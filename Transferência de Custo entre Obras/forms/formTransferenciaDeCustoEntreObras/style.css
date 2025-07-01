@@ -1,0 +1,51 @@
+/* Selectize */
+.selectize-dropdown .active:not(.selected){
+    background-color: lightgray !important;
+    color: black !important;
+}
+.selectize-dropdown .selected{
+    background-color: lightgray !important;
+    color: black !important;
+}
+.selectize-control.single .selectize-input{
+    box-shadow: rgba(0, 0, 0, 0.0) !important;
+    background-color: #fff !important;
+    background-image: none !important;
+}
+
+
+
+
+
+
+
+/* Utils */
+.fluig-style-guide .form-control[readonly]{
+    color: gray !important;
+}
+
+
+
+
+
+
+
+header{
+    background-color: #404142; 
+    color: white; 
+    text-align: center; 
+    padding: 10px;
+    border-radius: 20px 20px 0px 0px;
+}
+main{
+    border-left: 5px solid #404142;
+    border-right: 5px solid #404142;
+    background-color: white;
+}
+footer{
+    background-color: #404142; 
+    color: white; 
+    text-align: center; 
+    padding: 10px;
+    border-radius: 0px 0px 20px 20px;
+}

@@ -1,0 +1,348 @@
+<html>
+
+<head>
+	<!-- jQuery -->
+	<script type="text/javascript" src="/portal/resources/js/jquery/jquery.js"></script>
+	<script type="text/javascript" src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.14.1/jquery-ui.min.js"
+		integrity="sha512-MSOo1aY+3pXCOCdGAYoBZ6YGI0aragoQsg1mKKBHXCYPIWxamwOE7Drh+N5CPgGI5SA9IEKJiPjdfqWFWmZtRA=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="jquery.maskMoney.js" type="text/javascript"></script>
+
+	<!-- Fluig -->
+	<link type="text/css" rel="stylesheet"
+		href="http://fluig.castilho.com.br:1010/style-guide/css/fluig-style-guide.min.css" />
+	<script type="text/javascript" src="http://fluig.castilho.com.br:1010/style-guide/js/fluig-style-guide.min.js"
+		charset="utf-8"></script>
+	<script type="text/javascript" src="/webdesk/vcXMLRPC.js"></script>
+
+
+	<!-- Mustache -->
+	<script type="text/javascript" src="/portal/resources/js/mustache/mustache-min.js"></script>
+
+	<!-- Castilho Dev Guide -->
+	<link rel="stylesheet"
+		href="http://desenvolvimento.castilho.com.br:3232/castilho_dev_guide/resources/css/castilho-cards.css">
+	<link rel="stylesheet"
+		href="http://desenvolvimento.castilho.com.br:3232/castilho_dev_guide/resources/css/castilho-tables.css">
+	<link rel="stylesheet"
+		href="http://desenvolvimento.castilho.com.br:3232/castilho_dev_guide/resources/css/castilho_dev_guide.css">
+
+	<script src="/castilho_dev_guide/resources/js/castilho-consultas-rm.js"></script>
+	<script src="/castilho_dev_guide/resources/js/castilho-utils.js"></script>
+
+
+	<!-- selectize -->
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+		integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+		integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	<!-- Formulario -->
+	<link rel="stylesheet" href="style.css">
+	<script src="function.js"></script>
+	<script src="script.js"></script>
+</head>
+
+<body class="bg-castilho" style="margin: 0px;">
+	<div class="fluig-style-guide">
+		<form name="form" role="form">
+			<div style="display: none;">
+				<input type="hidden" name="userCode" id="userCode">
+				<input type="hidden" name="numProces" id="numProces">
+				<input type="hidden" name="atividade" id="atividade">
+				<input type="hidden" name="formMode" id="formMode">
+				<input type="hidden" name="dateSolicitacao" id="dateSolicitacao">
+				<input type="hidden" name="CODCOLIGADA" id="CODCOLIGADA">
+				<input type="hidden" name="ID_TRANSFERENCIAS_DE_CUSTO" id="ID_TRANSFERENCIAS_DE_CUSTO">
+
+
+				<!-- Aprovacoes -->
+				<input type="hidden" name="aprovadoEngenheiroObraOrigem" id="aprovadoEngenheiroObraOrigem">
+				<input type="hidden" name="aprovadoCoordenadorObraOrigem" id="aprovadoCoordenadorObraOrigem">
+				<input type="hidden" name="aprovadoDiretorObraOrigem" id="aprovadoDiretorObraOrigem">
+
+				<input type="hidden" name="aprovadoEngenheiroObraDestino" id="aprovadoEngenheiroObraDestino">
+				<input type="hidden" name="aprovadoCoordenadorObraDestino" id="aprovadoCoordenadorObraDestino">
+				<input type="hidden" name="aprovadoDiretorObraDestino" id="aprovadoDiretorObraDestino">
+
+				<input type="hidden" name="usuarioAprovadorOrigem" id="usuarioAprovadorOrigem">
+				<input type="hidden" name="usuarioAprovadorDestino" id="usuarioAprovadorDestino">
+
+				<input type="hidden" name="aprovadoObraDestino" id="aprovadoObraDestino">
+				<input type="hidden" name="aprovadoObraOrigem" id="aprovadoObraOrigem">
+
+				<input type="hidden" name="descisao" id="descisao">
+			</div>
+
+
+			<header id="header" style="display: none;">
+				<h1>TRANSFERÊNCIA DE CUSTO ENTRE OBRAS</h1>
+			</header>
+			<main style="padding: 20px; display: none;" id="main">
+				<div class="row" id="divCabecalhoSolicitacao">
+					<div class="col-md-6">
+						<label for="">Motivo de Transferência:</label>
+						<select name="motivoTransferencia" id="motivoTransferencia" class="form-control">
+							<option value=""></option>
+							<option value="Equipamento">Equipamento</option>
+							<option value="Mão de Obra">Mão de Obra</option>
+							<option value="Prestação de Serviço">Prestação de Serviço</option>
+							<option value="Insumos">Insumos</option>
+						</select>
+						<br>
+
+					</div>
+					<div class="col-md-2">
+						<label for="">Data Competência:</label>
+						<input name="dataCompetencia" id="dataCompetencia" class="form-control" />
+						<br>
+
+					</div>
+					<div class="col-md-2">
+						<label for="">Solicitante:</label>
+						<input name="solicitante" id="solicitante" class="form-control" readonly />
+						<br>
+					</div>
+					<div class="col-md-2">
+						<label for="">Data Solicitação:</label>
+						<input name="dataSolicitacao" id="dataSolicitacao" class="form-control" readonly />
+						<br>
+					</div>
+					<div class="col-md-12">
+						<label for="">Motivo da Transferência de Custo</label>
+						<textarea name="textMotivoTransferencia" id="textMotivoTransferencia" class="form-control"
+							rows="4"></textarea>
+						<br>
+					</div>
+				</div>
+				<div id="divObrasTransferencia" class="row">
+					<div class="col-md-6">
+						<div class="panel panel-castilho-primary">
+							<div class="panel-heading">
+								<h3 class="panel-title">OBRA ORIGEM <span style="color: lightgreen;">(Diminuição de
+										Custo)</span></h3>
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-md-8">
+										<label for="">Centro de Custo:</label>
+										<select name="ccustoObraOrigem" id="ccustoObraOrigem"
+											autocomplete="off"></select>
+									</div>
+									<div class="col-md-4">
+										<label for="">Valor:</label>
+										<input name="valorObraOrigem" id="valorObraOrigem" class="form-control"
+											style="color: green !important;" readonly />
+									</div>
+								</div>
+								<br>
+								<div class="row">
+									<div class="col-md-4">
+										<label for="">Engenheiro:</label>
+										<input type="text" name="engenheiroObraOrigem" id="engenheiroObraOrigem"
+											class="form-control" readonly>
+									</div>
+									<div class="col-md-4">
+										<label for="">Coordenador:</label>
+										<input type="text" name="coordenadorObraOrigem" id="coordenadorObraOrigem"
+											class="form-control" readonly>
+									</div>
+									<div class="col-md-4">
+										<label for="">Diretor:</label>
+										<input type="text" name="diretorObraOrigem" id="diretorObraOrigem"
+											class="form-control" readonly>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="panel panel-castilho-primary">
+							<div class="panel-heading">
+								<h3 class="panel-title">OBRA DESTINO <span style="color: orangered !important;">(Aumento
+										de Custo)</span></h3>
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-md-8">
+										<label for="">Centro de Custo:</label>
+										<select name="ccustoObraDestino" id="ccustoObraDestino"
+											autocomplete="off"></select>
+									</div>
+									<div class="col-md-4">
+										<label for="">Valor:</label>
+										<input name="valorObraDestino" id="valorObraDestino" class="form-control"
+											style="color: orangered !important;" readonly />
+									</div>
+								</div>
+								<br>
+								<div class="row">
+									<div class="col-md-4">
+										<label for="">Engenheiro:</label>
+										<input type="text" name="engenheiroObraDestino" id="engenheiroObraDestino"
+											class="form-control" readonly>
+									</div>
+									<div class="col-md-4">
+										<label for="">Coordenador:</label>
+										<input type="text" name="coordenadorObraDestino" id="coordenadorObraDestino"
+											class="form-control" readonly>
+									</div>
+									<div class="col-md-4">
+										<label for="">Diretor:</label>
+										<input type="text" name="diretorObraDestino" id="diretorObraDestino"
+											class="form-control" readonly>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<br>
+				</div>
+				<div id="divItensTransferencia" style="display: none;">
+					<div class="panel panel-castilho-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">ITENS</h3>
+						</div>
+						<div class="panel-body">
+
+							<table class="table table-bordered table-striped" id="tableItens" tablename="tableItens"
+								noaddbutton="true" nodeletebutton="true">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Produto</th>
+										<th>Descrição</th>
+										<th>QNTD</th>
+										<th>Valor Unit.</th>
+										<th>Valor Total</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="width: 1%;"></td>
+										<td style="width: 40%;">
+											<select type="text" name="itemProduto" id="itemProduto"
+												autocomplete="off"></select>
+										</td>
+										<td style="width: 20%;">
+											<input type="text" name="itemDescricao" id="itemDescricao"
+												class="form-control">
+										</td>
+										<td style="width: 10%;">
+											<input type="text" name="itemQuantidade" id="itemQuantidade"
+												class="form-control">
+										</td>
+										<td style="width: 10%;">
+											<input type="text" name="itemValorUnit" id="itemValorUnit"
+												class="form-control">
+										</td>
+										<td style="width: 10%;">
+											<input type="text" name="itemValorTotal" id="itemValorTotal"
+												class="form-control" readonly>
+										</td>
+										<td style="text-align: center;">
+											<button class="btn btn-danger btnRemoverLinhaItem">
+												<i class="flaticon flaticon-trash icon-md" aria-hidden="true"></i>
+											</button>
+										</td>
+									</tr>
+								</tbody>
+								<tfoot>
+									<tr>
+										<td colspan="7">
+											<div style="text-align: center;">
+												<button class="btn btn-success" id="btnAdicionarItem">
+													<i class="flaticon flaticon-add-plus icon-md"
+														aria-hidden="true"></i>
+												</button>
+											</div>
+										</td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div id="divHistorico" style="display: none;">
+					<div class="panel panel-castilho-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+								HISTÓRICO
+							</h3>
+						</div>
+						<div class="panel-body">
+							<div id="divLinhasHistorico">
+						
+							</div>
+
+							<div style="display: none;">
+								<!-- Table hidden para guardar as movimentacoes da Solicitação -->
+								<table id="tableHistorico" tablename="tableHistorico">
+									<thead>
+										<tr>
+											<th>ID</th>
+											<th>Data</th>
+											<th>Usuario</th>
+											<th>Movimentacao</th>
+											<th>Observacao</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>
+												<input type="hidden" name="idLinha" id="idLinha" class="idLinha">
+											</td>
+											<td>
+												<input type="hidden" name="dataMovimento" id="dataMovimento" class="dataMovimento">
+											</td>
+											<td>
+												<input type="hidden" name="usuario" id="usuario" class="usuario">
+											</td>
+											<td>
+												<input type="hidden" name="movimentacao" id="movimentacao" class="movimentacao">
+											</td>
+											<td>
+												<input type="hidden" name="observacao" id="observacao" class="observacao">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="divOpcoesAprovacao" style="display: none;">
+					<div class="row">
+						<div class="col-md-3"></div>
+
+						<div class="col-md-3">
+							<button class="btn btn-success btn-block">Aprovar</button>
+						</div>
+						<div class="col-md-3">
+							<button class="btn btn-danger btn-block">Reprovar</button>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<label for="">Observação:</label>
+							<textarea name="textObservacao" id="textObservacao" class="form-control" rows="4"></textarea>
+						</div>
+					</div>
+					<br>
+				</div>
+			</main>
+			<footer id="footer" style="display: none;">
+				<div>
+					CONSTRUTORA CASTILHO
+				</div>
+			</footer>
+		</form>
+	</div>
+</body>
+
+</html>

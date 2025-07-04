@@ -11,14 +11,15 @@ const ATIVIDADES = {
 };
 $(document).ready(function () {
 
-    init();
-    bindings();
 
     const atividadeAtual = $("#atividade").val();
     const formMode = $("#formMode").val();
     if (formMode == "VIEW") {
         loadAtividadesAprovacao();
     }
+    
+    init();
+    bindings();
 
 
     if (atividadeAtual == ATIVIDADES.INICIO || atividadeAtual == ATIVIDADES.INICIO_0) {

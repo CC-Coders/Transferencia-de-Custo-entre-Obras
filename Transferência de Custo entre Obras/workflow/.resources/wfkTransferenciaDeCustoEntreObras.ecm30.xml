@@ -29,7 +29,7 @@
     <processDefinitionVersionPK>
       <companyId>1</companyId>
       <processId>Tranferência de Custos entre Obras</processId>
-      <version>31</version>
+      <version>32</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
     <formId>28837</formId>
@@ -796,7 +796,7 @@
         <companyId>1</companyId>
         <processId>Tranferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>31</version>
+        <version>32</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -808,7 +808,7 @@
         <companyId>1</companyId>
         <processId>Tranferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>31</version>
+        <version>32</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -820,7 +820,7 @@
         <companyId>1</companyId>
         <processId>Tranferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>31</version>
+        <version>32</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -832,7 +832,7 @@
         <companyId>1</companyId>
         <processId>Tranferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>31</version>
+        <version>32</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1203,11 +1203,13 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {&#xd;
         log.info(&quot;idRow: &quot; + id);&#xd;
         insereItens(id);    &#xd;
         insereHistorico(id);&#xd;
+        hAPI.setCardValue(&quot;numProces&quot;,getValue(&quot;WKNumProces&quot;));&#xd;
     }&#xd;
 }&#xd;
 &#xd;
 &#xd;
 function insereNovoRegistro() {&#xd;
+    var numProces = getValue(&quot;WKNumProces&quot;);&#xd;
     var CODCOLIGADA_ORIGEM  = hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[0];&#xd;
     var CCUSTO_ORIGEM  = hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[1];&#xd;
     var CODCOLIGADA_DESTINO  = hAPI.getCardValue(&quot;ccustoObraDestino&quot;).split(&quot; - &quot;)[0];&#xd;
@@ -1223,6 +1225,7 @@ function insereNovoRegistro() {&#xd;
 &#xd;
     var query =&#xd;
         &quot;INSERT INTO TRANSFERENCIAS_DE_CUSTO (&quot; +&#xd;
+        &quot;   ID_SOLICITACAO, &quot;+&#xd;
         &quot;   CODCOLIGADA_ORIGEM, &quot;+&#xd;
         &quot;   CCUSTO_ORIGEM, &quot; +&#xd;
         &quot;   CODCOLIGADA_DESTINO, &quot;+&#xd;
@@ -1234,9 +1237,10 @@ function insereNovoRegistro() {&#xd;
         &quot;   DATA_COMPETENCIA, &quot; +&#xd;
         &quot;   STATUS)&quot; +&#xd;
         &quot; VALUES &quot; +&#xd;
-        &quot;(?,?,?,?,?,?,?,SYSDATETIME(),?,?)&quot;;&#xd;
+        &quot;(?,?,?,?,?,?,?,?,SYSDATETIME(),?,?)&quot;;&#xd;
 &#xd;
         return executaUpdate(query, [&#xd;
+            {type:&quot;int&quot;, value:numProces},&#xd;
             {type:&quot;int&quot;, value:CODCOLIGADA_ORIGEM},&#xd;
             {type:&quot;varchar&quot;, value:CCUSTO_ORIGEM},&#xd;
             {type:&quot;int&quot;, value:CODCOLIGADA_DESTINO},&#xd;
@@ -1555,7 +1559,7 @@ function verificaAprovadoresObraDestino(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Tranferência de Custos entre Obras</processId>
-        <version>31</version>
+        <version>32</version>
         <linkSequence>7</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -1566,7 +1570,7 @@ function verificaAprovadoresObraDestino(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Tranferência de Custos entre Obras</processId>
-        <version>31</version>
+        <version>32</version>
         <linkSequence>12</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -1577,7 +1581,7 @@ function verificaAprovadoresObraDestino(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Tranferência de Custos entre Obras</processId>
-        <version>31</version>
+        <version>32</version>
         <linkSequence>40</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -1588,7 +1592,7 @@ function verificaAprovadoresObraDestino(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Tranferência de Custos entre Obras</processId>
-        <version>31</version>
+        <version>32</version>
         <linkSequence>40</linkSequence>
         <bendSequence>2</bendSequence>
       </processLinkBendPK>
@@ -1599,7 +1603,7 @@ function verificaAprovadoresObraDestino(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Tranferência de Custos entre Obras</processId>
-        <version>31</version>
+        <version>32</version>
         <linkSequence>41</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -1610,7 +1614,7 @@ function verificaAprovadoresObraDestino(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Tranferência de Custos entre Obras</processId>
-        <version>31</version>
+        <version>32</version>
         <linkSequence>41</linkSequence>
         <bendSequence>2</bendSequence>
       </processLinkBendPK>
@@ -1621,7 +1625,7 @@ function verificaAprovadoresObraDestino(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Tranferência de Custos entre Obras</processId>
-        <version>31</version>
+        <version>32</version>
         <linkSequence>43</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>

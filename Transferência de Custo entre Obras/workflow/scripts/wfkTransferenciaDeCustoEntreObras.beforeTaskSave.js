@@ -17,11 +17,13 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {
         log.info("idRow: " + id);
         insereItens(id);    
         insereHistorico(id);
+        hAPI.setCardValue("numProces",getValue("WKNumProces"));
     }
 }
 
 
 function insereNovoRegistro() {
+    var numProces = getValue("WKNumProces");
     var CODCOLIGADA_ORIGEM  = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[0];
     var CCUSTO_ORIGEM  = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[1];
     var CODCOLIGADA_DESTINO  = hAPI.getCardValue("ccustoObraDestino").split(" - ")[0];
@@ -37,6 +39,7 @@ function insereNovoRegistro() {
 
     var query =
         "INSERT INTO TRANSFERENCIAS_DE_CUSTO (" +
+        "   ID_SOLICITACAO, "+
         "   CODCOLIGADA_ORIGEM, "+
         "   CCUSTO_ORIGEM, " +
         "   CODCOLIGADA_DESTINO, "+
@@ -48,9 +51,10 @@ function insereNovoRegistro() {
         "   DATA_COMPETENCIA, " +
         "   STATUS)" +
         " VALUES " +
-        "(?,?,?,?,?,?,?,SYSDATETIME(),?,?)";
+        "(?,?,?,?,?,?,?,?,SYSDATETIME(),?,?)";
 
         return executaUpdate(query, [
+            {type:"int", value:numProces},
             {type:"int", value:CODCOLIGADA_ORIGEM},
             {type:"varchar", value:CCUSTO_ORIGEM},
             {type:"int", value:CODCOLIGADA_DESTINO},

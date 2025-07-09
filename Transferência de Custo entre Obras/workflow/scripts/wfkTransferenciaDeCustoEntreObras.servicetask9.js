@@ -1,5 +1,6 @@
 function servicetask9(attempt, message) {
-    verificaAprovadoresObraDestino();
+    var aprovador = verificaAprovadoresObraDestino();
+    return aprovador;
 }
 
 function verificaAprovadoresObraDestino(){
@@ -14,15 +15,17 @@ function verificaAprovadoresObraDestino(){
     var aprovadoCoordenadorObraDestino = hAPI.getCardValue("aprovadoCoordenadorObraDestino");
     var aprovadoDiretorObraDestino = hAPI.getCardValue("aprovadoDiretorObraDestino");
 
-    if (aprovadoEngenheiroObraDestino != "Sim") {
+    if (aprovadoEngenheiroObraDestino != "true") {
         hAPI.setCardValue("usuarioAprovadorDestino", engenheiroObraDestino);
     }
-    else if (aprovadoCoordenadorObraDestino != "Sim") {
+    else if (aprovadoCoordenadorObraDestino != "true") {
         hAPI.setCardValue("usuarioAprovadorDestino", coordenadorObraDestino);
     }
-    else if (valorTotalTransferencia > 2000000 && aprovadoDiretorObraDestino != "Sim") {
+    else if (valorTotalTransferencia > 2000000 && aprovadoDiretorObraDestino != "true") {
         hAPI.setCardValue("usuarioAprovadorDestino", diretorObraDestino);
     }else{
-        hAPI.setCardValue("aprovadoObraDestino", "Sim");
+        hAPI.setCardValue("aprovadoObraDestino", "true");
     }
+
+    return hAPI.getCardValue("usuarioAprovadorDestino");
 }

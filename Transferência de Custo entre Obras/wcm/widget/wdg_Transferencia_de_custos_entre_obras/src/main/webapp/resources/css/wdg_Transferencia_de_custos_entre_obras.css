@@ -1,3 +1,28 @@
+.chartWrapper, #tableWraper{
+    background-color: #58595b;
+    padding: 15px 20px;
+    border-radius: 20px;
+}
+
+#d3-tooltip{
+        position: absolute;
+    display: none;
+    background: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    border: 1px solid rgb(51, 51, 51);
+    padding: 8px 12px;
+    border-radius: 20px;
+    pointer-events: none;
+    font-size: 13px;
+    z-index: 1000;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 8px;
+    fill: black;
+    left: 219px;
+    top: 139px;
+    white-space: nowrap;
+}
+
+
 .flexRow{
     display: flex !important;
     align-items: stretch !important;
@@ -14,4 +39,47 @@
 
 .nowrap{
     white-space: nowrap;
+}
+
+.panel.panel-primary{
+    border-radius: 25px !important;
+}
+
+.panel.panel-primary .panel-heading{
+    border-radius: 20px;
+}
+.panel.panel-primary .panel-body{
+    border-radius: 20px;
+}
+
+
+.responsive_theme div.wcm-all-content {
+    padding-top: 70px !important;
+}
+
+/* Darkmode */
+.castilho-dark-mode{
+    background-color: #3a3a3a  !important;
+    color: white !important;
+}
+
+.castilho-dark-mode th, .castilho-dark-mode td{
+    color:white !important;
+}
+.castilho-dark-mode .panel-body{
+    background-color: gray !important;
+}
+.castilho-dark-mode .panel{
+    background-color: gray !important;
+}
+
+
+.castilho-dark-mode div.dt-container .dt-paging .dt-paging-button.disabled, 
+.castilho-dark-mode div.dt-container .dt-paging .dt-paging-button.disabled:hover, 
+.castilho-dark-mode div.dt-container .dt-paging .dt-paging-button.disabled:active {
+    cursor: default;
+    color: gray !important;
+    border: 1px solid transparent;
+    background: transparent;
+    box-shadow: none;
 }

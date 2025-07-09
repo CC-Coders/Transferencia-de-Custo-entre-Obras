@@ -46,6 +46,7 @@ var wdgTransfCusto = SuperWidget.extend({
 });
 
 function init() {
+    toggleDarkMode();
     GCCUSTO = DatasetFactory.getDataset("GCCUSTO",null,null,null).values;
     initDataTableTransferencias();
     consultaTransferencias();
@@ -54,6 +55,13 @@ function init() {
         $("#arrowFiltro").toggleClass("flaticon-chevron-up");
         $("#arrowFiltro").toggleClass("flaticon-chevron-down");
     });
+
+    $("#btnDarkMode").on("click", toggleDarkMode);
+
+    loadChart1("chart1");
+    loadChart1("chart2");
+    loadChart1("chart3");
+    loadBarChart();
 
     var date = new Date();
     var mes = date.getMonth() + 1;
@@ -75,7 +83,6 @@ function consultaTransferencias() {
 
     dataTableTransferencias.clear().draw();
     for (const row of transferencias) {
-
         row.DESC_CCUSTO_ORIGEM = findDescCCUSTO(row.CODCOLIGADA_ORIGEM, row.CCUSTO_ORIGEM);
         row.DESC_CCUSTO_DESTINO = findDescCCUSTO(row.CODCOLIGADA_DESTINO, row.CCUSTO_DESTINO);
         
@@ -113,12 +120,6 @@ function initDataTableTransferencias() {
         fixedHeader: true,
         // order: [[4, 'desc']],
         columns: [
-            {
-                class: 'detaisNotaFiscal',
-                orderable: false,
-                data: null,
-                defaultContent: ''
-            },
             {
                 data: "ID_SOLICITACAO",
             },
@@ -178,7 +179,11 @@ function initDataTableTransferencias() {
                 render:function(data){
                     if (data == 1) {
                         return "Em andamento";
-                    }else{
+                    }
+                    else if(data == 2){
+                        return "Finalizado";
+                    }
+                    else{
                         return data;
                     }
                 }
@@ -187,7 +192,7 @@ function initDataTableTransferencias() {
                 data: null,
                 orderable: false,
                 render: function (data, type, row) {
-                    return `<button class="btn btn-primary">
+                    return `<button class="btn btn-default">
                         <i class="flaticon flaticon-view icon-sm" aria-hidden="true"></i>
                     </button>`;
                 }
@@ -207,6 +212,156 @@ function initDataTableTransferencias() {
 }
 
 
+function loadChart1(id){
+    const data = [
+        { label: 'Obra Toledo II', value: getRandomInt(100) },
+        { label: 'Obra Estrada da Boiadeira II', value: getRandomInt(100) },
+        { label: 'Obra Teste', value: getRandomInt(100) },
+        { label: 'Obra ABCDEF', value: getRandomInt(100) }
+    ];
+
+    const width = 350;
+    const height = 220;
+    const radius = Math.min(width, height) / 2;
+    const color = d3.scaleOrdinal(d3.schemeSet1);
+
+    // Remove previous chart if exists
+    d3.select("#" + id).selectAll("*").remove();
+
+    const svg = d3.select("#" + id)
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", `translate(${width / 2-60},${height / 2})`);
+
+    const pie = d3.pie()
+        .value(d => d.value);
+
+    const arc = d3.arc()
+        .innerRadius(0)
+        .outerRadius(radius - 10);
+
+    const arcs = svg.selectAll("arc")
+        .data(pie(data))
+        .enter()
+        .append("g");
+
+    // Tooltip
+    const tooltip = d3.select("#d3-tooltip");
+    // Draw slices with mouse events
+    arcs.append("path")
+        .attr("d", arc)
+        .attr("fill", (d, i) => color(i))
+        .on("mouseover", function(event, d) {
+            tooltip
+                .style("display", "block")
+                .style("fill", "black")
+                .html(`<strong>${d.data.label}</strong>: ${d.data.value}`);
+
+            d3.select(this).attr("stroke", "white").attr("stroke-width", 2);
+        })
+        .on("mousemove", function(event) {
+            tooltip
+            .style("left", (event.pageX - 70) + "px")
+            .style("top", (event.pageY - 300) + "px");
+        })
+        .on("mouseout", function() {
+            tooltip.style("display", "none");
+            d3.select(this).attr("stroke", null);
+        });
+
+
+  
+
+        var legendHolder = svg.append('g');
+
+        var legendLeft = legendHolder.selectAll(".legend")
+        .data(data.slice())
+        .enter().append("g")
+            .attr("class", "legend")
+            .attr("transform", function(d, i) { return "translate(120," + ((i * 20)  -(height/2) + 20) + ")"; });
+
+            
+        legendLeft.append("rect")
+        .attr("x", 0)
+        .attr("width", 18)
+        .attr("height", 18)
+        .attr("fill", (d,i)=>color(i));
+
+        legendLeft.append("text")
+        .attr("x", 20)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "start")
+        .style('fill', 'white')
+        .text(function(d) { return d.label.replace("Obra ",""); });
+
+
+}
+function loadBarChart(){
+ const data = [
+        {label: "A", value: 30},
+        {label: "B", value: 80},
+        {label: "C", value: 45},
+        {label: "D", value: 60},
+        {label: "E", value: 20},
+        {label: "F", value: 90},
+        {label: "G", value: 55}
+    ];
+
+    const width = 350;
+    const height = 220;
+    const margin = {top: 10, right: 10, bottom: 10, left:10};
+
+    const svg = d3.select("#chart4")
+        .attr("width", width)
+        .attr("height", height);
+
+    const x = d3.scaleBand()
+        .domain(data.map(d => d.label))
+        .range([margin.left, width - margin.right])
+        .padding(0.1);
+
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.value)]).nice()
+        .range([height - margin.bottom, margin.top]);
+
+    // Tooltip div
+    const tooltip = d3.select("#d3-tooltip");
+
+    svg.append("g")
+        .attr("fill", "#007bff")
+        .selectAll("rect")
+        .data(data)
+        .join("rect")
+            .attr("x", d => x(d.label))
+            .attr("y", d => y(d.value))
+            .attr("height", d => y(0) - y(d.value))
+            .attr("width", x.bandwidth())
+            .on("mouseover", function(event, d) {
+                tooltip
+                    .style("display", "block")
+                    .html(`<strong>${d.label}</strong>: ${d.value}`);
+                d3.select(this).attr("fill", "#0056b3");
+            })
+            .on("mousemove", function(event) {
+                tooltip
+                    .style("left", (event.pageX-70) + "px")
+                    .style("top", (event.pageY-300) + "px");
+            })
+            .on("mouseout", function() {
+                tooltip.style("display", "none");
+                d3.select(this).attr("fill", "#007bff");
+            });
+
+    svg.append("g")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x));
+
+    svg.append("g")
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y));
+}
 
 
 // Utils
@@ -240,4 +395,18 @@ function showMessage(title, message, type) {
         message: message,
         type: type
     });
+}
+
+
+function toggleDarkMode(){
+    $(".wcm-all-content").toggleClass("castilho-dark-mode");
+    $(".super-widget").toggleClass("castilho-dark-mode");
+    $(".wcm_widget").toggleClass("castilho-dark-mode");
+    $("#visualizacaoPagina").toggleClass("castilho-dark-mode");
+    $("body").toggleClass("castilho-dark-mode")
+}
+
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
 }

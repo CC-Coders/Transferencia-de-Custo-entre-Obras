@@ -21,11 +21,18 @@ function extraiAprovadoresDaLista(lista) {
 function preencheCamposDeObras() {
     var USUARIO = $("#solicitante").val();
 
+    var val = $("#ccustoObraOrigem").val();
     var obrasComPermissaoDoUsuario = buscaObrasPorPermissaoDoUsuario(USUARIO);
     $("#ccustoObraOrigem").html(geraHtmlOptions(obrasComPermissaoDoUsuario));
+    $("#ccustoObraOrigem").val(val);
 
+
+    var val2 = $("#ccustoObraDestino").val();
+    console.log("val2", val2);
     var todasObras = buscaObrasPorPermissaoDoUsuario(USUARIO, true);
     $("#ccustoObraDestino").html(geraHtmlOptions(todasObras));
+    $("#ccustoObraDestino").val(val2);
+
 
     function geraHtmlOptions(obras) {
         var html = "<option></option>";
@@ -72,28 +79,34 @@ function promiseBuscaAprovadoresDaObra(CODCOLIGADA, LOCALESTOQUE, CODTMV, valorT
 
 function adicionarLinhaItem() {
     var id = wdkAddChild("tableItens")
-    
+    loadLinhaItem(id);
+    updateCounterRowsTableItens();
+}
+function loadLinhaItem(id) {
+    var val = $("#itemProduto" + "___" + id).val();
     $("#itemProduto" + "___" + id).html(htmlListProdutos);
+    $("#itemProduto" + "___" + id).val(val);
     $("#itemProduto" + "___" + id).selectize();
 
-    $("#itemQuantidade" + "___" + id).maskMoney({thousands:'.', decimal:',',});
-    $("#itemValorUnit" + "___" + id).maskMoney({thousands:'.', decimal:',', prefix: 'R$'});
+    $("#itemQuantidade" + "___" + id).maskMoney({ thousands: '.', decimal: ',', });
+    $("#itemValorUnit" + "___" + id).maskMoney({ thousands: '.', decimal: ',', prefix: 'R$' });
 
-    $("#itemQuantidade___" + id + ", #itemValorUnit___" + id).on("change", function(){
+    $("#itemQuantidade___" + id + ", #itemValorUnit___" + id).on("change, keyup", function () {
         var id = $(this).attr("id").split("___")[1];
         calculaValorTotalItem(id);
         atualizaValorTotal();
     });
 
-    $(".btnRemoverLinhaItem:last").on("click", function(){
+
+    $(".btnRemoverLinhaItem").off("click").on("click", function () {
         fnWdkRemoveChild($(this).closest("tr")[0]);
         updateCounterRowsTableItens();
         atualizaValorTotal();
     });
-    updateCounterRowsTableItens();
 }
 
-function calculaValorTotalItem(id){
+
+function calculaValorTotalItem(id) {
     var quantidade = moneyToFloat($("#itemQuantidade" + "___" + id).val());
     var valor = moneyToFloat($("#itemValorUnit" + "___" + id).val());
     console.log(quantidade, valor)
@@ -102,15 +115,15 @@ function calculaValorTotalItem(id){
 
     $("#itemValorTotal" + "___" + id).val(floatToMoney(valorTotal));
 }
-function atualizaValorTotal(){
+function atualizaValorTotal() {
     var valorTotal = 0;
-        $("#tableItens>tbody>tr:not(:first)").each(function () {
-            var valorItem = $(this).find(`input[name^="itemValorTotal___"]`).val();
-            valorTotal += moneyToFloat(valorItem);
-        });
+    $("#tableItens>tbody>tr:not(:first)").each(function () {
+        var valorItem = $(this).find(`input[name^="itemValorTotal___"]`).val();
+        valorTotal += moneyToFloat(valorItem);
+    });
 
-        $("#valorObraOrigem").val("- " + floatToMoney(valorTotal));
-        $("#valorObraDestino").val(floatToMoney(valorTotal));
+    $("#valorObraOrigem").val("- " + floatToMoney(valorTotal));
+    $("#valorObraDestino").val(floatToMoney(valorTotal));
 }
 
 
@@ -148,7 +161,7 @@ async function loadListaItens() {
         });
     }
 
-    function montaHtmlListaProdutos(listaProdutos){
+    function montaHtmlListaProdutos(listaProdutos) {
         var html = "<option></option>";
         for (const produto of listaProdutos) {
             html += `<option value="${produto.VISUAL}">${produto.VISUAL}</option>`;
@@ -158,10 +171,12 @@ async function loadListaItens() {
 }
 
 
-function insereLinhaHistorico(){
+function insereLinhaHistorico() {
     var id = wdkAddChild("tableHistorico");
     var usuario = $("#userCode").val();
     var observacao = $("#textObservacao").val();
+    var atividadeAtual = $("#atividade").val();
+
     if (!observacao && ($("#atividade").val() == ATIVIDADES.INICIO && $("#atividade").val() == ATIVIDADES.INICIO_0)) {
         observacao = $("#textMotivoTransferencia").val();
     }
@@ -170,55 +185,66 @@ function insereLinhaHistorico(){
     if ($("#formMode").val() == "ADD") {
         movimentacao = "Inicio";
     }
-    else if ($("#descisao").val() == "Aprovar") {
-        movimentacao = "Aprovar";
+    else if(atividadeAtual == ATIVIDADES.INICIO){
+        movimentacao = "Ajuste";
     }
-    else if ($("#descisao").val() == "Reprovar") {
-        movimentacao = "Reprovar";
-    }else{
+    else if ($("#decisao").val() == "Aprovado") {
+        movimentacao = "Aprovado";
+    }
+    else if ($("#decisao").val() == "Reprovado") {
+        movimentacao = "Reprovado";
+    } else {
 
     }
 
     $("#idLinha" + "___" + id).val(id);
-    $("#dataMovimento" + "___" + id).val(moment().format("YYYY-MM-DD HH:MM"));
     $("#usuario" + "___" + id).val(usuario);
     $("#movimentacao" + "___" + id).val(movimentacao);
     $("#observacao" + "___" + id).val(observacao);
+    $("#dataMovimento" + "___" + id).val(moment().format("YYYY-MM-DD HH:mm"));
 }
-function geraTabelaHistorico(){
-    $("#tableHistorico>tbody>tr:not(:first)").each(async function(){
-        var idLinha = $(this).find(".idLinha").val();
-        var dataMovimento = $(this).find(".dataMovimento").val();
-        var usuario = $(this).find(".usuario").val();
-        var movimentacao = $(this).find(".movimentacao").val();
-        var observacao = $(this).find(".observacao").val();
+async function geraTabelaHistorico() {
+    var rows = $("#tableHistorico>tbody>tr:not(:first)").get();
+
+    for (let i = rows.length - 1; i >= 0; i--) {
+        var row = $(rows[i]);
+
+        var idLinha = $(row).find(".idLinha").val();
+        var dataMovimento = $(row).find(".dataMovimento").val();
+        var usuario = $(row).find(".usuario").val();
+        var movimentacao = $(row).find(".movimentacao").val();
+        var observacao = $(row).find(".observacao").val();
 
 
         var html = await gerahtml(usuario, dataMovimento, observacao, movimentacao);
         console.log(html)
         $("#divLinhasHistorico").append(html);
         $(".divImageUser:last").append(await BuscaImagemUsuario(usuario));
-    });
+    }
 
-    async function gerahtml(usuario, dataMovimento, observacao, movimentacao){
+
+
+    async function gerahtml(usuario, dataMovimento, observacao, movimentacao) {
+        dataMovimento = dataMovimento.split(" ");
+        dataMovimento[0] = dataMovimento[0].split("-").reverse().join("/");
+        dataMovimento = dataMovimento.join(" ");
+
         var nomeUsuario = BuscaNomeUsuario(usuario);
 
-        var  html =
-        `<div>
+        var html =
+            `
             <div class="card">
-                <div class="card-body">
+                <div class="card-body" style="${movimentacao == "Aprovado" ? "border:solid 1px green;" : (movimentacao == "Reprovado" ? "border:solid 1px red;" : "")} ">
                     <div style="display:flex;">
                         <div class="divImageUser" style="margin-right:20px;"></div>
                         <div>
-                            <h3 class="card-title">${nomeUsuario}</h3>
+                            <h3 class="card-title" style="margin-bottom:0px;">${nomeUsuario} <small>${movimentacao}</small></h3>
                             <small>${dataMovimento}</small>
+                            <p class="card-text">${observacao}</p>
                         </div>
                     </div>
-
-                    <p class="card-text">${observacao}</p>
                 </div>
-            </div>
-        </div>`;
+            </div>`;
         return html;
     }
 
@@ -227,11 +253,58 @@ function geraTabelaHistorico(){
             const res = await fetch("/api/public/social/image/" + usuario);
             const blob = await res.blob();
             const img = new Image();
-            img.width = "40";
-            img.height = "40";
+            img.width = "60";
+            img.height = "60";
+            img.classList.add('userImage');
             img.src = URL.createObjectURL(blob);
             await img.decode();
             resolve(img);
         });
     }
+}
+
+
+
+
+function marcaEmVerdeAprovados() {
+    var aprovadorEngenheiroOrigem = $("#aprovadoEngenheiroObraOrigem").val() == "true";
+    if (aprovadorEngenheiroOrigem) {
+        $("#engenheiroObraOrigem").css("background-color", "lightgreen");
+        $("#engenheiroObraOrigem").css("color", "black");
+    }
+
+    var aprovadoCoordenadorObraOrigem = $("#aprovadoCoordenadorObraOrigem").val() == "true";
+    if (aprovadoCoordenadorObraOrigem) {
+        $("#coordenadorObraOrigem").css("background-color", "lightgreen");
+        $("#coordenadorObraOrigem").css("color", "black");
+    }
+
+    var aprovadoDiretorObraOrigem = $("#aprovadoDiretorObraOrigem").val() == "true";
+    if (aprovadoDiretorObraOrigem) {
+        $("#diretorObraOrigem").css("background-color", "lightgreen");
+        $("#diretorObraOrigem").css("color", "black");
+    }
+
+    var aprovadoEngenheiroObraDestino = $("#aprovadoEngenheiroObraDestino").val() == "true";
+    if (aprovadoEngenheiroObraDestino) {
+        $("#engenheiroObraDestino").css("background-color", "lightgreen");
+        $("#engenheiroObraDestino").css("color", "black");
+    }
+
+    var aprovadoCoordenadorObraDestino = $("#aprovadoCoordenadorObraDestino").val() == "true";
+    if (aprovadoCoordenadorObraDestino) {
+        $("#coordenadorObraDestino").css("background-color", "lightgreen");
+        $("#coordenadorObraDestino").css("color", "black");
+    }
+
+    var aprovadoDiretorObraDestino = $("#aprovadoDiretorObraDestino").val() == "true";
+    if (aprovadoDiretorObraDestino) {
+        $("#diretorObraDestino").css("background-color", "lightgreen");
+        $("#diretorObraDestino").css("color", "black");
+    }
+
+
+
+
+
 }

@@ -11,8 +11,8 @@ var ATIVIDADES ={
 
 
 function displayFields(form,customHTML){
-    var ATIVIDADE = getValue("WKNumProces")
-    var USUARIO = getValue("WKUser")
+    var ATIVIDADE = getValue("WKNumState");
+    var USUARIO = getValue("WKUser");
     var dataHoje = getDateNow();
 
     form.setValue("formMode", form.getFormMode());

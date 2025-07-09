@@ -75,7 +75,7 @@
 				<input type="hidden" name="aprovadoObraDestino" id="aprovadoObraDestino">
 				<input type="hidden" name="aprovadoObraOrigem" id="aprovadoObraOrigem">
 
-				<input type="hidden" name="descisao" id="descisao">
+				<input type="hidden" name="decisao" id="decisao">
 			</div>
 
 
@@ -277,7 +277,7 @@
 						</div>
 						<div class="panel-body">
 							<div id="divLinhasHistorico">
-						
+
 							</div>
 
 							<div style="display: none;">
@@ -298,16 +298,19 @@
 												<input type="hidden" name="idLinha" id="idLinha" class="idLinha">
 											</td>
 											<td>
-												<input type="hidden" name="dataMovimento" id="dataMovimento" class="dataMovimento">
+												<input type="hidden" name="dataMovimento" id="dataMovimento"
+													class="dataMovimento">
 											</td>
 											<td>
 												<input type="hidden" name="usuario" id="usuario" class="usuario">
 											</td>
 											<td>
-												<input type="hidden" name="movimentacao" id="movimentacao" class="movimentacao">
+												<input type="hidden" name="movimentacao" id="movimentacao"
+													class="movimentacao">
 											</td>
 											<td>
-												<input type="hidden" name="observacao" id="observacao" class="observacao">
+												<input type="hidden" name="observacao" id="observacao"
+													class="observacao">
 											</td>
 										</tr>
 									</tbody>
@@ -321,19 +324,18 @@
 						<div class="col-md-3"></div>
 
 						<div class="col-md-3">
-							<button class="btn btn-success btn-block">Aprovar</button>
+							<button class="btn btn-success btn-block" id="btnAprovar">Aprovar</button>
 						</div>
 						<div class="col-md-3">
-							<button class="btn btn-danger btn-block">Reprovar</button>
+							<button class="btn btn-danger btn-block" id="btnReprovar">Reprovar</button>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<label for="">Observação:</label>
-							<textarea name="textObservacao" id="textObservacao" class="form-control" rows="4"></textarea>
-						</div>
+				</div>
+				<div class="row" id="divObservacaoAprovacao" style="display: none;">
+					<div class="col-md-12">
+						<label for="">Observação:</label>
+						<textarea name="textObservacao" id="textObservacao" class="form-control" rows="4"></textarea>
 					</div>
-					<br>
 				</div>
 			</main>
 			<footer id="footer" style="display: none;">

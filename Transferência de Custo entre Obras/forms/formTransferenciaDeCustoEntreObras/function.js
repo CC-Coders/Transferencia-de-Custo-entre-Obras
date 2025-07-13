@@ -82,54 +82,38 @@ function adicionarLinhaItem() {
     loadLinhaItem(id);
     updateCounterRowsTableItens();
 }
-function loadLinhaItem(id) {
-    var val = $("#itemProduto" + "___" + id).val();
-    $("#itemProduto" + "___" + id).html(htmlListProdutos);
-    $("#itemProduto" + "___" + id).val(val);
-    $("#itemProduto" + "___" + id).selectize();
-
-    $("#itemQuantidade" + "___" + id).maskMoney({ thousands: '.', decimal: ',', });
-    $("#itemValorUnit" + "___" + id).maskMoney({ thousands: '.', decimal: ',', prefix: 'R$' });
-
-    $("#itemQuantidade___" + id + ", #itemValorUnit___" + id).on("change, keyup", function () {
-        var id = $(this).attr("id").split("___")[1];
-        calculaValorTotalItem(id);
-        atualizaValorTotal();
-    });
-
-
-    $(".btnRemoverLinhaItem").off("click").on("click", function () {
-        fnWdkRemoveChild($(this).closest("tr")[0]);
-        updateCounterRowsTableItens();
-        atualizaValorTotal();
-    });
-}
-
-
-function calculaValorTotalItem(id) {
-    var quantidade = moneyToFloat($("#itemQuantidade" + "___" + id).val());
-    var valor = moneyToFloat($("#itemValorUnit" + "___" + id).val());
-    console.log(quantidade, valor)
+function calculaValorTotalItem(tr) {
+    var quantidade = moneyToFloat($(tr).find(".itemQuantidade").val());
+    var valor = moneyToFloat($(tr).find(".itemValorUnit").val());
     var valorTotal = quantidade * valor;
-    console.log(valorTotal)
-
-    $("#itemValorTotal" + "___" + id).val(floatToMoney(valorTotal));
+    $(tr).find(".itemValorTotal").val(floatToMoney(valorTotal));
 }
 function atualizaValorTotal() {
     var valorTotal = 0;
-    $("#tableItens>tbody>tr:not(:first)").each(function () {
-        var valorItem = $(this).find(`input[name^="itemValorTotal___"]`).val();
-        valorTotal += moneyToFloat(valorItem);
+
+    $(".panelTransferencia:not(:first)").each(function () {
+        var valorTotalPorTranferencia = 0;
+
+        $(this).find(".tableItens>tbody").find("tr").each(function () {
+            var valorItem = moneyToFloat($(this).find(`.itemValorTotal`).val());
+            valorTotal += valorItem;
+            valorTotalPorTranferencia += valorItem;
+        });
+
+        $(this).find(".spanValorTransferencia").text(floatToMoney(valorTotalPorTranferencia));
+        $(this).find("input[name^='valorTotalTransferencia']").val(floatToMoney(valorTotalPorTranferencia));
     });
+
+
 
     $("#valorObraOrigem").val("- " + floatToMoney(valorTotal));
     $("#valorObraDestino").val(floatToMoney(valorTotal));
 }
 
 
-function updateCounterRowsTableItens() {
+function updateCounterRowsTableItens(target) {
     var counter = 1;
-    $("#tableItens>tbody>tr:not(:first)").each(function () {
+    $(target).find("tbody>tr").each(function () {
         $(this).find("td:first").text(counter);
         counter++;
     });
@@ -171,45 +155,13 @@ async function loadListaItens() {
 }
 
 
-function insereLinhaHistorico() {
-    var id = wdkAddChild("tableHistorico");
-    var usuario = $("#userCode").val();
-    var observacao = $("#textObservacao").val();
-    var atividadeAtual = $("#atividade").val();
 
-    if (!observacao && ($("#atividade").val() == ATIVIDADES.INICIO && $("#atividade").val() == ATIVIDADES.INICIO_0)) {
-        observacao = $("#textMotivoTransferencia").val();
-    }
-
-    var movimentacao = "";
-    if ($("#formMode").val() == "ADD") {
-        movimentacao = "Inicio";
-    }
-    else if(atividadeAtual == ATIVIDADES.INICIO){
-        movimentacao = "Ajuste";
-    }
-    else if ($("#decisao").val() == "Aprovado") {
-        movimentacao = "Aprovado";
-    }
-    else if ($("#decisao").val() == "Reprovado") {
-        movimentacao = "Reprovado";
-    } else {
-
-    }
-
-    $("#idLinha" + "___" + id).val(id);
-    $("#usuario" + "___" + id).val(usuario);
-    $("#movimentacao" + "___" + id).val(movimentacao);
-    $("#observacao" + "___" + id).val(observacao);
-    $("#dataMovimento" + "___" + id).val(moment().format("YYYY-MM-DD HH:mm"));
-}
 async function geraTabelaHistorico() {
     var rows = $("#tableHistorico>tbody>tr:not(:first)").get();
 
     for (let i = rows.length - 1; i >= 0; i--) {
         var row = $(rows[i]);
 
-        var idLinha = $(row).find(".idLinha").val();
         var dataMovimento = $(row).find(".dataMovimento").val();
         var usuario = $(row).find(".usuario").val();
         var movimentacao = $(row).find(".movimentacao").val();
@@ -263,6 +215,174 @@ async function geraTabelaHistorico() {
     }
 }
 
+function adicionaNovaTransferencia() {
+    var id = wdkAddChild("tableTransferencias");
+
+    $("#motivoTransferencia" + "___" + id).on("change", function () {
+        $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text($(this).val());
+        salvaItensDasTransferenciasNoCampoHidden();
+    });
+    $(".panelTransferencia:last .panel-heading").on("click", function () {
+        $(".panelTransferencia .panel-heading").not(this).find(".flaticon").addClass("flaticon-chevron-up").removeClass("flaticon-chevron-down");
+        $(this).siblings(".panel-body").slideToggle();
+        $(this).find(".flaticon").toggleClass("flaticon-chevron-up, flaticon-chevron-down");
+    });
+    $(".btnAdicionarItem:last").on("click", function () {
+        $(this).closest(".panelTransferencia").find(".tableItens")
+    });
+
+
+    criaTabelaItens($(".panelTransferencia:last").find(".divTabelaItens"));
+    criaLinhaItem($(".panelTransferencia:last").find(".divTabelaItens").find("table"));
+    setTimeout(() => {
+        $(".panelTransferencia:not(:last):not(:first)").find(".panel-body").slideUp();
+    }, 10);
+}
+function criaTabelaItens(target, readonly) {
+    var htmlTabela =
+        `<table class="table table-bordered table-striped tableItens" style="margin-bottom:0px;">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Produto</th>
+					<th>Descrição</th>
+					<th>QNTD</th>
+					<th>Valor Unit.</th>
+					<th>Valor Total</th>
+                    ${!readonly ? "<th></th>" : ""}
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+            ${!readonly ?
+            `<tfoot>
+				    <tr>
+    					<td colspan="7">
+	    					<div style="text-align: center;">
+		    					<button class="btn btn-success btnAdicionarItem">
+			    					<i class="flaticon flaticon-add-plus icon-md" aria-hidden="true"></i>
+							    </button>
+						    </div>
+					    </td>
+				    </tr>
+			    </tfoot>` : ""}
+		</table>`;
+
+    $(target).append(htmlTabela);
+
+    $(".btnAdicionarItem:last").on("click", function () {
+        criaLinhaItem($(this).closest("table").find("tbody"));
+    });
+}
+function criaLinhaItem(target, values, readonly) {
+    var itemProduto = values ? values.CODPRODUTO + " - " + values.DESCPRODUTO : "";
+    var itemDescricao = values ? values.DESCRICAO : "";
+    var itemQuantidade = values ? values.QUANTIDADE : "";
+    var itemValorUnit = values ? values.VALOR_UNITARIO : "";
+    var itemValorTotal = values ? floatToMoney(moneyToFloat(values.VALOR_UNITARIO) * moneyToFloat(values.QUANTIDADE)) : "";
+    var textReadonly = readonly ? "readonly" : "";
+
+
+    var htmlLinha =
+        `<tr>
+            <td style="width: 1%;"></td>
+            <td style="width: 40%;">
+                ${!readonly ?
+                    `<select type="text" class="itemProduto" autocomplete="off" value="${itemProduto}"></select>` :
+                    `<input type="text"  class="form-control itemProduto" value="${itemProduto}" ${textReadonly}>`
+                }
+            </td>
+            <td style="width: 20%;">
+                <input type="text"   class="form-control itemDescricao" value="${itemDescricao}" ${textReadonly}>
+            </td>
+            <td style="width: 10%;">
+                <input type="text" class="form-control itemQuantidade" value="${itemQuantidade}" ${textReadonly}>
+            </td>
+            <td style="width: 10%;">
+                <input type="text" class="form-control itemValorUnit" value="${itemValorUnit}" ${textReadonly}>
+            </td>
+            <td style="width: 10%;">
+                <input type="text"  class="form-control itemValorTotal" inert value="${itemValorTotal}" readonly>
+            </td>
+            ${!readonly ?
+                `<td style="text-align: center;">
+                    <button class="btn btn-danger btnRemoverLinhaItem">
+                        <i class="flaticon flaticon-trash icon-md" aria-hidden="true"></i>
+                    </button>
+                </td>` : ""
+            }
+        </tr>`;
+    $(target).append(htmlLinha);
+
+    updateCounterRowsTableItens($(target).closest("table"));
+    if (!readonly) {
+        console.log(target)
+        loadLinhaItem($(target).find("tr:last"));
+    }
+
+    function loadLinhaItem(target) {
+        console.log(target)
+        var val = $(target).find(".itemProduto").attr("value");
+        $(target).find(".itemProduto").html(htmlListProdutos);
+        $(target).find(".itemProduto").selectize();
+        $(target).find(".itemProduto")[0].selectize.setValue(val);
+
+        $(target).find(".itemQuantidade").maskMoney({ thousands: '.', decimal: ',', });
+        $(target).find(".itemValorUnit").maskMoney({ thousands: '.', decimal: ',', prefix: 'R$' });
+
+        $(target).find(".itemQuantidade, .itemValorUnit").on("change, keyup", function () {
+            var row = $(this).closest("tr");
+            calculaValorTotalItem(row);
+            atualizaValorTotal();
+        });
+
+        $(target).find("select, input").on("change", salvaItensDasTransferenciasNoCampoHidden);
+
+        $(".btnRemoverLinhaItem").off("click").on("click", function () {
+            $(this).closest("tr").remove();
+            updateCounterRowsTableItens($(target).closest("table"));
+            atualizaValorTotal();
+            salvaItensDasTransferenciasNoCampoHidden();
+        });
+    }
+}
+
+function salvaItensDasTransferenciasNoCampoHidden() {
+    $("#tableTransferencias>tbody>tr:not(:first)").each(function () {
+        var linhas = [];
+
+        $(this).find(".tableItens>tbody>tr").each(function () {
+            var CODPRODUTO = $(this).find(".itemProduto").val().split(" - ")[0];
+            var DESCPRODUTO = $(this).find(".itemProduto").val().split(" - ");
+            DESCPRODUTO.shift();
+            DESCPRODUTO = DESCPRODUTO.join(" - ");
+            var DESCRICAO = $(this).find(".itemDescricao").val();
+            var QUANTIDADE = $(this).find(".itemQuantidade").val();
+            var VALOR_UNITARIO = $(this).find(".itemValorUnit").val();
+
+            linhas.push({ CODPRODUTO, DESCPRODUTO, DESCRICAO, QUANTIDADE, VALOR_UNITARIO });
+        });
+
+        $(this).find(".listItensTransferencia").val(JSON.stringify(linhas));
+    });
+}
+function carregaTabelaItensDasTransferencias() {
+    if ($("#atividade").val() != ATIVIDADES.INICIO) {
+        var readonly = true;       
+    }else{
+        var readonly = false;
+    }
+    $("#tableTransferencias>tbody>tr:not(:first)").each(function () {
+        var listItens = JSON.parse($(this).find(".listItensTransferencia").val());
+        var divTableItens = $(this).find(".divTabelaItens");
+
+        criaTabelaItens($(divTableItens), readonly);
+        for (const item of listItens) {
+            criaLinhaItem($(divTableItens).find("table>tbody"), item, readonly);
+        }
+    });
+}
 
 
 

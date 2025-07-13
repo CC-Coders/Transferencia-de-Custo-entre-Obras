@@ -10,12 +10,19 @@ const ATIVIDADES = {
     LANCA_TRANSFENCIA: 26,
 };
 $(document).ready(function () {
-
-
     const atividadeAtual = $("#atividade").val();
     const formMode = $("#formMode").val();
     if (formMode == "VIEW") {
+        $(".panelTransferencia .panel-heading").on("click", function () {
+            $(".panelTransferencia .panel-heading").not(this).siblings(".panel-body").slideUp();
+            $(".panelTransferencia .panel-heading").not(this).find(".flaticon").addClass("flaticon-chevron-up").removeClass("flaticon-chevron-down");
+            $(this).siblings(".panel-body").slideToggle();
+            $(this).find(".flaticon").toggleClass("flaticon-chevron-up").toggleClass("flaticon-chevron-down");
+        });
+        // $(".panelTransferencia:last>.panel-heading").click();
         loadAtividadesAprovacao();
+
+        return;
     }
 
     init();
@@ -24,11 +31,12 @@ $(document).ready(function () {
 
     if (atividadeAtual == ATIVIDADES.INICIO_0) {
         loadAtividadeInicio();
-    } else if (atividadeAtual == ATIVIDADES.INICIO) {
+    }
+    else if (atividadeAtual == ATIVIDADES.INICIO) {
         loadAtividadeAjuste();
         marcaEmVerdeAprovados();
     }
-    if (atividadeAtual == ATIVIDADES.APROVADOR_DESTINO || atividadeAtual == ATIVIDADES.APROVADOR_ORIGEM) {
+    else if (atividadeAtual == ATIVIDADES.APROVADOR_DESTINO || atividadeAtual == ATIVIDADES.APROVADOR_ORIGEM) {
         loadAtividadesAprovacao();
     }
 });
@@ -38,13 +46,24 @@ function init() {
     FLUIGC.calendar('#dataCompetencia');
 }
 function bindings() {
+    $(".panelTransferencia .panel-heading").on("click", function () {
+        $(".panelTransferencia .panel-heading").not(this).siblings(".panel-body").slideUp();
+        $(".panelTransferencia .panel-heading").not(this).find(".flaticon").addClass("flaticon-chevron-up").removeClass("flaticon-chevron-down");
+        $(this).siblings(".panel-body").slideToggle();
+        $(this).find(".flaticon").toggleClass("flaticon-chevron-up").toggleClass("flaticon-chevron-down");
+    });
+
+    $("#btnAdicionarTransferencia").on("click", function () {
+        adicionaNovaTransferencia();
+    });
+
+
     $("#motivoTransferencia, #ccustoObraOrigem, #ccustoObraDestino, #textMotivoTransferencia").on("change", function () {
         if ($("#motivoTransferencia").val() != "" && $("#ccustoObraOrigem").val() != "" && $("#ccustoObraDestino").val() != "" && $("#textMotivoTransferencia").val() != "") {
             $("#divItensTransferencia").slideDown(1000);
         }
     });
 
-    $("#btnAdicionarItem").on("click", adicionarLinhaItem);
 
     $("#btnEnviarSolicitacao").on("click", function () {
         parent.$("#send-process-button").click();
@@ -58,6 +77,10 @@ function bindings() {
         $("#aprovadoObraOrigem").val("Reprovado");
         $("#aprovadoObraDestino").val("Reprovado");
         parent.$("#send-process-button").click();
+    });
+
+    $(".panelColapse>.panel-heading").on("click", function () {
+        $(this).siblings(".panel-body").slideToggle();
     });
 }
 
@@ -80,7 +103,7 @@ function loadAtividadeInicio() {
             $("#motivoTransferencia").change();
             loadListaItens().then(() => {
                 // Inicia a tabela de itens com a Primeira Linha
-                adicionarLinhaItem();
+                adicionaNovaTransferencia();
             });
         }
     });
@@ -115,9 +138,18 @@ function loadAtividadeAjuste() {
 
     preencheCamposDeObras();
     loadListaItens().then(() => {
-        $("#tableItens>tbody>tr:not(:first)").each(function () {
-            var id = $(this).find("input[name^='itemDescricao___']").attr("id").split("___")[1];
-            loadLinhaItem(id);
+        updateCounterRowsTableItens();
+        carregaTabelaItensDasTransferencias();
+
+        $(".panelTransferencia:last>.panel-heading").click();
+
+        $(".motivoTransferencia").each(function () {
+            var val = $(this).val() ? $(this).val() : $(this).text();
+            $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text(val);
+        });
+        $(".valorTotalTransferencia").each(function () {
+            var val = $(this).val() ? $(this).val() : $(this).text();
+            $(this).closest(".panelTransferencia").find(".spanValorTransferencia").text(val);
         });
 
     })
@@ -133,7 +165,7 @@ function loadAtividadeAjuste() {
             $("#motivoTransferencia").change();
             loadListaItens().then(() => {
                 // Inicia a tabela de itens com a Primeira Linha
-                adicionarLinhaItem();
+
             });
         }
     });
@@ -184,20 +216,24 @@ function loadAtividadesAprovacao() {
     $("#ccustoObraOrigem, #ccustoObraDestino").addClass("form-control");
     $("#ccustoObraOrigem, #ccustoObraDestino").attr("readonly", "readonly");
 
-
-    $("#motivoTransferencia, #dataCompetencia, #textMotivoTransferencia").attr("readonly", "readonly");
+    $("#dataCompetencia").attr("readonly", "readonly");
 
     updateCounterRowsTableItens();
-    $("#tableItens>tfoot").hide();
+    carregaTabelaItensDasTransferencias();
 
+    $(".panelTransferencia:last>.panel-heading").click();
 
-    $("#tableItens>thead>tr>th:last").hide();
-    $("#tableItens>tbody>tr:not(:first)").each(function () {
-        $(this).find("td:last").hide();
-        $(this).find("select").addClass("form-control");
-        $(this).find("select").attr("readonly", "readonly");
-        $(this).find("input").attr("readonly", "readonly");
+    $(".motivoTransferencia").each(function () {
+        var val = $(this).val() ? $(this).val() : $(this).text();
+        $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text(val);
     });
+    $(".valorTotalTransferencia").each(function () {
+        var val = $(this).val() ? $(this).val() : $(this).text();
+        $(this).closest(".panelTransferencia").find(".spanValorTransferencia").text(val);
+    });
+
+    $(".textMotivoTransferencia, .motivoTransferencia").attr("readonly", "readonly");
+    $("#btnAdicionarTransferencia").hide();
 
     geraTabelaHistorico();
     marcaEmVerdeAprovados();
@@ -207,7 +243,6 @@ function loadAtividadesAprovacao() {
 // Validacao
 var beforeSendValidate = function () {
     var valida = true;
-
 
     const atividadeAtual = $("#atividade").val();
     if (atividadeAtual == ATIVIDADES.INICIO || atividadeAtual == ATIVIDADES.INICIO_0) {
@@ -222,8 +257,6 @@ var beforeSendValidate = function () {
     }
 
     if (valida === true) {
-        insereLinhaHistorico();
-
         if ($("#decisao").val() == "Reprovado") {
             movimentaAtividadeParaReprovacao();
         }
@@ -235,6 +268,7 @@ var beforeSendValidate = function () {
 };
 
 function validaPreenchimentoForm() {
+    return true;
     var retorno = [];
 
     if ($("#motivoTransferencia").val() == "") {
@@ -254,33 +288,44 @@ function validaPreenchimentoForm() {
     }
 }
 
-
-
-
 function movimentaAtividadeParaReprovacao() {
     var processId = $("#numProces").val();
     $.ajax({
         url: '/process-management/api/v2/activities?processInstanceId=' + processId + '&active=true',
         type: 'get',
         success: result => {
-            for (const task of result.items) {
-                if (task.state.sequence == ATIVIDADES.APROVADOR_DESTINO) {
-                    var sequence = task.movementSequence;
+            var sequence = null;
+            var targetState = null;
 
-                    DatasetFactory.getDataset("dsMovimentaAtividade", null, [
-                        DatasetFactory.createConstraint("numProces", processId, "", ConstraintType.MUST),
-                        DatasetFactory.createConstraint("movementSequence", sequence, "", ConstraintType.MUST),
-                        DatasetFactory.createConstraint("assignee", $("#usuarioAprovadorDestino").val(), "", ConstraintType.MUST),
-                        DatasetFactory.createConstraint("targetState", 37, "", ConstraintType.MUST),
-                    ], null, {
-                        success: ds => {
-
-                        }, error: e => {
-
-                        }
-                    });
+            if ($("#atividade").val() == ATIVIDADES.APROVADOR_ORIGEM) {
+                targetState = 37;
+                for (const task of result.items) {
+                    if (task.state.sequence == ATIVIDADES.APROVADOR_DESTINO) {
+                        sequence = task.movementSequence;
+                    }
+                }
+            } else if ($("#atividade").val() == ATIVIDADES.APROVADOR_DESTINO) {
+                targetState = 36;
+                for (const task of result.items) {
+                    if (task.state.sequence == ATIVIDADES.APROVADOR_ORIGEM) {
+                        sequence = task.movementSequence;
+                    }
                 }
             }
+
+            DatasetFactory.getDataset("dsMovimentaAtividade", null, [
+                DatasetFactory.createConstraint("numProces", processId, "", ConstraintType.MUST),
+                DatasetFactory.createConstraint("movementSequence", sequence, "", ConstraintType.MUST),
+                DatasetFactory.createConstraint("assignee", $("#usuarioAprovadorDestino").val(), "", ConstraintType.MUST),
+                DatasetFactory.createConstraint("targetState", targetState, "", ConstraintType.MUST),
+            ], null, {
+                success: ds => {
+
+                }, error: e => {
+
+                }
+            });
         }
-    })
+
+    });
 }

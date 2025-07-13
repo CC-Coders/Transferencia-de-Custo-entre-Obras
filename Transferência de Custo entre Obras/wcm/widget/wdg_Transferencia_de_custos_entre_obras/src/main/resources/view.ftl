@@ -61,141 +61,199 @@
         }
     </style>
 
-    <div style="text-align: center;">
-        <h1>TRANSFERÊNCIAS DE CUSTO ENTRE OBRAS</h1>
-    </div>
 
-    <div>
-        <div class="row flexRow">
-            <div class="col-md-3">
-                <div class="card card-castilho">
-                    <div class="card-body">
-                        <h3 class="card-title">
-                            Valor Total
-                            <br>
-                            <span id="textValorTotal"></span>
-                        </h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card card-castilho">
-                    <div class="card-body">
-                        <h3 class="card-title">
-                            <h3 class="card-title">
-                                Pendente Aprovação <br>
-                                <span id="textValorPendente"></span>
-                            </h3>
-                        </h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card card-castilho">
-                    <div class="card-body">
-                        <h3 class="card-title">
-                            <h3 class="card-title">
-                                Pendente Aprovação R$12.345,67
-                            </h3>
-                        </h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card card-castilho"
-                    style="background-color: #58595b !important; height: 80%; background: #58595b; color: white !important;">
-                    <div class="card-body"
-                        style="background-color: #58595b; display: flex; justify-content: center; align-items: center;">
-                        <h3 class="card-title">
-                            <span class="counter-group">
-                                Minhas Aprovações
-                                <a href="#" class="counter counter-warning pos-right-bottom">10</a>
-                            </span>
-                        </h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div>
-        <div class="row">
-            <div class="col-md-3" style="text-align: center;">
-                <div class="chartWrapper">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Obras com maior Envio de Custo</h3>
-                        </div>
-                    </div>
-                    <svg id="chart1" width="250" height="250"></svg>
-                    <div id="d3-tooltip"></div>
-                </div>
-
-            </div>
-            <div class="col-md-3" style="text-align: center;">
-                <div class="chartWrapper">
-
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Obras com maior Recebimento de Custo</h3>
-                        </div>
-                    </div>
-                    <svg id="chart2" width="250" height="250"></svg>
-                </div>
-            </div>
-            <div class="col-md-3" style="text-align: center;">
-                <div class="chartWrapper">
-
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Produtos com maior Valor Transferido</h3>
-                        </div>
-                    </div>
-                    <svg id="chart3" width="250" height="250"></svg>
-                </div>
-            </div>
-            <div class="col-md-3" style="text-align: center;">
-                <div class="chartWrapper">
-
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Produtos com maior Valor Transferido</h3>
-                        </div>
-                    </div>
-                    <svg id="chart4" width="250" height="250"></svg>
-                </div>
-            </div>
-        </div>
-    </div>
-    <br>
-
-    <div id="tableWraper">
+    <div id="dashboard">
         <div style="text-align: center;">
-            <h2>Transferências</h2>
+            <h1>TRANSFERÊNCIAS DE CUSTO ENTRE OBRAS</h1>
         </div>
 
-        <table class="table" id="tableTransferencias">
-            <thead>
-                <tr>
-                    <th>Solicitação</th>
-                    <th>Obra Origem</th>
-                    <th>Obra Destino</th>
-                    <th>Solicitante</th>
-                    <th>Valor</th>
-                    <th>Data Solicitação</th>
-                    <th>Data Competencia</th>
-                    <th>STATUS</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="dashboard">
+            <div class="row flexRow" style="margin-bottom: 0px;">
+                <div class="col-md-3">
+                    <div class="card card-castilho">
+                        <div class="card-body">
+                            <h3 class="card-title">
+                                Total Receita
+                                <br>
+                                <span id="textValorTotalReceita"></span>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-castilho">
+                        <div class="card-body">
+                            <h3 class="card-title">
+                                <h3 class="card-title">
+                                    Total Despesa <br>
+                                    <span id="textValorTotalDespesa"></span>
+                                </h3>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-castilho">
+                        <div class="card-body">
+                            <h3 class="card-title">
+                                <h3 class="card-title">
+                                    Pendente Aprovação
+                                    <br>
+                                    <span id="textValorPendente"></span>
+                                </h3>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-castilho" id="cardAprovacoesPendentes"
+                        style="background-color: #58595b !important; height: 80%; background: #58595b; color: white !important;">
+                        <div class="card-body"
+                            style="background-color: #58595b; display: flex; justify-content: center; align-items: center; height: 100%;">
+                            <h3 class="card-title">
+                                <span class="counter-group">
+                                    Minhas Aprovações
+                                    <a href="#" id="counterAprovacaoPendente"
+                                        class="counter counter-warning pos-right-bottom">10</a>
+                                </span>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            </tbody>
-        </table>
-    </div>
 
-    <div class="row">
+        <div>
+            <div class="row">
+                <div class="col-md-3" style="text-align: center;">
+                    <div class="chartWrapper">
+                        <div class="panel panel-primary" style="margin-bottom: 0px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title" style="padding-bottom: 0px;">Maior Envio de Custo</h3>
+                            </div>
+                            <div class="panel-body" style="padding: 0px;">
+                                <svg id="chart1" width="250" height="250"></svg>
+                                <svg id="legendchart1" width="250" height="50"></svg>
+                            </div>
+                        </div>
+
+
+                        <div id="d3-tooltip"></div>
+                    </div>
+
+                </div>
+                <div class="col-md-3" style="text-align: center;">
+                    <div class="chartWrapper">
+                        <div class="panel panel-primary" style="margin-bottom: 0px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title" style="padding-bottom: 0px;">Maior Recebimento de Custo</h3>
+                            </div>
+                            <div class="panel-body" style="padding: 0px;">
+                                <svg id="chart2" width="250" height="250"></svg>
+                                <svg id="legendchart2" width="250" height="50"></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3" style="text-align: center;">
+                    <div class="chartWrapper">
+                        <div class="panel panel-primary" style="margin-bottom: 0px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title" style="padding-bottom: 0px;">Produtos com maior Valor</h3>
+                            </div>
+                            <div class="panel-body" style="padding: 0px;">
+                                <svg id="chart3" width="250" height="250"></svg>
+                                <svg id="legendchart3" width="250" height="50"></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3" style="text-align: center;">
+                    <div class="chartWrapper">
+
+                        <div class="panel panel-primary" style="margin-bottom: 0px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title" style="padding-bottom: 0px;">Produtos com maior Valor</h3>
+                            </div>
+                            <div class="panel-body" style="padding: 0px;">
+                                <svg id="chart4" width="250" height="250"></svg>
+                                <svg id="legendchart4" width="250" height="50"></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <div id="tableWraper" class="dashboard">
+            <div style="text-align: center;">
+                <h2>Transferências</h2>
+            </div>
+            <div id="filtros" class="panel panel-primary" style="border-radius: 25px;">
+                <div class="panel-heading" style="text-align: center;border-radius: 20px;">
+                    <h3 class="" style="font-weight: bolder; margin: 0px;">
+                        <i class="flaticon flaticon-chevron-up icon-sm" aria-hidden="true" id="arrowFiltro"></i>
+                        FILTROS
+                    </h3>
+                </div>
+                <div class="panel-body" style="display: none; border-radius: 20px;">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="">Coligada Obra Origem</label>
+                            <select name="" id="" class="form-control"></select>
+                            <br>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="">C. Custo Obra Origem</label>
+                            <select name="" id="" class="form-control"></select>
+                            <br>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="">Coligada Obra Destino</label>
+                            <select name="" id="" class="form-control"></select>
+                            <br>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="">C. Custo Obra Destino</label>
+                            <select name="" id="" class="form-control"></select>
+                            <br>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="">Tipo</label>
+                            <select name="" id="" class="form-control"></select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="">STATUS</label>
+                            <select name="" id="" class="form-control"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table" id="tableTransferencias">
+                <thead>
+                    <tr>
+                        <th>Solicitação</th>
+                        <th>Obra Origem</th>
+                        <th>Obra Destino</th>
+                        <th>Solicitante</th>
+                        <th>Valor</th>
+                        <th>Data Solicitação</th>
+                        <th>Data Competencia</th>
+                        <th>STATUS</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+
+        <!-- <div class="row">
         <div class="col-md-12" style="text-align: center;">
             <div style="display: flex;     justify-content: center;">
                 <div style="margin-right: 40px;">
@@ -218,56 +276,167 @@
                 </div>
             </div>
         </div>
+    </div> -->
+        <div id="landing" class="bg-castilho dashboard" style="display: none;">
+            <div style="text-align: center;">
+                <h1 style="font-weight: bolder;">Transferência de Custos entre Obras</h1>
+            </div>
+        </div>
+
     </div>
-    <div id="landing" class="bg-castilho" style="display: none;">
-        <div style="text-align: center;">
-            <h1 style="font-weight: bolder;">Transferência de Custos entre Obras</h1>
+
+
+
+    <div id="painelAprovacoes">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Aprovação de Redução de Custo</h3>
+            </div>
+            <div class="panel-body">
+                <h2 style="margin-bottom: 5px;">SOLICITAÇÃO</h2>
+                <hr style="margin-bottom: 10px; margin-top: 0px;">
+                <b>Número: </b><span>123456</span><br>
+                <b>Solicitante: </b><span>gabriel.persike</span><br>
+                <b>Data Competencia: </b><span>09/07/2025</span><br>
+                <b>Valor: </b> <span>R$ 250,00</span> <br>
+                <b>Motivo: </b>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt amet, dolorum magnam iste odio libero pariatur molestias fuga. Odit iste excepturi, asperiores neque consequuntur libero cupiditate repellat quam maiores recusandae.</p>
+
+                <h2 style="margin-bottom: 5px;">ORIGEM <small>(redução de custo)</small></h2>
+                <hr style="margin-bottom: 10px; margin-top: 0px;" >
+                <b>Obra: </b> <span>1.1.001 - Matriz Curitiba</span><br>
+                <div>
+                    <b>Engenheiro: </b><span>Felipe</span><br>
+                    <b>Coordenador: </b><span>Eduardo</span><br>
+                    <b>Diretor: </b><span>Augusto</span><br>
+                </div>
+                <br>
+
+                <h2 style="margin-bottom: 5px;">DESTINO <small>(aumento de custo)</small></h2>
+                <hr style="margin-bottom: 10px; margin-top: 0px;">
+                <b>Obra: </b> <span>1.2.023 - Obra Toledo II</span><br>
+                <div>
+                    <b>Engenheiro: </b><span>Claudio.pecanha</span><br>
+                    <b>Coordenador: </b><span>Eduardo</span><br>
+                    <b>Diretor: </b><span>Augusto</span><br>
+                </div>
+
+                <h2 style="margin-bottom: 5px;">ITENS</h2>
+                <hr style="margin-bottom: 10px; margin-top: 0px;">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card-item">
+                            <div style="display: flex;align-items: center;">
+                                <div style="margin-right: 21px;">
+                                    #1
+                                </div>
+                                <div>
+                                    <b>10.001.0213012 - Nome do Produto</b> <br>
+                                    <small>20 TO x R$ 100,00</small><br>
+                                    <span>Descrição extra</span><br>
+                                    <b>R$ 2.000,00</b>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-item">
+                            <div style="display: flex;align-items: center;">
+                                <div style="margin-right: 21px;">
+                                    #1
+                                </div>
+                                <div>
+                                    <b>10.001.0213012 - Nome do Produto</b> <br>
+                                    <small>20 TO x R$ 100,00</small><br>
+                                    <span>Descrição extra</span><br>
+                                    <b>R$ 2.000,00</b>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-item">
+                            <div style="display: flex;align-items: center;">
+                                <div style="margin-right: 21px;">
+                                    #1
+                                </div>
+                                <div>
+                                    <b>10.001.0213012 - Nome do Produto</b> <br>
+                                    <small>20 TO x R$ 100,00</small><br>
+                                    <span>Descrição extra</span><br>
+                                    <b>R$ 2.000,00</b>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-item">
+                            <div style="display: flex;align-items: center;">
+                                <div style="margin-right: 21px;">
+                                    #1
+                                </div>
+                                <div>
+                                    <b>10.001.0213012 - Nome do Produto</b> <br>
+                                    <small>20 TO x R$ 100,00</small><br>
+                                    <span>Descrição extra</span><br>
+                                    <b>R$ 2.000,00</b>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-item">
+                            <div style="display: flex;align-items: center;">
+                                <div style="margin-right: 21px;">
+                                    #1
+                                </div>
+                                <div>
+                                    <b>10.001.0213012 - Nome do Produto</b> <br>
+                                    <small>20 TO x R$ 100,00</small><br>
+                                    <span>Descrição extra</span><br>
+                                    <b>R$ 2.000,00</b>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-item">
+                            <div style="display: flex;align-items: center;">
+                                <div style="margin-right: 21px;">
+                                    #1
+                                </div>
+                                <div>
+                                    <b>10.001.0213012 - Nome do Produto</b> <br>
+                                    <small>20 TO x R$ 100,00</small><br>
+                                    <span>Descrição extra</span><br>
+                                    <b>R$ 2.000,00</b>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+                <br>
+                <h2 style="margin-bottom: 5px;">HISTÓRICO</h2>
+                <hr style="margin-bottom: 10px; margin-top: 0px;">
+
+                  <div style="text-align: center;">
+                    <button class="btn btn-success" style="margin-right: 10px;">Aprovar</button>
+                    <button class="btn btn-danger">Reprovar</button>
+                </div>
+            </div>
         </div>
     </div>
 
 
-    <div id="filtros" class="panel panel-primary" style="border-radius: 25px;">
-        <div class="panel-heading" style="text-align: center;border-radius: 20px;">
-            <h3 class="" style="font-weight: bolder; margin: 0px;">
-                <i class="flaticon flaticon-chevron-up icon-sm" aria-hidden="true" id="arrowFiltro"></i>
-                FILTROS
-            </h3>
-        </div>
-        <div class="panel-body" style="display: none; border-radius: 20px;">
-            <div class="row">
-                <div class="col-md-3">
-                    <label for="">Coligada Obra Origem</label>
-                    <select name="" id="" class="form-control"></select>
-                    <br>
-                </div>
-                <div class="col-md-3">
-                    <label for="">C. Custo Obra Origem</label>
-                    <select name="" id="" class="form-control"></select>
-                    <br>
-                </div>
-                <div class="col-md-3">
-                    <label for="">Coligada Obra Destino</label>
-                    <select name="" id="" class="form-control"></select>
-                    <br>
-                </div>
-                <div class="col-md-3">
-                    <label for="">C. Custo Obra Destino</label>
-                    <select name="" id="" class="form-control"></select>
-                    <br>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <label for="">Tipo</label>
-                    <select name="" id="" class="form-control"></select>
-                </div>
-                <div class="col-md-3">
-                    <label for="">STATUS</label>
-                    <select name="" id="" class="form-control"></select>
-                </div>
-            </div>
-        </div>
-    </div>
+
+
+
 
     <button class="btn btn-primary" id="btnDarkMode"><i class="flaticon flaticon-moon icon-sm"
             aria-hidden="true"></i></button>

@@ -1,11 +1,26 @@
-.chartWrapper, #tableWraper{
+.castilho-dark-mode #tableWraper{
     background-color: #58595b;
     padding: 15px 20px;
     border-radius: 20px;
 }
+#tableWraper{
+    background-color: lightgray;
+    padding: 15px 20px;
+    border-radius: 20px;
+}
+.castilho-dark-mode .chartWrapper{
+    background-color: #58595b;
+    padding: 0px;
+    border-radius: 20px;
+}
+.chartWrapper{
+    background-color: lightgray;
+    padding: 0px;
+    border-radius: 20px;
+}
 
 #d3-tooltip{
-        position: absolute;
+    position: absolute;
     display: none;
     background: rgb(0, 0, 0);
     color: rgb(255, 255, 255);
@@ -42,16 +57,19 @@
 }
 
 .panel.panel-primary{
-    border-radius: 25px !important;
+    border-radius: 20px !important;
+    overflow: hidden;
 }
 
 .panel.panel-primary .panel-heading{
-    border-radius: 20px;
 }
 .panel.panel-primary .panel-body{
     border-radius: 20px;
 }
 
+.panel.panel-primary{
+    background-color: rgb(222,222,222) !important;
+}
 
 .responsive_theme div.wcm-all-content {
     padding-top: 70px !important;
@@ -82,4 +100,31 @@
     border: 1px solid transparent;
     background: transparent;
     box-shadow: none;
+}
+
+
+.castilho-dark-mode .table-hover tbody tr:hover, .castilho-dark-mode .table-hover tr:hover td{ 
+    background-color: white !important;
+    color: black !important;
+}
+
+
+.castilho-dark-mode .card-item{
+    background-color: white !important;
+    color: black !important;
+    padding: 10px 20px !important;
+    border-radius: 20px !important;
+}
+.card-item{
+    background-color: white !important;
+    color: black !important;
+    padding: 10px 20px !important;
+    border-radius: 20px !important;
+}
+
+.legendText{
+    fill: black !important;
+}
+.castilho-dark-mode .legendText{
+    fill: white !important;
 }

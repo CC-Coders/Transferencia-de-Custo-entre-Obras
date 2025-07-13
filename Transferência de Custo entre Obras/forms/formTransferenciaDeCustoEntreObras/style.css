@@ -1,3 +1,8 @@
+.spanTipoTransferencia{
+        margin-left: 10px;
+}
+
+
 /* Selectize */
 .selectize-dropdown .active:not(.selected){
     background-color: lightgray !important;
@@ -15,6 +20,22 @@
 
 
 
+.panelTransferencia .panel-title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.panelTransferencia .panel-heading{
+    background-color: #e3e3e3 !important;
+}
+.panelTransferencia .panel-title span{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+
 
 
 
@@ -23,7 +44,9 @@
 .fluig-style-guide .form-control[readonly]{
     color: gray !important;
 }
-
+.alignCenter{
+    text-align: center;
+}
 .userImage{
     border-radius: 50%;
 }

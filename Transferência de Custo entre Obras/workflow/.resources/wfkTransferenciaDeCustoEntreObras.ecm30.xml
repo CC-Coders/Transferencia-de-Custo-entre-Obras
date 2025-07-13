@@ -2,9 +2,9 @@
   <ProcessDefinition>
     <processDefinitionPK>
       <companyId>1</companyId>
-      <processId>Tranferência de Custos entre Obras</processId>
+      <processId>Transferência de Custos entre Obras</processId>
     </processDefinitionPK>
-    <processDescription>Tranferência de Custos entre Obras</processDescription>
+    <processDescription>Transferência de Custos entre Obras</processDescription>
     <instruction></instruction>
     <active>true</active>
     <publicProcess>false</publicProcess>
@@ -28,8 +28,8 @@
   <ProcessDefinitionVersion>
     <processDefinitionVersionPK>
       <companyId>1</companyId>
-      <processId>Tranferência de Custos entre Obras</processId>
-      <version>59</version>
+      <processId>Transferência de Custos entre Obras</processId>
+      <version>73</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
     <formId>28837</formId>
@@ -50,7 +50,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>4</sequence>
       </processStatePK>
@@ -100,7 +100,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>5</sequence>
       </processStatePK>
@@ -152,7 +152,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>8</sequence>
       </processStatePK>
@@ -204,7 +204,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>9</sequence>
       </processStatePK>
@@ -254,7 +254,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>10</sequence>
       </processStatePK>
@@ -304,7 +304,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>14</sequence>
       </processStatePK>
@@ -356,7 +356,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>20</sequence>
       </processStatePK>
@@ -408,7 +408,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>26</sequence>
       </processStatePK>
@@ -458,7 +458,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>30</sequence>
       </processStatePK>
@@ -510,7 +510,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>13</sequence>
       </processStatePK>
@@ -557,7 +557,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>19</sequence>
       </processStatePK>
@@ -604,7 +604,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>31</sequence>
       </processStatePK>
@@ -651,7 +651,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>6</sequence>
       </processStatePK>
@@ -676,7 +676,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>23</sequence>
       </processStatePK>
@@ -701,7 +701,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>36</sequence>
       </processStatePK>
@@ -726,7 +726,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>37</sequence>
       </processStatePK>
@@ -751,7 +751,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>44</sequence>
       </processStatePK>
@@ -776,7 +776,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>28</sequence>
       </processStatePK>
@@ -825,9 +825,9 @@
     <ConditionProcessState>
       <conditionProcessStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>59</version>
+        <version>73</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -837,9 +837,9 @@
     <ConditionProcessState>
       <conditionProcessStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>59</version>
+        <version>73</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -849,9 +849,9 @@
     <ConditionProcessState>
       <conditionProcessStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>59</version>
+        <version>73</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -861,9 +861,9 @@
     <ConditionProcessState>
       <conditionProcessStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>59</version>
+        <version>73</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -873,9 +873,9 @@
     <ConditionProcessState>
       <conditionProcessStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>59</version>
+        <version>73</version>
         <sequence>44</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -885,9 +885,9 @@
     <ConditionProcessState>
       <conditionProcessStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>59</version>
+        <version>73</version>
         <sequence>44</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -899,9 +899,9 @@
     <ConditionProcessState>
       <conditionProcessStatePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>3</expressionOrder>
-        <version>59</version>
+        <version>73</version>
         <sequence>44</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -915,7 +915,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>7</linkSequence>
       </processLinkPK>
@@ -932,7 +932,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>11</linkSequence>
       </processLinkPK>
@@ -949,7 +949,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>12</linkSequence>
       </processLinkPK>
@@ -966,7 +966,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>15</linkSequence>
       </processLinkPK>
@@ -983,7 +983,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>16</linkSequence>
       </processLinkPK>
@@ -1000,7 +1000,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>17</linkSequence>
       </processLinkPK>
@@ -1017,7 +1017,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>18</linkSequence>
       </processLinkPK>
@@ -1034,7 +1034,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>21</linkSequence>
       </processLinkPK>
@@ -1051,7 +1051,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>22</linkSequence>
       </processLinkPK>
@@ -1068,7 +1068,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>29</linkSequence>
       </processLinkPK>
@@ -1085,7 +1085,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>32</linkSequence>
       </processLinkPK>
@@ -1102,7 +1102,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>33</linkSequence>
       </processLinkPK>
@@ -1119,7 +1119,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>38</linkSequence>
       </processLinkPK>
@@ -1136,7 +1136,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>39</linkSequence>
       </processLinkPK>
@@ -1153,7 +1153,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>40</linkSequence>
       </processLinkPK>
@@ -1170,7 +1170,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>41</linkSequence>
       </processLinkPK>
@@ -1187,7 +1187,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>42</linkSequence>
       </processLinkPK>
@@ -1204,7 +1204,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>43</linkSequence>
       </processLinkPK>
@@ -1221,7 +1221,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>45</linkSequence>
       </processLinkPK>
@@ -1238,7 +1238,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>46</linkSequence>
       </processLinkPK>
@@ -1255,7 +1255,7 @@
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <linkSequence>47</linkSequence>
       </processLinkPK>
@@ -1276,7 +1276,7 @@
       <workflowProcessEventPK>
         <companyId>1</companyId>
         <eventId>servicetask26</eventId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
       </workflowProcessEventPK>
       <eventDescription>function servicetask26(attempt, message) {
@@ -1297,8 +1297,20 @@ function atualizaStatusTransferencia(STATUS){
     <WorkflowProcessEvent>
       <workflowProcessEventPK>
         <companyId>1</companyId>
+        <eventId>beforeCancelProcess</eventId>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>1</version>
+      </workflowProcessEventPK>
+      <eventDescription>function beforeCancelProcess(colleagueId,processId){&#xd;
+    atualizaStatusTransferencia(3);&#xd;
+&#xd;
+}</eventDescription>
+    </WorkflowProcessEvent>
+    <WorkflowProcessEvent>
+      <workflowProcessEventPK>
+        <companyId>1</companyId>
         <eventId>beforeTaskSave</eventId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
       </workflowProcessEventPK>
       <eventDescription>var ATIVIDADES = {&#xd;
@@ -1317,9 +1329,10 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {&#xd;
     if (ATIVIDADE == ATIVIDADES.INICIO || ATIVIDADE == ATIVIDADES.INICIO_0) {&#xd;
         var id = insereNovoRegistro();&#xd;
         hAPI.setCardValue(&quot;ID_TRANSFERENCIAS_DE_CUSTO&quot;, id);&#xd;
-        insereItens(id);&#xd;
+        insereTransferencias(id);&#xd;
         insereHistorico(id);&#xd;
         hAPI.setCardValue(&quot;numProces&quot;, getValue(&quot;WKNumProces&quot;));&#xd;
+&#xd;
     } else if (ATIVIDADE == ATIVIDADES.APROVADOR_DESTINO) {&#xd;
         var decisao = hAPI.getCardValue(&quot;decisao&quot;);&#xd;
         var is_aprovado = decisao == &quot;Aprovado&quot;;&#xd;
@@ -1373,17 +1386,10 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {&#xd;
                 throw &quot;Usuário não listado para Aprovações&quot;;&#xd;
             }&#xd;
         } else {&#xd;
+            hAPI.setCardValue(&quot;aprovadoObraOrigem&quot;, &quot;Reprovado&quot;);&#xd;
             hAPI.setCardValue(&quot;aprovadoObraDestino&quot;, &quot;Reprovado&quot;);&#xd;
-&#xd;
-&#xd;
-&#xd;
         }&#xd;
-&#xd;
-&#xd;
-   &#xd;
-&#xd;
-&#xd;
-&#xd;
+        insereHistorico(hAPI.getCardValue(&quot;ID_TRANSFERENCIAS_DE_CUSTO&quot;));&#xd;
 &#xd;
     } else if (ATIVIDADE == ATIVIDADES.APROVADOR_ORIGEM) {&#xd;
         var decisao = hAPI.getCardValue(&quot;decisao&quot;);&#xd;
@@ -1438,6 +1444,8 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {&#xd;
             hAPI.setCardValue(&quot;aprovadoObraOrigem&quot;, &quot;Reprovado&quot;);&#xd;
             hAPI.setCardValue(&quot;aprovadoObraDestino&quot;, &quot;Reprovado&quot;);&#xd;
         }&#xd;
+        insereHistorico(hAPI.getCardValue(&quot;ID_TRANSFERENCIAS_DE_CUSTO&quot;));&#xd;
+&#xd;
     }&#xd;
 }&#xd;
 &#xd;
@@ -1487,44 +1495,87 @@ function insereNovoRegistro() {&#xd;
     ]);&#xd;
 }&#xd;
 &#xd;
-function insereItens(ID_PAI) {&#xd;
-    var indices = hAPI.getChildrenIndexes(&quot;tableItens&quot;);&#xd;
+function insereTransferencias(ID_PAI) {&#xd;
+    var indices = hAPI.getChildrenIndexes(&quot;tableTransferencias&quot;);&#xd;
 &#xd;
     for (var i = 0; i &lt; indices.length; i++) {&#xd;
         var id = indices[i];&#xd;
 &#xd;
-        var Produto = hAPI.getCardValue(&quot;itemProduto&quot; + &quot;___&quot; + id).split(&quot; - &quot;)[0];&#xd;
-        var Descricao = hAPI.getCardValue(&quot;itemDescricao&quot; + &quot;___&quot; + id);&#xd;
-        var Quantidade = hAPI.getCardValue(&quot;itemQuantidade&quot; + &quot;___&quot; + id).split(&quot;.&quot;).join(&quot;&quot;).replace(&quot;,&quot;, &quot;.&quot;);&#xd;
-        var ValorUnitario = moneyToFloat(hAPI.getCardValue(&quot;itemValorUnit&quot; + &quot;___&quot; + id));&#xd;
+        var tipo = hAPI.getCardValue(&quot;motivoTransferencia&quot; + &quot;___&quot; + id);&#xd;
+        var motivo = hAPI.getCardValue(&quot;textMotivoTransferencia&quot; + &quot;___&quot; + id);&#xd;
+        var valor = moneyToFloat(hAPI.getCardValue(&quot;valorTotalTransferencia&quot; + &quot;___&quot; + id));&#xd;
+        var itens = JSON.parse(hAPI.getCardValue(&quot;listItensTransferencia&quot; + &quot;___&quot; + id));&#xd;
 &#xd;
+        var query = &quot;INSERT INTO TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA (ID_TRANSFERENCIA, TIPO, VALOR, JUSTIFICATIVA, TRANSFERE_CUSTO, TRANSFERE_RECEITA) VALUES (?,?,?,?,?,?)&quot;;&#xd;
+&#xd;
+        var ID_TRANSFERENCIA = executaUpdate(query, [&#xd;
+            { type: &quot;int&quot;, value: ID_PAI },&#xd;
+            { type: &quot;varchar&quot;, value: tipo },&#xd;
+            { type: &quot;varchar&quot;, value: valor },&#xd;
+            { type: &quot;varchar&quot;, value: motivo },&#xd;
+            { type: &quot;int&quot;, value: 1 },&#xd;
+            { type: &quot;int&quot;, value: 0 },&#xd;
+        ]);&#xd;
+&#xd;
+        for (var j = 0; j &lt; itens.length; j++) {&#xd;
+            var item = itens[j];&#xd;
+            insereItem(ID_TRANSFERENCIA, item);&#xd;
+        }&#xd;
+    }  &#xd;
+}&#xd;
+&#xd;
+function insereItem(ID_TRANSFERENCIA, item){&#xd;
         var query =&#xd;
             &quot;INSERT INTO TRANSFERENCIAS_DE_CUSTO_ITENS (&quot; +&#xd;
             &quot; ID_TRANSFERENCIA, &quot; +&#xd;
-            &quot; PRODUTO, &quot; +&#xd;
+            &quot; CODIGO_PRODUTO, &quot; +&#xd;
+            &quot; DESCRICAO_PRODUTO, &quot; +&#xd;
             &quot; DESCRICAO, &quot; +&#xd;
             &quot; QUANTIDADE, &quot; +&#xd;
             &quot; VALOR_UNITARIO) &quot; +&#xd;
-            &quot; VALUES (?,?,?,?,?)&quot;;&#xd;
+            &quot; VALUES (?,?,?,?,?,?)&quot;;&#xd;
 &#xd;
         executaUpdate(query, [&#xd;
-            { type: &quot;int&quot;, value: ID_PAI },&#xd;
-            { type: &quot;varchar&quot;, value: Produto },&#xd;
-            { type: &quot;varchar&quot;, value: Descricao },&#xd;
-            { type: &quot;float&quot;, value: Quantidade },&#xd;
-            { type: &quot;float&quot;, value: ValorUnitario }&#xd;
+            { type: &quot;int&quot;, value: ID_TRANSFERENCIA },&#xd;
+            { type: &quot;varchar&quot;, value: item.CODPRODUTO },&#xd;
+            { type: &quot;varchar&quot;, value: item.DESCPRODUTO },&#xd;
+            { type: &quot;varchar&quot;, value: item.DESCRICAO },&#xd;
+            { type: &quot;float&quot;, value: moneyToFloat(item.QUANTIDADE)},&#xd;
+            { type: &quot;float&quot;, value: moneyToFloat(item.VALOR_UNITARIO) }&#xd;
         ]);&#xd;
-    }&#xd;
 }&#xd;
 &#xd;
 function insereHistorico(ID_PAI) {&#xd;
-    var indices = hAPI.getChildrenIndexes(&quot;tableItens&quot;);&#xd;
-    var ultimoHistorico = indices[indices.length - 1];&#xd;
+    var usuario = hAPI.getCardValue(&quot;userCode&quot;);&#xd;
+    var observacao = hAPI.getCardValue(&quot;textObservacao&quot;);&#xd;
+    var atividadeAtual = hAPI.getCardValue(&quot;atividade&quot;);&#xd;
+    var data = getDateTimeNow();&#xd;
 &#xd;
-    var data = hAPI.getCardValue(&quot;dataMovimento&quot; + &quot;___&quot; + ultimoHistorico);&#xd;
-    var usuario = hAPI.getCardValue(&quot;usuario&quot; + &quot;___&quot; + ultimoHistorico);&#xd;
-    var movimentacao = hAPI.getCardValue(&quot;movimentacao&quot; + &quot;___&quot; + ultimoHistorico);&#xd;
-    var observacao = hAPI.getCardValue(&quot;observacao&quot; + &quot;___&quot; + ultimoHistorico);&#xd;
+&#xd;
+    var movimentacao = &quot;&quot;;&#xd;
+    var decisao = hAPI.getCardValue(&quot;decisao&quot;);&#xd;
+    var formMode = hAPI.getCardValue(&quot;formMode&quot;);&#xd;
+    if (formMode == &quot;ADD&quot;) {&#xd;
+        movimentacao = &quot;Inicio&quot;;&#xd;
+    }&#xd;
+    else if (atividadeAtual == ATIVIDADES.INICIO) {&#xd;
+        movimentacao = &quot;Ajuste&quot;;&#xd;
+    }&#xd;
+    else if (decisao == &quot;Aprovado&quot;) {&#xd;
+        movimentacao = &quot;Aprovado&quot;;&#xd;
+    }&#xd;
+    else if (decisao == &quot;Reprovado&quot;) {&#xd;
+        movimentacao = &quot;Reprovado&quot;;&#xd;
+    } else {&#xd;
+&#xd;
+    }&#xd;
+&#xd;
+    var linha = new java.util.HashMap();&#xd;
+    linha.put(&quot;usuario&quot;, usuario);&#xd;
+    linha.put(&quot;movimentacao&quot;, movimentacao);&#xd;
+    linha.put(&quot;observacao&quot;, observacao);&#xd;
+    linha.put(&quot;dataMovimento&quot;, data);&#xd;
+    hAPI.addCardChild(&quot;tableHistorico&quot;, linha);&#xd;
 &#xd;
     var query =&#xd;
         &quot;INSERT INTO TRANSFERENCIAS_DE_CUSTO_HISTORICO (&quot; +&#xd;
@@ -1605,34 +1656,51 @@ function executaUpdate(query, constraints) {&#xd;
 &#xd;
 // Utils&#xd;
 function moneyToFloat(val) {&#xd;
-    log.info(&quot;moneyToFloat init&quot;);&#xd;
-    log.info(val);&#xd;
     if (val.indexOf(&quot;R$&quot;) &gt; -1) {&#xd;
         val = val.replace(&quot;R$&quot;, &quot;&quot;);&#xd;
         val = val.trim();&#xd;
-        log.info(&quot;Replace&quot;);&#xd;
-        log.info(val);&#xd;
     }&#xd;
 &#xd;
     val = val.replace(&quot;.&quot;, &quot;&quot;);&#xd;
-&#xd;
-    log.info(val);&#xd;
     val = val.replace(&quot;,&quot;, &quot;.&quot;);&#xd;
-    log.info(val);&#xd;
     val = parseFloat(val);&#xd;
-    log.info(val);&#xd;
     if (isNaN(val)) {&#xd;
-        log.info(&quot;NAN&quot;);&#xd;
         return 0;&#xd;
     }&#xd;
     return val;&#xd;
+}&#xd;
+function getDateTimeNow() {&#xd;
+    var date = new Date();&#xd;
+    var dia = date.getDate();&#xd;
+    if (dia &lt; 10) {&#xd;
+        dia = &quot;0&quot; + dia;&#xd;
+    }&#xd;
+    var mes = date.getMonth() + 1;&#xd;
+    if (mes &lt; 10) {&#xd;
+        mes = &quot;0&quot; + mes;&#xd;
+    }&#xd;
+&#xd;
+    var ano = date.getFullYear();&#xd;
+&#xd;
+    var hora = date.getHours();&#xd;
+    if (hora &lt; 10) {&#xd;
+        hora = &quot;0&quot; + hora;&#xd;
+    }&#xd;
+&#xd;
+    var minutos = date.getMinutes();&#xd;
+    if (minutos &lt; 10) {&#xd;
+        minutos = &quot;0&quot; + minutos;&#xd;
+    }&#xd;
+&#xd;
+    var dateTime = [ano, mes, dia].join(&quot;-&quot;) + &quot; &quot; + hora + &quot;:&quot; + minutos;&#xd;
+    return dateTime&#xd;
 }</eventDescription>
     </WorkflowProcessEvent>
     <WorkflowProcessEvent>
       <workflowProcessEventPK>
         <companyId>1</companyId>
         <eventId>servicetask10</eventId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
       </workflowProcessEventPK>
       <eventDescription>function servicetask10(attempt, message) {
@@ -1673,7 +1741,7 @@ function verificaAprovadoresObraOrigem(){
       <workflowProcessEventPK>
         <companyId>1</companyId>
         <eventId>servicetask9</eventId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
       </workflowProcessEventPK>
       <eventDescription>function servicetask9(attempt, message) {
@@ -1722,7 +1790,7 @@ function verificaAprovadoresObraDestino(){
       <parentSequence>0</parentSequence>
       <swimLanePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>1</sequence>
       </swimLanePK>
@@ -1738,7 +1806,7 @@ function verificaAprovadoresObraDestino(){
       <parentSequence>1</parentSequence>
       <swimLanePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>2</sequence>
       </swimLanePK>
@@ -1754,7 +1822,7 @@ function verificaAprovadoresObraDestino(){
       <parentSequence>1</parentSequence>
       <swimLanePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>3</sequence>
       </swimLanePK>
@@ -1770,7 +1838,7 @@ function verificaAprovadoresObraDestino(){
       <parentSequence>1</parentSequence>
       <swimLanePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>4</sequence>
       </swimLanePK>
@@ -1786,7 +1854,7 @@ function verificaAprovadoresObraDestino(){
       <parentSequence>1</parentSequence>
       <swimLanePK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
+        <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
         <sequence>5</sequence>
       </swimLanePK>
@@ -1798,8 +1866,8 @@ function verificaAprovadoresObraDestino(){
     <ProcessLinkBend>
       <processLinkBendPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
-        <version>59</version>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>73</version>
         <linkSequence>7</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -1809,8 +1877,8 @@ function verificaAprovadoresObraDestino(){
     <ProcessLinkBend>
       <processLinkBendPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
-        <version>59</version>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>73</version>
         <linkSequence>12</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -1820,8 +1888,8 @@ function verificaAprovadoresObraDestino(){
     <ProcessLinkBend>
       <processLinkBendPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
-        <version>59</version>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>73</version>
         <linkSequence>40</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -1831,8 +1899,8 @@ function verificaAprovadoresObraDestino(){
     <ProcessLinkBend>
       <processLinkBendPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
-        <version>59</version>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>73</version>
         <linkSequence>40</linkSequence>
         <bendSequence>2</bendSequence>
       </processLinkBendPK>
@@ -1842,8 +1910,8 @@ function verificaAprovadoresObraDestino(){
     <ProcessLinkBend>
       <processLinkBendPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
-        <version>59</version>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>73</version>
         <linkSequence>41</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -1853,8 +1921,8 @@ function verificaAprovadoresObraDestino(){
     <ProcessLinkBend>
       <processLinkBendPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
-        <version>59</version>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>73</version>
         <linkSequence>41</linkSequence>
         <bendSequence>2</bendSequence>
       </processLinkBendPK>
@@ -1864,8 +1932,8 @@ function verificaAprovadoresObraDestino(){
     <ProcessLinkBend>
       <processLinkBendPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
-        <version>59</version>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>73</version>
         <linkSequence>43</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -1875,8 +1943,8 @@ function verificaAprovadoresObraDestino(){
     <ProcessLinkBend>
       <processLinkBendPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
-        <version>59</version>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>73</version>
         <linkSequence>47</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -1886,8 +1954,8 @@ function verificaAprovadoresObraDestino(){
     <ProcessLinkBend>
       <processLinkBendPK>
         <companyId>1</companyId>
-        <processId>Tranferência de Custos entre Obras</processId>
-        <version>59</version>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>73</version>
         <linkSequence>47</linkSequence>
         <bendSequence>2</bendSequence>
       </processLinkBendPK>
@@ -1901,7 +1969,7 @@ function verificaAprovadoresObraDestino(){
   <list>
     <ProcessStateService>
       <companyId>1</companyId>
-      <processId>Tranferência de Custos entre Obras</processId>
+      <processId>Transferência de Custos entre Obras</processId>
       <version>1</version>
       <sequence>9</sequence>
       <attempts>0</attempts>
@@ -1912,7 +1980,7 @@ function verificaAprovadoresObraDestino(){
     </ProcessStateService>
     <ProcessStateService>
       <companyId>1</companyId>
-      <processId>Tranferência de Custos entre Obras</processId>
+      <processId>Transferência de Custos entre Obras</processId>
       <version>1</version>
       <sequence>10</sequence>
       <attempts>0</attempts>
@@ -1923,7 +1991,7 @@ function verificaAprovadoresObraDestino(){
     </ProcessStateService>
     <ProcessStateService>
       <companyId>1</companyId>
-      <processId>Tranferência de Custos entre Obras</processId>
+      <processId>Transferência de Custos entre Obras</processId>
       <version>1</version>
       <sequence>26</sequence>
       <attempts>0</attempts>

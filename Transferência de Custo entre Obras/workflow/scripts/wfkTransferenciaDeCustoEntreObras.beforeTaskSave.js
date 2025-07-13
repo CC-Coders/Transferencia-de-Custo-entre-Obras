@@ -14,9 +14,11 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {
     if (ATIVIDADE == ATIVIDADES.INICIO || ATIVIDADE == ATIVIDADES.INICIO_0) {
         var id = insereNovoRegistro();
         hAPI.setCardValue("ID_TRANSFERENCIAS_DE_CUSTO", id);
-        insereItens(id);
+        insereTransferencias(id);
         insereHistorico(id);
         hAPI.setCardValue("numProces", getValue("WKNumProces"));
+        hAPI.setCardValue("solicitacao", getValue("WKNumProces"));
+
     } else if (ATIVIDADE == ATIVIDADES.APROVADOR_DESTINO) {
         var decisao = hAPI.getCardValue("decisao");
         var is_aprovado = decisao == "Aprovado";
@@ -73,12 +75,7 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {
             hAPI.setCardValue("aprovadoObraOrigem", "Reprovado");
             hAPI.setCardValue("aprovadoObraDestino", "Reprovado");
         }
-
-
-
-
-
-
+        insereHistorico(hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO"));
 
     } else if (ATIVIDADE == ATIVIDADES.APROVADOR_ORIGEM) {
         var decisao = hAPI.getCardValue("decisao");
@@ -133,6 +130,8 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {
             hAPI.setCardValue("aprovadoObraOrigem", "Reprovado");
             hAPI.setCardValue("aprovadoObraDestino", "Reprovado");
         }
+        insereHistorico(hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO"));
+
     }
 }
 
@@ -182,44 +181,87 @@ function insereNovoRegistro() {
     ]);
 }
 
-function insereItens(ID_PAI) {
-    var indices = hAPI.getChildrenIndexes("tableItens");
+function insereTransferencias(ID_PAI) {
+    var indices = hAPI.getChildrenIndexes("tableTransferencias");
 
     for (var i = 0; i < indices.length; i++) {
         var id = indices[i];
 
-        var Produto = hAPI.getCardValue("itemProduto" + "___" + id).split(" - ")[0];
-        var Descricao = hAPI.getCardValue("itemDescricao" + "___" + id);
-        var Quantidade = hAPI.getCardValue("itemQuantidade" + "___" + id).split(".").join("").replace(",", ".");
-        var ValorUnitario = moneyToFloat(hAPI.getCardValue("itemValorUnit" + "___" + id));
+        var tipo = hAPI.getCardValue("motivoTransferencia" + "___" + id);
+        var motivo = hAPI.getCardValue("textMotivoTransferencia" + "___" + id);
+        var valor = moneyToFloat(hAPI.getCardValue("valorTotalTransferencia" + "___" + id));
+        var itens = JSON.parse(hAPI.getCardValue("listItensTransferencia" + "___" + id));
 
+        var query = "INSERT INTO TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA (ID_TRANSFERENCIA, TIPO, VALOR, JUSTIFICATIVA, TRANSFERE_CUSTO, TRANSFERE_RECEITA) VALUES (?,?,?,?,?,?)";
+
+        var ID_TRANSFERENCIA = executaUpdate(query, [
+            { type: "int", value: ID_PAI },
+            { type: "varchar", value: tipo },
+            { type: "varchar", value: valor },
+            { type: "varchar", value: motivo },
+            { type: "int", value: 1 },
+            { type: "int", value: 0 },
+        ]);
+
+        for (var j = 0; j < itens.length; j++) {
+            var item = itens[j];
+            insereItem(ID_TRANSFERENCIA, item);
+        }
+    }  
+}
+
+function insereItem(ID_TRANSFERENCIA, item){
         var query =
             "INSERT INTO TRANSFERENCIAS_DE_CUSTO_ITENS (" +
             " ID_TRANSFERENCIA, " +
-            " PRODUTO, " +
+            " CODIGO_PRODUTO, " +
+            " DESCRICAO_PRODUTO, " +
             " DESCRICAO, " +
             " QUANTIDADE, " +
             " VALOR_UNITARIO) " +
-            " VALUES (?,?,?,?,?)";
+            " VALUES (?,?,?,?,?,?)";
 
         executaUpdate(query, [
-            { type: "int", value: ID_PAI },
-            { type: "varchar", value: Produto },
-            { type: "varchar", value: Descricao },
-            { type: "float", value: Quantidade },
-            { type: "float", value: ValorUnitario }
+            { type: "int", value: ID_TRANSFERENCIA },
+            { type: "varchar", value: item.CODPRODUTO },
+            { type: "varchar", value: item.DESCPRODUTO },
+            { type: "varchar", value: item.DESCRICAO },
+            { type: "float", value: moneyToFloat(item.QUANTIDADE)},
+            { type: "float", value: moneyToFloat(item.VALOR_UNITARIO) }
         ]);
-    }
 }
 
 function insereHistorico(ID_PAI) {
-    var indices = hAPI.getChildrenIndexes("tableItens");
-    var ultimoHistorico = indices[indices.length - 1];
+    var usuario = hAPI.getCardValue("userCode");
+    var observacao = hAPI.getCardValue("textObservacao");
+    var atividadeAtual = hAPI.getCardValue("atividade");
+    var data = getDateTimeNow();
 
-    var data = hAPI.getCardValue("dataMovimento" + "___" + ultimoHistorico);
-    var usuario = hAPI.getCardValue("usuario" + "___" + ultimoHistorico);
-    var movimentacao = hAPI.getCardValue("movimentacao" + "___" + ultimoHistorico);
-    var observacao = hAPI.getCardValue("observacao" + "___" + ultimoHistorico);
+
+    var movimentacao = "";
+    var decisao = hAPI.getCardValue("decisao");
+    var formMode = hAPI.getCardValue("formMode");
+    if (formMode == "ADD") {
+        movimentacao = "Inicio";
+    }
+    else if (atividadeAtual == ATIVIDADES.INICIO) {
+        movimentacao = "Ajuste";
+    }
+    else if (decisao == "Aprovado") {
+        movimentacao = "Aprovado";
+    }
+    else if (decisao == "Reprovado") {
+        movimentacao = "Reprovado";
+    } else {
+
+    }
+
+    var linha = new java.util.HashMap();
+    linha.put("usuario", usuario);
+    linha.put("movimentacao", movimentacao);
+    linha.put("observacao", observacao);
+    linha.put("dataMovimento", data);
+    hAPI.addCardChild("tableHistorico", linha);
 
     var query =
         "INSERT INTO TRANSFERENCIAS_DE_CUSTO_HISTORICO (" +
@@ -300,25 +342,42 @@ function executaUpdate(query, constraints) {
 
 // Utils
 function moneyToFloat(val) {
-    log.info("moneyToFloat init");
-    log.info(val);
     if (val.indexOf("R$") > -1) {
         val = val.replace("R$", "");
         val = val.trim();
-        log.info("Replace");
-        log.info(val);
     }
 
     val = val.replace(".", "");
-
-    log.info(val);
     val = val.replace(",", ".");
-    log.info(val);
     val = parseFloat(val);
-    log.info(val);
     if (isNaN(val)) {
-        log.info("NAN");
         return 0;
     }
     return val;
+}
+function getDateTimeNow() {
+    var date = new Date();
+    var dia = date.getDate();
+    if (dia < 10) {
+        dia = "0" + dia;
+    }
+    var mes = date.getMonth() + 1;
+    if (mes < 10) {
+        mes = "0" + mes;
+    }
+
+    var ano = date.getFullYear();
+
+    var hora = date.getHours();
+    if (hora < 10) {
+        hora = "0" + hora;
+    }
+
+    var minutos = date.getMinutes();
+    if (minutos < 10) {
+        minutos = "0" + minutos;
+    }
+
+    var dateTime = [ano, mes, dia].join("-") + " " + hora + ":" + minutos;
+    return dateTime
 }

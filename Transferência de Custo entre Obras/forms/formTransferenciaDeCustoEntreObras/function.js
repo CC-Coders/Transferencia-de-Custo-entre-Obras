@@ -1,4 +1,4 @@
-
+// Obra Origem e Destino
 function extraiAprovadoresDaLista(lista) {
     var engenherio = "";
     var coordenador = "";
@@ -75,8 +75,242 @@ function promiseBuscaAprovadoresDaObra(CODCOLIGADA, LOCALESTOQUE, CODTMV, valorT
         });
     });
 }
+function marcaEmVerdeAprovados() {
+    var aprovadorEngenheiroOrigem = $("#aprovadoEngenheiroObraOrigem").val() == "true";
+    if (aprovadorEngenheiroOrigem) {
+        $("#engenheiroObraOrigem").css("background-color", "lightgreen");
+        $("#engenheiroObraOrigem").css("color", "black");
+    }
+
+    var aprovadoCoordenadorObraOrigem = $("#aprovadoCoordenadorObraOrigem").val() == "true";
+    if (aprovadoCoordenadorObraOrigem) {
+        $("#coordenadorObraOrigem").css("background-color", "lightgreen");
+        $("#coordenadorObraOrigem").css("color", "black");
+    }
+
+    var aprovadoDiretorObraOrigem = $("#aprovadoDiretorObraOrigem").val() == "true";
+    if (aprovadoDiretorObraOrigem) {
+        $("#diretorObraOrigem").css("background-color", "lightgreen");
+        $("#diretorObraOrigem").css("color", "black");
+    }
+
+    var aprovadoEngenheiroObraDestino = $("#aprovadoEngenheiroObraDestino").val() == "true";
+    if (aprovadoEngenheiroObraDestino) {
+        $("#engenheiroObraDestino").css("background-color", "lightgreen");
+        $("#engenheiroObraDestino").css("color", "black");
+    }
+
+    var aprovadoCoordenadorObraDestino = $("#aprovadoCoordenadorObraDestino").val() == "true";
+    if (aprovadoCoordenadorObraDestino) {
+        $("#coordenadorObraDestino").css("background-color", "lightgreen");
+        $("#coordenadorObraDestino").css("color", "black");
+    }
+
+    var aprovadoDiretorObraDestino = $("#aprovadoDiretorObraDestino").val() == "true";
+    if (aprovadoDiretorObraDestino) {
+        $("#diretorObraDestino").css("background-color", "lightgreen");
+        $("#diretorObraDestino").css("color", "black");
+    }
 
 
+
+
+
+}
+
+
+// Transferencias
+function adicionaNovaTransferencia() {
+    var id = wdkAddChild("tableTransferencias");
+
+    $("#motivoTransferencia" + "___" + id).on("change", function () {
+        $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text($(this).val());
+        salvaItensDasTransferenciasNoCampoHidden();
+    });
+    $(".panelTransferencia:last .panel-heading").on("click", function () {
+        $(".panelTransferencia:not(:first)").not($(this).closest(".panelTransferencia")).find(".panel-heading").find(".iconarrow").addClass("flaticon-chevron-up").removeClass("flaticon-chevron-down");
+        $(".panelTransferencia:not(:first)").not($(this).closest(".panelTransferencia")).find(".panel-body").slideUp();
+        $(this).siblings(".panel-body").slideToggle();
+        $(this).find(".iconarrow").toggleClass("flaticon-chevron-up").toggleClass("flaticon-chevron-down");
+    });
+    $(".btnAdicionarItem:last").on("click", function () {
+        criaLinhaItem($(this).closest("table").find("tbody"));
+    });
+
+    $(".panelTransferencia:not(:last):not(:first)").find(".panel-body").slideUp();
+    $(".panelTransferencia:not(:last):not(:first)").find(".panel-heading").find(".iconarrow").addClass("flaticon-chevron-up").removeClass("flaticon-chevron-down");
+
+
+    criaTabelaItens($(".panelTransferencia:last").find(".divTabelaItens"));
+    criaLinhaItem($(".panelTransferencia:last").find(".divTabelaItens").find("table>tbody"));
+
+}
+function criaTabelaItens(target, readonly) {
+    var htmlTabela =
+        `<table class="table table-bordered table-striped tableItens" style="margin-bottom:0px;">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Produto</th>
+					<th>Descrição</th>
+					<th>QNTD</th>
+					<th>Valor Unit.</th>
+					<th>Valor Total</th>
+                    ${!readonly ? "<th></th>" : ""}
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+            ${!readonly ?
+            `<tfoot>
+				    <tr>
+    					<td colspan="7">
+	    					<div style="text-align: center;">
+		    					<button class="btn btn-success btnAdicionarItem">
+			    					<i class="flaticon flaticon-add-plus icon-md" aria-hidden="true"></i>
+							    </button>
+						    </div>
+					    </td>
+				    </tr>
+			    </tfoot>` : ""}
+		</table>`;
+
+    $(target).append(htmlTabela);
+
+    $(".btnAdicionarItem:last").on("click", function () {
+        criaLinhaItem($(this).closest("table").find("tbody"));
+    });
+}
+function criaLinhaItem(target, values = null, readonly) {
+    var itemProduto = values ? values.CODPRODUTO + " - " + values.DESCPRODUTO : "";
+    var itemDescricao = values ? values.DESCRICAO : "";
+    var itemQuantidade = values ? values.QUANTIDADE : "";
+    var itemUN = values ? values.UN : "";
+    var itemValorUnit = values ? values.VALOR_UNITARIO : "";
+    var itemValorTotal = values ? floatToMoney(moneyToFloat(values.VALOR_UNITARIO) * moneyToFloat(values.QUANTIDADE)) : "";
+    var textReadonly = readonly ? "readonly" : "";
+
+
+    var htmlLinha =
+        `<tr>
+            <td style="width: 1%;"></td>
+            <td style="width: 40%;">
+                ${!readonly ?
+            `<select type="text" class="itemProduto" autocomplete="off" value="${itemProduto}"></select>` :
+            `<input type="text"  class="form-control itemProduto" value="${itemProduto}" ${textReadonly}>`
+        }
+            </td>
+            <td style="width: 20%;">
+                <input type="text"   class="form-control itemDescricao" value="${itemDescricao}" ${textReadonly}>
+            </td>
+            <td style="width: 15%;">
+                <div style="display:flex;">
+                    <input type="text" class="form-control itemQuantidade" value="${itemQuantidade}" ${textReadonly}>
+                    <select type="text" class="form-control itemUN" value="${itemUN}" ${textReadonly} placeholder="UN">
+                        <option></option>
+                        ${listUnidadesMedida.map(e => `<option ${e.CODUND == itemUN ? "selected" : ""}>${e.CODUND}</option>`)}
+                    </select>
+                </div>
+            </td>
+            <td style="width: 10%;">
+                <input type="text" class="form-control itemValorUnit" value="${itemValorUnit}" ${textReadonly}>
+            </td>
+            <td style="width: 10%;">
+                <input type="text"  class="form-control itemValorTotal" inert value="${itemValorTotal}" readonly>
+            </td>
+            ${!readonly ?
+            `<td style="text-align: center;">
+                    <button class="btn btn-danger btnRemoverLinhaItem">
+                        <i class="flaticon flaticon-trash icon-md" aria-hidden="true"></i>
+                    </button>
+                </td>` : ""
+        }
+        </tr>`;
+    $(target).append(htmlLinha);
+
+    updateCounterRowsTableItens($(target).closest("table"));
+    if (!readonly) {
+        console.log(target)
+        loadLinhaItem($(target).find("tr:last"));
+    }
+
+    function loadLinhaItem(target) {
+        var val = $(target).find(".itemProduto").attr("value");
+        $(target).find(".itemProduto").html(htmlListProdutos);
+        $(target).find(".itemProduto").selectize();
+        $(target).find(".itemProduto").on("change", function () {
+            var value = $(this).val();
+            var UN = listaProdutos.find(e => e.VISUAL == value);
+            if (UN) {
+                $(this).closest("tr").find(".itemUN").val(UN.CODUNDCONTROLE);
+            }
+        });
+
+        $(target).find(".itemProduto")[0].selectize.setValue(val);
+
+        $(target).find(".itemQuantidade").maskMoney({ thousands: '.', decimal: ',', });
+        $(target).find(".itemValorUnit").maskMoney({ thousands: '.', decimal: ',', prefix: 'R$' });
+
+        $(target).find(".itemQuantidade, .itemValorUnit").on("change, keyup", function () {
+            var row = $(this).closest("tr");
+            calculaValorTotalItem(row);
+            atualizaValorTotal();
+        });
+
+        $(target).find("select, input").on("change", salvaItensDasTransferenciasNoCampoHidden);
+
+        $(".btnRemoverLinhaItem").off("click").on("click", function () {
+            $(this).closest("tr").remove();
+            updateCounterRowsTableItens($(target).closest("table"));
+            atualizaValorTotal();
+            salvaItensDasTransferenciasNoCampoHidden();
+        });
+    }
+}
+function salvaItensDasTransferenciasNoCampoHidden() {
+    $("#tableTransferencias>tbody>tr:not(:first)").each(function () {
+        var linhas = [];
+
+        $(this).find(".tableItens>tbody>tr").each(function () {
+            var CODPRODUTO = $(this).find(".itemProduto").val().split(" - ")[0];
+            var DESCPRODUTO = $(this).find(".itemProduto").val().split(" - ");
+            DESCPRODUTO.shift();
+            DESCPRODUTO = DESCPRODUTO.join(" - ");
+            var DESCRICAO = $(this).find(".itemDescricao").val();
+            var QUANTIDADE = $(this).find(".itemQuantidade").val();
+            var UN = $(this).find(".itemUN").val();
+            var VALOR_UNITARIO = $(this).find(".itemValorUnit").val();
+
+            linhas.push({ CODPRODUTO, DESCPRODUTO, DESCRICAO, QUANTIDADE, UN, VALOR_UNITARIO });
+        });
+
+        $(this).find(".listItensTransferencia").val(JSON.stringify(linhas));
+    });
+}
+function carregaTabelaItensDasTransferencias() {
+    if ($("#atividade").val() != ATIVIDADES.INICIO) {
+        var readonly = true;
+    } else {
+        var readonly = false;
+    }
+    $("#tableTransferencias>tbody>tr:not(:first)").each(function () {
+        var listItens = JSON.parse($(this).find(".listItensTransferencia").val());
+        var divTableItens = $(this).find(".divTabelaItens");
+
+        criaTabelaItens($(divTableItens), readonly);
+        for (const item of listItens) {
+            criaLinhaItem($(divTableItens).find("table>tbody"), item, readonly);
+        }
+    });
+}
+function updateCounterRowsTableItens(target) {
+    var counter = 1;
+    $(target).find("tbody>tr").each(function () {
+        $(this).find("td:first").text(counter);
+        counter++;
+    });
+}
 function adicionarLinhaItem() {
     var id = wdkAddChild("tableItens")
     loadLinhaItem(id);
@@ -88,38 +322,6 @@ function calculaValorTotalItem(tr) {
     var valorTotal = quantidade * valor;
     $(tr).find(".itemValorTotal").val(floatToMoney(valorTotal));
 }
-function atualizaValorTotal() {
-    var valorTotal = 0;
-
-    $(".panelTransferencia:not(:first)").each(function () {
-        var valorTotalPorTranferencia = 0;
-
-        $(this).find(".tableItens>tbody").find("tr").each(function () {
-            var valorItem = moneyToFloat($(this).find(`.itemValorTotal`).val());
-            valorTotal += valorItem;
-            valorTotalPorTranferencia += valorItem;
-        });
-
-        $(this).find(".spanValorTransferencia").text(floatToMoney(valorTotalPorTranferencia));
-        $(this).find("input[name^='valorTotalTransferencia']").val(floatToMoney(valorTotalPorTranferencia));
-    });
-
-
-
-    $("#valorObraOrigem").val("- " + floatToMoney(valorTotal));
-    $("#valorObraDestino").val(floatToMoney(valorTotal));
-}
-
-
-function updateCounterRowsTableItens(target) {
-    var counter = 1;
-    $(target).find("tbody>tr").each(function () {
-        $(this).find("td:first").text(counter);
-        counter++;
-    });
-}
-
-
 async function loadListaItens() {
     listaProdutos = await buscaProdutos($("#CODCOLIGADA").val());
     htmlListProdutos = montaHtmlListaProdutos(listaProdutos);
@@ -155,7 +357,7 @@ async function loadListaItens() {
 }
 
 
-
+// Historico
 async function geraTabelaHistorico() {
     var rows = $("#tableHistorico>tbody>tr:not(:first)").get();
 
@@ -215,216 +417,77 @@ async function geraTabelaHistorico() {
     }
 }
 
-function adicionaNovaTransferencia() {
-    var id = wdkAddChild("tableTransferencias");
 
-    $("#motivoTransferencia" + "___" + id).on("change", function () {
-        $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text($(this).val());
-        salvaItensDasTransferenciasNoCampoHidden();
-    });
-    $(".panelTransferencia:last .panel-heading").on("click", function () {
-        $(".panelTransferencia .panel-heading").not(this).find(".flaticon").addClass("flaticon-chevron-up").removeClass("flaticon-chevron-down");
-        $(this).siblings(".panel-body").slideToggle();
-        $(this).find(".flaticon").toggleClass("flaticon-chevron-up, flaticon-chevron-down");
-    });
-    $(".btnAdicionarItem:last").on("click", function () {
-        $(this).closest(".panelTransferencia").find(".tableItens")
+// Utils
+function atualizaValorTotal() {
+    var valorTotal = 0;
+
+    $(".panelTransferencia:not(:first)").each(function () {
+        var valorTotalPorTranferencia = 0;
+
+        $(this).find(".tableItens>tbody").find("tr").each(function () {
+            var valorItem = moneyToFloat($(this).find(`.itemValorTotal`).val());
+            valorTotal += valorItem;
+            valorTotalPorTranferencia += valorItem;
+        });
+
+        $(this).find(".spanValorTransferencia").text(floatToMoney(valorTotalPorTranferencia));
+        $(this).find("input[name^='valorTotalTransferencia']").val(floatToMoney(valorTotalPorTranferencia));
     });
 
+    $("#valorObraOrigem").val("- " + floatToMoney(valorTotal));
+    $("#valorObraDestino").val(floatToMoney(valorTotal));
+    $("#valorTotal").val(valorTotal);
 
-    criaTabelaItens($(".panelTransferencia:last").find(".divTabelaItens"));
-    criaLinhaItem($(".panelTransferencia:last").find(".divTabelaItens").find("table"));
-    setTimeout(() => {
-        $(".panelTransferencia:not(:last):not(:first)").find(".panel-body").slideUp();
-    }, 10);
+    if (valorTotal < 200000) {
+        $("#diretorObraOrigem, #diretorObraDestino").closest("div").hide();
+    }
 }
-function criaTabelaItens(target, readonly) {
-    var htmlTabela =
-        `<table class="table table-bordered table-striped tableItens" style="margin-bottom:0px;">
-			<thead>
-				<tr>
-					<th>#</th>
-					<th>Produto</th>
-					<th>Descrição</th>
-					<th>QNTD</th>
-					<th>Valor Unit.</th>
-					<th>Valor Total</th>
-                    ${!readonly ? "<th></th>" : ""}
-				</tr>
-			</thead>
-			<tbody>
-				
-			</tbody>
-            ${!readonly ?
-            `<tfoot>
-				    <tr>
-    					<td colspan="7">
-	    					<div style="text-align: center;">
-		    					<button class="btn btn-success btnAdicionarItem">
-			    					<i class="flaticon flaticon-add-plus icon-md" aria-hidden="true"></i>
-							    </button>
-						    </div>
-					    </td>
-				    </tr>
-			    </tfoot>` : ""}
-		</table>`;
-
-    $(target).append(htmlTabela);
-
-    $(".btnAdicionarItem:last").on("click", function () {
-        criaLinhaItem($(this).closest("table").find("tbody"));
-    });
+function consultaUnidadesDeMedida() {
+    var ds = DatasetFactory.getDataset("ds_UnidadesMedida", null, null, null);
+    listUnidadesMedida = ds.values;
 }
-function criaLinhaItem(target, values, readonly) {
-    var itemProduto = values ? values.CODPRODUTO + " - " + values.DESCPRODUTO : "";
-    var itemDescricao = values ? values.DESCRICAO : "";
-    var itemQuantidade = values ? values.QUANTIDADE : "";
-    var itemValorUnit = values ? values.VALOR_UNITARIO : "";
-    var itemValorTotal = values ? floatToMoney(moneyToFloat(values.VALOR_UNITARIO) * moneyToFloat(values.QUANTIDADE)) : "";
-    var textReadonly = readonly ? "readonly" : "";
+function movimentaAtividadeParaReprovacao() {
+    var processId = $("#numProces").val();
+    $.ajax({
+        url: '/process-management/api/v2/activities?processInstanceId=' + processId + '&active=true',
+        type: 'get',
+        success: result => {
+            var sequence = null;
+            var targetState = null;
+            var assignee = null
 
-
-    var htmlLinha =
-        `<tr>
-            <td style="width: 1%;"></td>
-            <td style="width: 40%;">
-                ${!readonly ?
-                    `<select type="text" class="itemProduto" autocomplete="off" value="${itemProduto}"></select>` :
-                    `<input type="text"  class="form-control itemProduto" value="${itemProduto}" ${textReadonly}>`
+            if ($("#atividade").val() == ATIVIDADES.APROVADOR_ORIGEM) {
+                targetState = 37;
+                assignee = $("#usuarioAprovadorDestino").val();
+                for (const task of result.items) {
+                    if (task.state.sequence == ATIVIDADES.APROVADOR_DESTINO) {
+                        sequence = task.movementSequence;
+                    }
                 }
-            </td>
-            <td style="width: 20%;">
-                <input type="text"   class="form-control itemDescricao" value="${itemDescricao}" ${textReadonly}>
-            </td>
-            <td style="width: 10%;">
-                <input type="text" class="form-control itemQuantidade" value="${itemQuantidade}" ${textReadonly}>
-            </td>
-            <td style="width: 10%;">
-                <input type="text" class="form-control itemValorUnit" value="${itemValorUnit}" ${textReadonly}>
-            </td>
-            <td style="width: 10%;">
-                <input type="text"  class="form-control itemValorTotal" inert value="${itemValorTotal}" readonly>
-            </td>
-            ${!readonly ?
-                `<td style="text-align: center;">
-                    <button class="btn btn-danger btnRemoverLinhaItem">
-                        <i class="flaticon flaticon-trash icon-md" aria-hidden="true"></i>
-                    </button>
-                </td>` : ""
+            } else if ($("#atividade").val() == ATIVIDADES.APROVADOR_DESTINO) {
+                targetState = 36;
+                assignee = $("#usuarioAprovadorOrigem").val();
+                for (const task of result.items) {
+                    if (task.state.sequence == ATIVIDADES.APROVADOR_ORIGEM) {
+                        sequence = task.movementSequence;
+                    }
+                }
             }
-        </tr>`;
-    $(target).append(htmlLinha);
 
-    updateCounterRowsTableItens($(target).closest("table"));
-    if (!readonly) {
-        console.log(target)
-        loadLinhaItem($(target).find("tr:last"));
-    }
+            DatasetFactory.getDataset("dsMovimentaAtividade", null, [
+                DatasetFactory.createConstraint("numProces", processId, "", ConstraintType.MUST),
+                DatasetFactory.createConstraint("movementSequence", sequence, "", ConstraintType.MUST),
+                DatasetFactory.createConstraint("assignee", assignee, "", ConstraintType.MUST),
+                DatasetFactory.createConstraint("targetState", targetState, "", ConstraintType.MUST),
+            ], null, {
+                success: ds => {
 
-    function loadLinhaItem(target) {
-        console.log(target)
-        var val = $(target).find(".itemProduto").attr("value");
-        $(target).find(".itemProduto").html(htmlListProdutos);
-        $(target).find(".itemProduto").selectize();
-        $(target).find(".itemProduto")[0].selectize.setValue(val);
+                }, error: e => {
 
-        $(target).find(".itemQuantidade").maskMoney({ thousands: '.', decimal: ',', });
-        $(target).find(".itemValorUnit").maskMoney({ thousands: '.', decimal: ',', prefix: 'R$' });
-
-        $(target).find(".itemQuantidade, .itemValorUnit").on("change, keyup", function () {
-            var row = $(this).closest("tr");
-            calculaValorTotalItem(row);
-            atualizaValorTotal();
-        });
-
-        $(target).find("select, input").on("change", salvaItensDasTransferenciasNoCampoHidden);
-
-        $(".btnRemoverLinhaItem").off("click").on("click", function () {
-            $(this).closest("tr").remove();
-            updateCounterRowsTableItens($(target).closest("table"));
-            atualizaValorTotal();
-            salvaItensDasTransferenciasNoCampoHidden();
-        });
-    }
-}
-
-function salvaItensDasTransferenciasNoCampoHidden() {
-    $("#tableTransferencias>tbody>tr:not(:first)").each(function () {
-        var linhas = [];
-
-        $(this).find(".tableItens>tbody>tr").each(function () {
-            var CODPRODUTO = $(this).find(".itemProduto").val().split(" - ")[0];
-            var DESCPRODUTO = $(this).find(".itemProduto").val().split(" - ");
-            DESCPRODUTO.shift();
-            DESCPRODUTO = DESCPRODUTO.join(" - ");
-            var DESCRICAO = $(this).find(".itemDescricao").val();
-            var QUANTIDADE = $(this).find(".itemQuantidade").val();
-            var VALOR_UNITARIO = $(this).find(".itemValorUnit").val();
-
-            linhas.push({ CODPRODUTO, DESCPRODUTO, DESCRICAO, QUANTIDADE, VALOR_UNITARIO });
-        });
-
-        $(this).find(".listItensTransferencia").val(JSON.stringify(linhas));
-    });
-}
-function carregaTabelaItensDasTransferencias() {
-    if ($("#atividade").val() != ATIVIDADES.INICIO) {
-        var readonly = true;       
-    }else{
-        var readonly = false;
-    }
-    $("#tableTransferencias>tbody>tr:not(:first)").each(function () {
-        var listItens = JSON.parse($(this).find(".listItensTransferencia").val());
-        var divTableItens = $(this).find(".divTabelaItens");
-
-        criaTabelaItens($(divTableItens), readonly);
-        for (const item of listItens) {
-            criaLinhaItem($(divTableItens).find("table>tbody"), item, readonly);
+                }
+            });
         }
+
     });
-}
-
-
-
-function marcaEmVerdeAprovados() {
-    var aprovadorEngenheiroOrigem = $("#aprovadoEngenheiroObraOrigem").val() == "true";
-    if (aprovadorEngenheiroOrigem) {
-        $("#engenheiroObraOrigem").css("background-color", "lightgreen");
-        $("#engenheiroObraOrigem").css("color", "black");
-    }
-
-    var aprovadoCoordenadorObraOrigem = $("#aprovadoCoordenadorObraOrigem").val() == "true";
-    if (aprovadoCoordenadorObraOrigem) {
-        $("#coordenadorObraOrigem").css("background-color", "lightgreen");
-        $("#coordenadorObraOrigem").css("color", "black");
-    }
-
-    var aprovadoDiretorObraOrigem = $("#aprovadoDiretorObraOrigem").val() == "true";
-    if (aprovadoDiretorObraOrigem) {
-        $("#diretorObraOrigem").css("background-color", "lightgreen");
-        $("#diretorObraOrigem").css("color", "black");
-    }
-
-    var aprovadoEngenheiroObraDestino = $("#aprovadoEngenheiroObraDestino").val() == "true";
-    if (aprovadoEngenheiroObraDestino) {
-        $("#engenheiroObraDestino").css("background-color", "lightgreen");
-        $("#engenheiroObraDestino").css("color", "black");
-    }
-
-    var aprovadoCoordenadorObraDestino = $("#aprovadoCoordenadorObraDestino").val() == "true";
-    if (aprovadoCoordenadorObraDestino) {
-        $("#coordenadorObraDestino").css("background-color", "lightgreen");
-        $("#coordenadorObraDestino").css("color", "black");
-    }
-
-    var aprovadoDiretorObraDestino = $("#aprovadoDiretorObraDestino").val() == "true";
-    if (aprovadoDiretorObraDestino) {
-        $("#diretorObraDestino").css("background-color", "lightgreen");
-        $("#diretorObraDestino").css("color", "black");
-    }
-
-
-
-
-
 }

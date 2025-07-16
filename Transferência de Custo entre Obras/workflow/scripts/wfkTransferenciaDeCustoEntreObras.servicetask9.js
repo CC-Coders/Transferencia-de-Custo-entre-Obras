@@ -4,27 +4,27 @@ function servicetask9(attempt, message) {
 }
 
 function verificaAprovadoresObraDestino(){
-    var valorTotalTransferencia = hAPI.getCardValue("valorTotalTransferencia");
-
-    var engenheiroObraDestino = hAPI.getCardValue("engenheiroObraDestino");
-    var coordenadorObraDestino = hAPI.getCardValue("coordenadorObraDestino");
-    var diretorObraDestino = hAPI.getCardValue("diretorObraDestino");
-
+    var valorTotalTransferencia = hAPI.getCardValue("valorTotal");
 
     var aprovadoEngenheiroObraDestino = hAPI.getCardValue("aprovadoEngenheiroObraDestino");
     var aprovadoCoordenadorObraDestino = hAPI.getCardValue("aprovadoCoordenadorObraDestino");
     var aprovadoDiretorObraDestino = hAPI.getCardValue("aprovadoDiretorObraDestino");
 
     if (aprovadoEngenheiroObraDestino != "true") {
+        var engenheiroObraDestino = hAPI.getCardValue("engenheiroObraDestino");
         hAPI.setCardValue("usuarioAprovadorDestino", engenheiroObraDestino);
     }
     else if (aprovadoCoordenadorObraDestino != "true") {
+        var coordenadorObraDestino = hAPI.getCardValue("coordenadorObraDestino");
         hAPI.setCardValue("usuarioAprovadorDestino", coordenadorObraDestino);
     }
-    else if (valorTotalTransferencia > 2000000 && aprovadoDiretorObraDestino != "true") {
+    else if (valorTotalTransferencia > 250000 && aprovadoDiretorObraDestino != "true") {
+        var diretorObraDestino = hAPI.getCardValue("diretorObraDestino");
         hAPI.setCardValue("usuarioAprovadorDestino", diretorObraDestino);
-    }else{
+    }
+    else{
         hAPI.setCardValue("aprovadoObraDestino", "true");
+        hAPI.setCardValue("usuarioAprovadorDestino", "");
     }
 
     return hAPI.getCardValue("usuarioAprovadorDestino");

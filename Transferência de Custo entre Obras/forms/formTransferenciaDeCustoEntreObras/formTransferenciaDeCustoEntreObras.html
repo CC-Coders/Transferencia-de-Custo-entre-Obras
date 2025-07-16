@@ -63,6 +63,11 @@
 				<input type="hidden" name="dateSolicitacao" id="dateSolicitacao">
 				<input type="hidden" name="CODCOLIGADA" id="CODCOLIGADA">
 				<input type="hidden" name="ID_TRANSFERENCIAS_DE_CUSTO" id="ID_TRANSFERENCIAS_DE_CUSTO">
+				<input type="hidden" name="TRANSFERE_CUSTO" id="TRANSFERE_CUSTO">
+				<input type="hidden" name="TRANSFERE_RECEITA" id="TRANSFERE_RECEITA">
+				<input type="hidden" name="IDMOV_ORIGEM" id="IDMOV_ORIGEM">
+				<input type="hidden" name="IDMOV_DESTINO" id="IDMOV_DESTINO">
+				<input type="hidden" name="valorTotal" id="valorTotal">
 
 
 				<!-- Aprovacoes -->
@@ -112,8 +117,12 @@
 					<div class="col-md-6">
 						<div class="panel panel-castilho-primary">
 							<div class="panel-heading">
-								<h3 class="panel-title">OBRA ORIGEM <span style="color: lightgreen;">(Diminuição de
-										Custo)</span></h3>
+								<h3 class="panel-title" style="display: flex;justify-content: space-between;">
+									<div>
+										OBRA ORIGEM <span style="color: lightgreen;">(Diminuição de Custo)</span>
+									</div>
+									<div id="spanIDMOV_ORIGEM"></div>
+								</h3>
 							</div>
 							<div class="panel-body">
 								<div class="row">
@@ -152,8 +161,12 @@
 					<div class="col-md-6">
 						<div class="panel panel-castilho-primary">
 							<div class="panel-heading">
-								<h3 class="panel-title">OBRA DESTINO <span style="color: orangered !important;">(Aumento
-										de Custo)</span></h3>
+								<h3 class="panel-title" style="display: flex;justify-content: space-between;">
+									<div>
+										OBRA DESTINO <span style="color: orangered !important;">(Aumento de Custo)</span>
+									</div>
+									<div id="spanIDMOV_DESTINO"></div>
+								</h3>
 							</div>
 							<div class="panel-body">
 								<div class="row">
@@ -211,12 +224,16 @@
 												<div class="panel-heading">
 													<h3 class="panel-title">
 														<span>
-															<i class="flaticon flaticon-chevron-down icon-md"
+															<i class="flaticon flaticon-chevron-down icon-md iconarrow"
 																aria-hidden="true"></i>
 															<span class="spanTipoTransferencia"></span>
-
 														</span>
-														<span class="spanValorTransferencia">R$ 0,00</span>
+														<span>
+															<span class="spanValorTransferencia">R$ 0,00</span>
+															<button class="btn btn-danger btnRemoverTransferencia" style="margin-left: 20px;" onclick="fnWdkRemoveChild(this)">
+																<i class="flaticon flaticon-trash icon-md" aria-hidden="true"></i>
+															</button>
+														</span>
 													</h3>
 												</div>
 												<div class="panel-body">

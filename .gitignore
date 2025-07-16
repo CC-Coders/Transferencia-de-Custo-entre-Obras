@@ -2,3 +2,5 @@
 com.totvs.tds.ecm.dataservers
 *.cache
 *.war
+*.bkp
+*.cache

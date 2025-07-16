@@ -1,4 +1,3 @@
 function beforeCancelProcess(colleagueId,processId){
-    atualizaStatusTransferencia(3);
-
+    atualizaStatusTransferencia(STATUS_TRANSFENCIA.CANCELADO);
 }

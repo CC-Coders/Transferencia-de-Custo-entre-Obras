@@ -2,7 +2,7 @@ function servicetask26(attempt, message) {
     var CODCOLIGADA_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[0];
     var CODCCUSTO_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[1];
     var NOMECCUSTO_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[2];
-    
+
     var CODCOLIGADA_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[0];
     var CODCCUSTO_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[1];
     var NOMECCUSTO_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[2];
@@ -14,15 +14,15 @@ function servicetask26(attempt, message) {
     // Se for TRANSFERE_CUSTO, então a Obra Origem, recebe o PRODUTO AUMENTA_RESULTADO, pois está enviando o CUSTO
     // Porém, se for TRANSFERE_RECEITA, então a Obra Origem, recebe o PRODUTO DIMINUI_RESULTADO, pois está enviando a RECEITA
     var PRODUTO_ORIGEM = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? PRODUTOS.AUMENTA_RESULTADO : PRODUTOS.DIMINUI_RESULTADO;
-    var idmov = geraMovimentos(CODCOLIGADA_ORIGEM, CODCCUSTO_ORIGEM, NOMECCUSTO_ORIGEM, PRODUTO_ORIGEM);
+    var idmov = geraMovimentos(CODCOLIGADA_ORIGEM, CODCCUSTO_ORIGEM, CODCOLIGADA_DESTINO, NOMECCUSTO_ORIGEM, PRODUTO_ORIGEM);
     hAPI.setCardValue("IDMOV_ORIGEM", idmov);
-    
-    
+
+
     // Lanca ajuste para Obra Destino
     // Se for TRANSFERE_CUSTO, então a Obra Destino, recebe o PRODUTO DIMINUI_RESULTADO, pois está recebendo CUSTO
     // Porém, se for TRANSFERE_RECEITA, então a Obra Destino, recebe o PRODUTO AUMENTA_RESULTADO, pois está recebendo a RECEITA
     var PRODUTO_DESTINO = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? PRODUTOS.DIMINUI_RESULTADO : PRODUTOS.AUMENTA_RESULTADO;
-    var idmov = geraMovimentos(CODCOLIGADA_DESTINO, CODCCUSTO_DESTINO, NOMECCUSTO_DESTINO, PRODUTO_DESTINO);
+    var idmov = geraMovimentos(CODCOLIGADA_DESTINO, CODCCUSTO_DESTINO, CODCOLIGADA_ORIGEM, NOMECCUSTO_DESTINO, PRODUTO_DESTINO);
     hAPI.setCardValue("IDMOV_DESTINO", idmov);
 
 
@@ -34,12 +34,12 @@ function getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO) {
         // Se transferencia entre Centro de Custo
         var PRODUTOS = {
             AUMENTA_RESULTADO: {
-                IDPRD: "1514",
+                CODIGOPRD_COLIGADA1: "11.006.00110",
                 CODIGOPRD: "11.006.00110",
                 DESCPRD: "Ajustes gerenciais (+)",
             },
             DIMINUI_RESULTADO: {
-                IDPRD: "1515",
+                CODIGOPRD_COLIGADA1: "11.006.00111",
                 CODIGOPRD: "11.006.00111",
                 DESCPRD: "Ajustes gerenciais (-)",
             }
@@ -49,12 +49,12 @@ function getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO) {
         // Se Transferencia entre Coligadas
         var PRODUTOS = {
             AUMENTA_RESULTADO: {
-                IDPRD: "11.006.00158",
+                CODIGOPRD_COLIGADA1: "11.006.00160",
                 CODIGOPRD: "11.006.00158",
                 DESCPRD: "Ajuste entre coligadas (+)",
             },
             DIMINUI_RESULTADO: {
-                IDPRD: "11.006.00159",
+                CODIGOPRD_COLIGADA1: "11.006.00161",
                 CODIGOPRD: "11.006.00159",
                 DESCPRD: "Ajuste entre coligadas (-)",
             }
@@ -62,10 +62,29 @@ function getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO) {
         return PRODUTOS;
     }
 }
+function buscaIdDoProduto(CODCOLIGADA, CODIGOPRD) {
+    var query = "SELECT IDPRD, CODIGOPRD, NOMEFANTASIA FROM TPRODUTO WHERE CODCOLPRD = ? AND CODIGOPRD = ?";
 
-function geraMovimentos(CODCOLIGADA, CODCCUSTO, NOMECCUSTO, PRODUTO){
+    return executaQuery(query, [
+        { type: "int", value: CODCOLIGADA },
+        { type: "varchar", value: CODIGOPRD },
+    ], "/jdbc/FluigRM");
+}
+
+function geraMovimentos(CODCOLIGADA, CODCCUSTO, CODCOLIGADA_FORNECEDOR, NOMECCUSTO, PRODUTO) {
     var CODLOC = buscaLocalEstoquePorNome(CODCOLIGADA, 1, NOMECCUSTO);
-    var xml = montaXML(CODCOLIGADA, CODLOC, CODCOLIGADA, "00001", PRODUTO, CODCCUSTO);
+    log.info("CODLOC")
+    log.info(CODLOC)
+    var CNPJColigadaFornecedor = buscaCNPJDaColigada(CODCOLIGADA_FORNECEDOR);
+    log.info("CNPJColigadaFornecedor")
+    log.info(CNPJColigadaFornecedor)
+    var fornecedor = buscaCodigoFornecedor(CODCOLIGADA, CNPJColigadaFornecedor);
+    var CODCOLCFO = fornecedor[0];
+    var CODCFO = fornecedor[1];
+    log.info("CODCFO")
+    log.info(CODCFO)
+
+    var xml = montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO);
 
     var idmov = ImportaMovimento(CODCOLIGADA, xml);
     log.info("Movimentos inseridos: " + idmov);
@@ -74,8 +93,8 @@ function geraMovimentos(CODCOLIGADA, CODCCUSTO, NOMECCUSTO, PRODUTO){
 }
 
 function montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO) {
-    var URLFluig = getServerURL() + "portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=" + getValue("WKNumProces")  ;
-    
+    var URLFluig = getServerURL() + "portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=" + getValue("WKNumProces");
+
     var xml = "";
     xml += "<MovMovimento>";
     xml += "    <TMOV>";
@@ -99,9 +118,10 @@ function montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO) {
     xml += "    </TMOV>";
 
 
-    var IDPRD = PRODUTO.IDPRD;
-    var CODIGOPRD = PRODUTO.CODIGOPRD;
+
+    var CODIGOPRD = CODCOLIGADA == 1 ?  PRODUTO.CODIGOPRD_COLIGADA1: PRODUTO.CODIGOPRD;
     var DESCPRODUTO = PRODUTO.DESCPRD;
+    var IDPRD = buscaIdDoProduto(CODCOLIGADA, CODIGOPRD)[0].IDPRD;
 
     // var DESCITEM = item.DescricaoItem;
     var QUANTIDADE = 1;
@@ -162,6 +182,29 @@ function montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO) {
     return xml;
 }
 
+function buscaCodigoFornecedor(CODCOLIGADA, CGCCFO) {
+    var FCFO = DatasetFactory.getDataset("FCFO", null, [
+        DatasetFactory.createConstraint("CODCOLIGADA", CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST),
+        DatasetFactory.createConstraint("CGCCFO", CGCCFO, CGCCFO, ConstraintType.MUST),
+    ], null);
+    if (FCFO.values.length > 0) {
+        return [CODCOLIGADA, FCFO.getValue(0, "CODCFO")];
+    }
+
+    var FCFO = DatasetFactory.getDataset("FCFO", null, [
+        DatasetFactory.createConstraint("CODCOLIGADA", 0, 0, ConstraintType.MUST),
+        DatasetFactory.createConstraint("CGCCFO", CGCCFO, CGCCFO, ConstraintType.MUST),
+    ], null);
+    if (FCFO.values.length > 0) {
+        return [0, FCFO.getValue(0, "CODCFO")];
+    }
+}
+function buscaCNPJDaColigada(CODCOLIGADA) {
+    var ds = DatasetFactory.getDataset("Coligadas", null, [
+        DatasetFactory.createConstraint("CODCOLIGADA", CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST)
+    ], null);
+    return ds.getValue(0, "CGC");
+}
 function ImportaMovimento(CODCOLIGADA, xml) {
     var ds = DatasetFactory.getDataset("ImportaMovRM", null, [
         DatasetFactory.createConstraint("xmlMov", xml, xml, ConstraintType.MUST),
@@ -173,7 +216,7 @@ function ImportaMovimento(CODCOLIGADA, xml) {
     }
     else {
         if (ds.values[0][0] == "false") {
-            throw"Erro ao gerar movimento. Favor entrar em contato com o administrador do sistema. Mensagem: " + ds.values[0][1];
+            throw "Erro ao gerar movimento. Favor entrar em contato com o administrador do sistema. Mensagem: " + ds.values[0][1];
         }
         else if (ds.values[0][0] == "true") {
             return ds.values[0][2];
@@ -181,29 +224,87 @@ function ImportaMovimento(CODCOLIGADA, xml) {
     }
 }
 
-function buscaLocalEstoquePorNome(CODCOLIGADA, CODFILIAL, NOME){
+function buscaLocalEstoquePorNome(CODCOLIGADA, CODFILIAL, NOME) {
     var ds = DatasetFactory.getDataset("LocalRM", null, [
         DatasetFactory.createConstraint("clg", CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST),
-        DatasetFactory.createConstraint("cdFl",CODFILIAL,CODFILIAL, ConstraintType.MUST),
-    ],null);
+        DatasetFactory.createConstraint("cdFl", CODFILIAL, CODFILIAL, ConstraintType.MUST),
+    ], null);
 
     for (var i = 0; i < ds.values.length; i++) {
-        var nomeLocalEstoque = ds.getValue(i,"nome");
+        var nomeLocalEstoque = ds.getValue(i, "nome");
         if (NOME == nomeLocalEstoque) {
-            return ds.getValue(i,"codloc");
+            return ds.getValue(i, "codloc");
         }
     }
 }
-function atualizaStatusTransferencia(STATUS){
+function atualizaStatusTransferencia(STATUS) {
     var id = hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO");
 
     var query = "UPDATE TRANSFERENCIAS_DE_CUSTO SET STATUS = ? WHERE ID = ?";
     executaUpdate(query, [
-        {type:"int", value:STATUS},
-        {type:"int", value:id},
+        { type: "int", value: STATUS },
+        { type: "int", value: id },
     ]);
 }
-function getServerURL(){
-    var ds = DatasetFactory.getDataset("dsGetServerURL",null,null,null);
-    return ds.getValue(0,"URL");
+
+
+// Utils
+function getServerURL() {
+    var ds = DatasetFactory.getDataset("dsGetServerURL", null, null, null);
+    return ds.getValue(0, "URL");
+}
+function executaQuery(query, constraints, dataSorce) {
+    try {
+        var dataSource = dataSorce;
+        var ic = new javax.naming.InitialContext();
+        var ds = ic.lookup(dataSource);
+
+        var conn = ds.getConnection();
+        var stmt = conn.prepareStatement(query);
+
+        var counter = 1;
+        for (var i = 0; i < constraints.length; i++) {
+            var val = constraints[i];
+            if (val.type == "int") {
+                stmt.setInt(counter, val.value);
+            }
+            else if (val.type == "float") {
+                stmt.setFloat(counter, val.value);
+            }
+            else if (val.type == "date") {
+                stmt.setString(counter, val.value);
+            }
+            else if (val.type == "datetime") {
+                stmt.setString(counter, val.value);
+            } else {
+                stmt.setString(counter, val.value);
+            }
+            counter++;
+        }
+
+        var rs = stmt.executeQuery();
+        var columnCount = rs.getMetaData().getColumnCount();
+        var retorno = [];
+
+        while (rs.next()) {
+            var linha = {};
+            for (var j = 1; j < columnCount + 1; j++) {
+                linha[rs.getMetaData().getColumnName(j)] = rs.getObject(rs.getMetaData().getColumnName(j)).toString() + "";
+            }
+            retorno.push(linha);
+        }
+
+        return retorno;
+
+    } catch (e) {
+        log.error("ERRO==============> " + e.message);
+        throw e;
+    } finally {
+        if (stmt != null) {
+            stmt.close();
+        }
+        if (conn != null) {
+            conn.close();
+        }
+    }
 }

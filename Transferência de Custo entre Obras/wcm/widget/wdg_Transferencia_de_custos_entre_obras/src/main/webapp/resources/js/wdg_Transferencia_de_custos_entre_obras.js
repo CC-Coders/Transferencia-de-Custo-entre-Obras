@@ -424,8 +424,161 @@ function loadBarChart() {
         .attr("transform", `translate(${margin.left},0)`)
         .call(d3.axisLeft(y));
 }
+function loadMultiLineChart(id, datasets, colorList) {
+    // Example datasets if not provided
+    if (!datasets) {
+        datasets = [
+            {
+                name: "Série 1",
+                values: [
+                    { date: new Date(2025, 0, 1), value: 30 },
+                    { date: new Date(2025, 1, 1), value: 80 },
+                    { date: new Date(2025, 2, 1), value: 45 },
+                    { date: new Date(2025, 3, 1), value: 60 },
+                    { date: new Date(2025, 4, 1), value: 20 },
+                    { date: new Date(2025, 5, 1), value: 90 },
+                    { date: new Date(2025, 6, 1), value: 55 }
+                ]
+            },
+            {
+                name: "Série 2",
+                values: [
+                    { date: new Date(2025, 0, 1), value: 50 },
+                    { date: new Date(2025, 1, 1), value: 60 },
+                    { date: new Date(2025, 2, 1), value: 35 },
+                    { date: new Date(2025, 3, 1), value: 80 },
+                    { date: new Date(2025, 4, 1), value: 40 },
+                    { date: new Date(2025, 5, 1), value: 70 },
+                    { date: new Date(2025, 6, 1), value: 65 }
+                ]
+            }
+        ];
+    }
+    if (!colorList) colorList = ["#008000", "#dd0426", "#38b000", "#ad2831"];
 
-function loadGroupedBarChart(id, data, groupKeys, colors) {
+    // Defensive: ensure all dates are Date objects
+    datasets.forEach(serie => {
+        serie.values.forEach(point => {
+            if (!(point.date instanceof Date)) {
+                // Try to parse string date (YYYY-MM-DD or similar)
+                if (typeof point.date === 'string') {
+                    let d = new Date(point.date);
+                    if (!isNaN(d)) {
+                        point.date = d;
+                    }
+                }
+            }
+        });
+    });
+
+    const width = $("#" + id).closest("div").width() || 350;
+    const height = 320;
+    const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+
+    d3.select("#" + id).selectAll("*").remove();
+
+    const svg = d3.select("#" + id)
+        .attr("width", width)
+        .attr("height", height);
+
+    // Flatten all values to get global x/y domains
+    const allValues = datasets.flatMap(d => d.values);
+
+    const x = d3.scaleTime()
+        .domain(d3.extent(allValues, d => d.date))
+        .range([margin.left, width - margin.right]);
+
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(allValues, d => d.value)]).nice()
+        .range([height - margin.bottom, margin.top]);
+
+    // Horizontal grid lines (Y)
+    svg.append("g")
+        .attr("class", "grid grid-y")
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(
+            d3.axisLeft(y)
+                .ticks(6)
+                .tickSize(-width + margin.left + margin.right)
+                .tickFormat("")
+        )
+        .selectAll("line")
+        .attr("stroke", "#e0e0e0")
+        .attr("stroke-dasharray", "2,2");
+
+    // Vertical grid lines (X)
+    svg.append("g")
+        .attr("class", "grid grid-x")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(
+            d3.axisBottom(x)
+                .ticks(6)
+                .tickSize(-height + margin.top + margin.bottom)
+                .tickFormat("")
+        )
+        .selectAll("line")
+        .attr("stroke", "#e0e0e0")
+        .attr("stroke-dasharray", "2,2");
+
+    // Color scale
+    const color = d3.scaleOrdinal()
+        .domain(datasets.map(d => d.name))
+        .range(colorList);
+
+    // Line generator
+    const line = d3.line()
+        .x(d => x(d.date))
+        .y(d => y(d.value));
+
+    // Draw lines
+    datasets.forEach((serie, i) => {
+        svg.append("path")
+            .datum(serie.values)
+            .attr("fill", "none")
+            .attr("stroke", color(serie.name))
+            .attr("stroke-width", 2)
+            .attr("d", line);
+
+        // Draw points
+        svg.selectAll(".point-" + i)
+            .data(serie.values)
+            .join("circle")
+            .attr("class", "point-" + i)
+            .attr("cx", d => x(d.date))
+            .attr("cy", d => y(d.value))
+            .attr("r", 4)
+            .attr("fill", color(serie.name));
+    });
+
+    // X Axis
+    svg.append("g")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat("%b/%y")));
+
+    // Y Axis
+    svg.append("g")
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y));
+
+    // Legend
+    const legend = svg.append("g")
+        .attr("transform", `translate(${width - margin.right - 100},${margin.top})`);
+
+    datasets.forEach((serie, i) => {
+        const legendRow = legend.append("g")
+            .attr("transform", `translate(0,${i * 20})`);
+        legendRow.append("rect")
+            .attr("width", 15)
+            .attr("height", 15)
+            .attr("fill", color(serie.name));
+        legendRow.append("text")
+            .attr("x", 20)
+            .attr("y", 12)
+            .attr("fill", "#333")
+            .text(serie.name);
+    });
+}
+function loadGroupedBarChart(id, data, groupKeys, colors) { 
     // Example data if not provided
     if (!data) {
         data = [
@@ -435,7 +588,7 @@ function loadGroupedBarChart(id, data, groupKeys, colors) {
             { group: "D", value1: 60, value2: 40 }
         ];
         groupKeys = ["value1", "value2"];
-        colors = ["#007bff", "#ff8000"];
+        colors = ["#38b000", "#a50104"];
     }
 
     const width = $("#" + id).closest("div").width();
@@ -612,6 +765,7 @@ function alimentaCharts() {
     ];
     loadChart1("chart1", envioAcumuladoPorObra, colorsEnvio);
     loadChart1("chart2", recebimentoAcumuladoPorObra, colorsRecebimento);
+    loadMultiLineChart("chart5");
 }
 function abreModalTransferencia(idSolicitacao) {
     var ds = DatasetFactory.getDataset("dsTransferenciaDeCustoEntreObras", null, [
@@ -768,6 +922,7 @@ function showMessage(title, message, type) {
         type: type
     });
 }
+
 
 
 function toggleDarkMode() {

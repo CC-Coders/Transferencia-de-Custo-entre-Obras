@@ -184,8 +184,17 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <svg id="chart5" width="250" height="250"></svg>
+                    <svg id="legendchart5" width="250" height="50"></svg>
+                </div>
+            </div>
+
         </div>
         <br>
+
+
 
         <div id="tableWraper" class="dashboard">
             <div style="text-align: center;">

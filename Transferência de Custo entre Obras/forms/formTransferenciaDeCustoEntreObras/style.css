@@ -51,6 +51,14 @@
     border-radius: 50%;
 }
 
+.iconStonks{
+    color: green;
+}
+.iconNotStonks{
+    color: red;
+    transform: rotate(90deg);
+}
+
 
 
 

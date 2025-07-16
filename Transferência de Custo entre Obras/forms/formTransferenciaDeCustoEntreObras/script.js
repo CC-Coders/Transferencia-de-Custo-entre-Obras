@@ -1,6 +1,6 @@
 var listaProdutos = null;
 var htmlListProdutos = null;
-var listUnidadesMedida = [];
+var listUnidadesMedida = ["H","KG","L","M","M2","M3","DIA","MÊS","PC","SC","T","UN"];
 const ATIVIDADES = {
     INICIO_0: 0,
     INICIO: 4,
@@ -11,6 +11,19 @@ const ATIVIDADES = {
     LANCA_TRANSFENCIA: 26,
     FIM: 28,
 };
+const listaTiposTransferencia = {
+    CUSTO:[
+        "Equipamento",
+        "Mão de Obra",
+        "Prestação de Serviço",
+        "Insumos",
+    ],
+    RECEITA:[
+        "Receita"
+    ],
+}
+
+
 $(document).ready(function () {
     const atividadeAtual = $("#atividade").val();
     const formMode = $("#formMode").val();
@@ -25,9 +38,9 @@ $(document).ready(function () {
             $("#spanIDMOV_ORIGEM").text("Identificador: " + $("#IDMOV_ORIGEM").val());
             $("#spanIDMOV_DESTINO").text("Identificador: " + $("#IDMOV_DESTINO").val());
         }
+        $("#divObservacaoAprovacao, #divOpcoesAprovacao").hide();
         return;
     }
-
 
     if (atividadeAtual == ATIVIDADES.INICIO_0) {
         loadAtividadeInicio();
@@ -44,7 +57,6 @@ $(document).ready(function () {
 
 function init() {
     FLUIGC.calendar('#dataCompetencia');
-    consultaUnidadesDeMedida();
 }
 function bindings() {
     $(".panelTransferencia .panel-heading").on("click", function () {
@@ -56,11 +68,6 @@ function bindings() {
     $("#btnAdicionarTransferencia").on("click", function () {
         adicionaNovaTransferencia();
     });
-    $("#motivoTransferencia, #ccustoObraOrigem, #ccustoObraDestino, #textMotivoTransferencia").on("change", function () {
-        if ($("#motivoTransferencia").val() != "" && $("#ccustoObraOrigem").val() != "" && $("#ccustoObraDestino").val() != "" && $("#textMotivoTransferencia").val() != "") {
-            $("#divItensTransferencia").slideDown(1000);
-        }
-    });
     $("#btnEnviarSolicitacao").on("click", function () {
         parent.$("#send-process-button").click();
     });
@@ -71,10 +78,8 @@ function bindings() {
             aprovaObraOrigem();
         }
         else if (atividadeAtual == ATIVIDADES.APROVADOR_DESTINO) {
-
+            aprovaObraDestino();
         }
-
-
 
         parent.$("#send-process-button").click();
 
@@ -94,8 +99,22 @@ function bindings() {
                 $("#aprovadoDiretorObraOrigem").val("true");
             }
         }
+        function aprovaObraDestino() {
+            var aprovador = $("#usuarioAprovadorDestino").val();
+            var engenheiroObraDestino = $("#engenheiroObraDestino").val();
+            var coordenadorObrDestino = $("#coordenadorObraDestino").val();
+            var diretorObraOriDestino = $("#diretorObraDestino").val();
 
-
+            if (aprovador == engenheiroObraDestino) {
+                $("#aprovadoEngenheiroObraDestino").val("true");
+            } 
+            else if (aprovador == coordenadorObrDestino) {
+                $("#aprovadoCoordenadorObraDestino").val("true");
+            }
+            else if (aprovador == diretorObraOriDestino) {
+                $("#aprovadoDiretorObraDestino").val("true");
+            }
+        }
     });
     $("#btnReprovar").on("click", function () {
         $("#decisao").val("Reprovado");
@@ -119,7 +138,9 @@ function loadAtividadeInicio() {
 
     $('#ccustoObraOrigem').selectize({
         onChange: async function (value, isOnInitialize) {
-            var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra("1", value.split(" - ")[2], "1.1.02", "9999999999999"));
+            var CODCOLIGADA = value.split(" - ")[0];
+            var perfil = value.split(" - ")[2];
+            var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra(CODCOLIGADA, perfil, "1.1.02", "9999999999999"));
             $("#engenheiroObraOrigem").val(aprovadores.engenherio);
             $("#coordenadorObraOrigem").val(aprovadores.coordenador);
             $("#diretorObraOrigem").val(aprovadores.diretor);
@@ -133,7 +154,9 @@ function loadAtividadeInicio() {
     });
     $('#ccustoObraDestino').selectize({
         onChange: async function (value, isOnInitialize) {
-            var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra("1", value.split(" - ")[2], "1.1.02", "9999999999999"));
+            var CODCOLIGADA = value.split(" - ")[0];
+            var perfil = value.split(" - ")[2];
+            var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra(CODCOLIGADA, perfil, "1.1.02", "9999999999999"));
             $("#engenheiroObraDestino").val(aprovadores.engenherio);
             $("#coordenadorObraDestino").val(aprovadores.coordenador);
             $("#diretorObraDestino").val(aprovadores.diretor);
@@ -158,7 +181,7 @@ function loadAtividadeAjuste() {
 
     geraTabelaHistorico();
     marcaEmVerdeAprovados();
-
+    alteraIconesECorDosValores();
     preencheCamposDeObras();
     loadListaItens().then(() => {
         updateCounterRowsTableItens();
@@ -241,7 +264,7 @@ function loadAtividadesAprovacao() {
 
     updateCounterRowsTableItens();
     carregaTabelaItensDasTransferencias();
-
+    alteraIconesECorDosValores();
     $(".panelTransferencia:last>.panel-heading").click();
 
     $(".motivoTransferencia").each(function () {
@@ -258,6 +281,7 @@ function loadAtividadesAprovacao() {
     $(".textMotivoTransferencia, .motivoTransferencia").attr("readonly", "readonly");
     $("#btnAdicionarTransferencia").hide();
 
+    escondeDiretoresSeValorNoLimiteDoCoordenador();
     geraTabelaHistorico();
     marcaEmVerdeAprovados();
 }
@@ -308,6 +332,10 @@ function validaPreenchimentoForm() {
     }
     if ($("#ccustoObraDestino").val() == "") {
         retorno.push("Informar a Obra de Destino.");
+    }
+
+    if ($("#ccustoObraOrigem").val() == $("#ccustoObraDestino").val()) {
+        retorno.push("Não é possível fazer Transferência entre o Mesmo Centro de Custo");
     }
 
     var rows = $("#tableTransferencias>tbody>tr:not(:first)");

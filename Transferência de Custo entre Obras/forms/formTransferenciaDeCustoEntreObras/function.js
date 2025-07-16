@@ -111,11 +111,21 @@ function marcaEmVerdeAprovados() {
         $("#diretorObraDestino").css("background-color", "lightgreen");
         $("#diretorObraDestino").css("color", "black");
     }
-
-
-
-
-
+}
+function alteraIconesECorDosValores(){
+    var isTipoCusto = $("#TRANSFERE_CUSTO").val() == "true";
+    var isTipoReceita = $("#TRANSFERE_RECEITA").val() == "true";
+    if (isTipoCusto) {
+            $("#iconObraDestino").removeClass("iconStonks").addClass("iconNotStonks");
+            $("#iconObraOrigem").removeClass("iconNotStonks").addClass("iconStonks");
+            $("#valorObraOrigem").attr("style", "color: green !important");
+            $("#valorObraDestino").attr("style", "color: red !important");
+    }else if(isTipoReceita){
+         $("#iconObraOrigem").removeClass("iconStonks").addClass("iconNotStonks");
+            $("#iconObraDestino").removeClass("iconNotStonks").addClass("iconStonks");
+            $("#valorObraDestino").attr("style", "color: green !important");
+            $("#valorObraOrigem").attr("style", "color: red !important");
+    }
 }
 
 
@@ -124,8 +134,37 @@ function adicionaNovaTransferencia() {
     var id = wdkAddChild("tableTransferencias");
 
     $("#motivoTransferencia" + "___" + id).on("change", function () {
+        var isTipoCusto = listaTiposTransferencia.CUSTO.includes($(this).val());
+
+        var temTipoSelecionado = $("#tableTransferencias>tbody>tr:not(:first)").find(`.motivoTransferencia`).filter(function() {
+            return $(this).val();
+        }).length > 1;
+
+        if (isTipoCusto && $("#TRANSFERE_RECEITA").val() == "true" && temTipoSelecionado) {
+            showMessage("Não é Possível selecionar Tipos de CUSTO e RECEITA em uma mesma Solicitação.","","warning");
+            $(this).val("");
+            $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text("");
+            return;
+        }
+        if (!isTipoCusto && $("#TRANSFERE_CUSTO").val() == "true" && temTipoSelecionado) {
+            showMessage("Não é Possível selecionar Tipos de CUSTO e RECEITA em uma mesma Solicitação.","","warning");
+            $(this).val("");
+            $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text("");
+            return;
+        }
+
         $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text($(this).val());
         salvaItensDasTransferenciasNoCampoHidden();
+
+        if (isTipoCusto) {
+            $("#TRANSFERE_CUSTO").val("true");
+            $("#TRANSFERE_RECEITA").val("");
+            alteraIconesECorDosValores();
+        }else{
+            $("#TRANSFERE_CUSTO").val("");
+            $("#TRANSFERE_RECEITA").val("true");
+            alteraIconesECorDosValores();
+        }
     });
     $(".panelTransferencia:last .panel-heading").on("click", function () {
         $(".panelTransferencia:not(:first)").not($(this).closest(".panelTransferencia")).find(".panel-heading").find(".iconarrow").addClass("flaticon-chevron-up").removeClass("flaticon-chevron-down");
@@ -209,7 +248,7 @@ function criaLinhaItem(target, values = null, readonly) {
                     <input type="text" class="form-control itemQuantidade" value="${itemQuantidade}" ${textReadonly}>
                     <select type="text" class="form-control itemUN" value="${itemUN}" ${textReadonly} placeholder="UN">
                         <option></option>
-                        ${listUnidadesMedida.map(e => `<option ${e.CODUND == itemUN ? "selected" : ""}>${e.CODUND}</option>`)}
+                        ${listUnidadesMedida.map(e => `<option ${e == itemUN ? "selected" : ""}>${e}</option>`).join("")}
                     </select>
                 </div>
             </td>
@@ -241,7 +280,7 @@ function criaLinhaItem(target, values = null, readonly) {
         $(target).find(".itemProduto").selectize();
         $(target).find(".itemProduto").on("change", function () {
             var value = $(this).val();
-            var UN = listaProdutos.find(e => e.VISUAL == value);
+            var UN = listaProdutos.find(e => e == value);
             if (UN) {
                 $(this).closest("tr").find(".itemUN").val(UN.CODUNDCONTROLE);
             }
@@ -438,15 +477,15 @@ function atualizaValorTotal() {
     $("#valorObraOrigem").val("- " + floatToMoney(valorTotal));
     $("#valorObraDestino").val(floatToMoney(valorTotal));
     $("#valorTotal").val(valorTotal);
-
+    escondeDiretoresSeValorNoLimiteDoCoordenador();
+}
+function escondeDiretoresSeValorNoLimiteDoCoordenador(){
+    var valorTotal = parseFloat($("#valorTotal").val());
     if (valorTotal < 200000) {
         $("#diretorObraOrigem, #diretorObraDestino").closest("div").hide();
     }
 }
-function consultaUnidadesDeMedida() {
-    var ds = DatasetFactory.getDataset("ds_UnidadesMedida", null, null, null);
-    listUnidadesMedida = ds.values;
-}
+
 function movimentaAtividadeParaReprovacao() {
     var processId = $("#numProces").val();
     $.ajax({

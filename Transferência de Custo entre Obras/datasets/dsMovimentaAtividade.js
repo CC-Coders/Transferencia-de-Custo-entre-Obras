@@ -47,6 +47,7 @@ function movimentaAtividades(numProces, movementSequence, assignee, targetState)
             "formFields": {
                 "aprovadoObraDestino":"Reprovado",
                 "aprovadoObraOrigem":"Reprovado",
+                "decisao":"Reprovado Automaticamente",
             }
         },
         options: {

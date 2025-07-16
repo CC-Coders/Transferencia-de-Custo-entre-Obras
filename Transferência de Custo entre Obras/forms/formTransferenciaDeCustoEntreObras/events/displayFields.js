@@ -26,6 +26,9 @@ function displayFields(form,customHTML){
         form.setValue("solicitante", USUARIO);
         form.setValue("dataCompetencia", dataHoje.split("-").reverse().join("/"));
     }
+
+
+    form.setValue("textObservacao","");
 }
 
 

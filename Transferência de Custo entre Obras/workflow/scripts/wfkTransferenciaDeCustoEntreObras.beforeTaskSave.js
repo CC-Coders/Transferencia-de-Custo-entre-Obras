@@ -52,7 +52,7 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {
             else if(ATIVIDADE == ATIVIDADES.APROVADOR_ORIGEM){
                 verificaSeAprovadorTambemAprovaObraDestino();
             }
-        } 
+        }
 
         // Se reprovado marca a Reprovacao nas Duas Obras para Retornar ao Inicio
         if(decisao == "Reprovado") {
@@ -67,8 +67,6 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {
         }
     }
 }
-
-
 
 
 // Verifica Aprovadores em comum entre Obra Origem e Destino
@@ -87,7 +85,7 @@ function verificaSeAprovadorTambemAprovaObraDestino(){
             if (aprovador == coordenadorObraDestino) {
                 hAPI.setCardValue("aprovadoCoordenadorObraDestino", "true");
             }
-            if (diretorObraOrigem == diretorObraDestino) {
+            if (aprovador == diretorObraDestino) {
                 hAPI.setCardValue("aprovadoDiretorObraDestino", "true");
             }
 }

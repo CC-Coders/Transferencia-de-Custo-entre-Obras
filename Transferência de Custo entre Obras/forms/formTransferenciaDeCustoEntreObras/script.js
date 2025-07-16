@@ -1,5 +1,6 @@
 var listaProdutos = null;
 var htmlListProdutos = null;
+var listUnidadesMedida = [];
 const ATIVIDADES = {
     INICIO_0: 0,
     INICIO: 4,
@@ -8,25 +9,24 @@ const ATIVIDADES = {
     APROVADOR_ORIGEM: 5,
     DEFINE_APROVADOR_ORIGEM: 10,
     LANCA_TRANSFENCIA: 26,
+    FIM: 28,
 };
 $(document).ready(function () {
     const atividadeAtual = $("#atividade").val();
     const formMode = $("#formMode").val();
-    if (formMode == "VIEW") {
-        $(".panelTransferencia .panel-heading").on("click", function () {
-            $(".panelTransferencia .panel-heading").not(this).siblings(".panel-body").slideUp();
-            $(".panelTransferencia .panel-heading").not(this).find(".flaticon").addClass("flaticon-chevron-up").removeClass("flaticon-chevron-down");
-            $(this).siblings(".panel-body").slideToggle();
-            $(this).find(".flaticon").toggleClass("flaticon-chevron-up").toggleClass("flaticon-chevron-down");
-        });
-        // $(".panelTransferencia:last>.panel-heading").click();
-        loadAtividadesAprovacao();
-
-        return;
-    }
-
+    
     init();
     bindings();
+
+    if (formMode == "VIEW") {
+        loadAtividadesAprovacao();
+
+        if (atividadeAtual == ATIVIDADES.FIM) {
+            $("#spanIDMOV_ORIGEM").text("Identificador: " + $("#IDMOV_ORIGEM").val());
+            $("#spanIDMOV_DESTINO").text("Identificador: " + $("#IDMOV_DESTINO").val());
+        }
+        return;
+    }
 
 
     if (atividadeAtual == ATIVIDADES.INICIO_0) {
@@ -44,33 +44,58 @@ $(document).ready(function () {
 
 function init() {
     FLUIGC.calendar('#dataCompetencia');
+    consultaUnidadesDeMedida();
 }
 function bindings() {
     $(".panelTransferencia .panel-heading").on("click", function () {
         $(".panelTransferencia .panel-heading").not(this).siblings(".panel-body").slideUp();
-        $(".panelTransferencia .panel-heading").not(this).find(".flaticon").addClass("flaticon-chevron-up").removeClass("flaticon-chevron-down");
+        $(".panelTransferencia .panel-heading").not(this).find(".iconarrow").addClass("flaticon-chevron-up").removeClass("flaticon-chevron-down");
         $(this).siblings(".panel-body").slideToggle();
-        $(this).find(".flaticon").toggleClass("flaticon-chevron-up").toggleClass("flaticon-chevron-down");
+        $(this).find(".iconarrow").toggleClass("flaticon-chevron-up").toggleClass("flaticon-chevron-down");
     });
-
     $("#btnAdicionarTransferencia").on("click", function () {
         adicionaNovaTransferencia();
     });
-
-
     $("#motivoTransferencia, #ccustoObraOrigem, #ccustoObraDestino, #textMotivoTransferencia").on("change", function () {
         if ($("#motivoTransferencia").val() != "" && $("#ccustoObraOrigem").val() != "" && $("#ccustoObraDestino").val() != "" && $("#textMotivoTransferencia").val() != "") {
             $("#divItensTransferencia").slideDown(1000);
         }
     });
-
-
     $("#btnEnviarSolicitacao").on("click", function () {
         parent.$("#send-process-button").click();
     });
     $("#btnAprovar").on("click", function () {
         $("#decisao").val("Aprovado");
+        const atividadeAtual = $("#atividade").val();
+        if (atividadeAtual == ATIVIDADES.APROVADOR_ORIGEM) {
+            aprovaObraOrigem();
+        }
+        else if (atividadeAtual == ATIVIDADES.APROVADOR_DESTINO) {
+
+        }
+
+
+
         parent.$("#send-process-button").click();
+
+        function aprovaObraOrigem() {
+            var aprovador = $("#usuarioAprovadorOrigem").val();
+            var engenheiroObraOrigem = $("#engenheiroObraOrigem").val();
+            var coordenadorObraOrigem = $("#coordenadorObraOrigem").val();
+            var diretorObraOrigem = $("#diretorObraOrigem").val();
+
+            if (aprovador == engenheiroObraOrigem) {
+                $("#aprovadoEngenheiroObraOrigem").val("true");
+            } 
+            else if (aprovador == coordenadorObraOrigem) {
+                $("#aprovadoCoordenadorObraOrigem").val("true");
+            }
+            else if (aprovador == diretorObraOrigem) {
+                $("#aprovadoDiretorObraOrigem").val("true");
+            }
+        }
+
+
     });
     $("#btnReprovar").on("click", function () {
         $("#decisao").val("Reprovado");
@@ -78,7 +103,6 @@ function bindings() {
         $("#aprovadoObraDestino").val("Reprovado");
         parent.$("#send-process-button").click();
     });
-
     $(".panelColapse>.panel-heading").on("click", function () {
         $(this).siblings(".panel-body").slideToggle();
     });
@@ -120,7 +144,6 @@ function loadAtividadeInicio() {
     $("input[autocomplete]").attr("autocomplete", "off");
 
 }
-
 function loadAtividadeAjuste() {
     setTimeout(() => {
         $("#header, #main, #footer").show("fade", 1500);
@@ -201,8 +224,6 @@ function loadAtividadeAjuste() {
         $("#decisao").val();
     }
 }
-
-
 function loadAtividadesAprovacao() {
     setTimeout(() => {
         $("#header, #main, #footer").show("fade", 1500);
@@ -232,6 +253,8 @@ function loadAtividadesAprovacao() {
         $(this).closest(".panelTransferencia").find(".spanValorTransferencia").text(val);
     });
 
+    $(".btnRemoverTransferencia").hide();
+
     $(".textMotivoTransferencia, .motivoTransferencia").attr("readonly", "readonly");
     $("#btnAdicionarTransferencia").hide();
 
@@ -247,9 +270,20 @@ var beforeSendValidate = function () {
     const atividadeAtual = $("#atividade").val();
     if (atividadeAtual == ATIVIDADES.INICIO || atividadeAtual == ATIVIDADES.INICIO_0) {
         valida = validaPreenchimentoForm();
+        if (valida) {
+            var valorTotal = parseFloat($("#valorTotal").val());
+            if (valorTotal < 200000) {
+                $("#diretorObraOrigem, #diretorObraDestino").val("");
+            }
+        }
     }
 
     if (atividadeAtual == ATIVIDADES.APROVADOR_DESTINO || atividadeAtual == ATIVIDADES.APROVADOR_ORIGEM) {
+        if ($("#decisao").val() == "") {
+            valida = false;
+            throw "Necessário selecionar a Aprovação.";
+        }
+
         if ($("#decisao").val() == "Reprovado" && $("#textObservacao").val() == "") {
             valida = false;
             throw "Necessário informar o motivo da Decisão.";
@@ -266,66 +300,71 @@ var beforeSendValidate = function () {
         return false;
     }
 };
-
 function validaPreenchimentoForm() {
-    return true;
     var retorno = [];
 
-    if ($("#motivoTransferencia").val() == "") {
-        retorno.push("Informar motivo da Transferência.");
+    if ($("#ccustoObraOrigem").val() == "") {
+        retorno.push("Informar a Obra de Origem.");
     }
+    if ($("#ccustoObraDestino").val() == "") {
+        retorno.push("Informar a Obra de Destino.");
+    }
+
+    var rows = $("#tableTransferencias>tbody>tr:not(:first)");
+    if (rows.length == 0) {
+        retorno.push("Necessário incluir pelo menos uma transferência");
+    }
+
+
+    var counter = 1;
+    for (const row of rows) {
+        if ($(row).find(".motivoTransferencia").val() == "") {
+            retorno.push("Informar o Tipo da Transferência " + counter);
+        }
+
+        if ($(row).find(".textMotivoTransferencia").val() == "") {
+            retorno.push("Informar a Justificativa da Transferência " + counter);
+        }
+
+
+        var rowsItens = $(row).find(".tableItens>tbody>tr");
+        if (rowsItens.length == 0) {
+            retorno.push("Necessário incluir pelo menos um Item na Transferêcia " + counter);
+        }
+
+        var counterItem = 1;
+        for (const rowItem of rowsItens) {
+            if ($(rowItem).find(".itemProduto").val() == "") {
+                retorno.push(`Informar o "Produto" do Item ${counterItem} na Transferência ${counter}`);
+            }
+            if ($(rowItem).find(".itemDescricao").val() == "") {
+                retorno.push(`Informar a "Descrição" do Item ${counterItem} na Transferência ${counter}`);
+            }
+            if ($(rowItem).find(".itemQuantidade").val() == "") {
+                retorno.push(`Informar a "Quantidade" do Item ${counterItem} na Transferência ${counter}`);
+            }
+            if ($(rowItem).find(".itemUN").val() == "") {
+                retorno.push(`Informar a "Unidade de Medida" do Item ${counterItem} na Transferência ${counter}`);
+            }
+            if ($(rowItem).find(".itemValorUnit").val() == "") {
+                retorno.push(`Informar o "Valor Unitário" do Item ${counterItem} na Transferência ${counter}`);
+            }
+            counterItem++;
+        }
+
+
+        counter++;
+    }
+
+
     if ($("#dataCompetencia").val() == "") {
         retorno.push("Informar a Data de Competência.");
     }
-    if ($("#textMotivoTransferencia").val() == "") {
-        retorno.push("Informar motivo da Transferência.");
-    }
+
 
     if (retorno.length == 0) {
         return true;
     } else {
         return retorno.map(e => `<li>${e}</li>`).join("");
     }
-}
-
-function movimentaAtividadeParaReprovacao() {
-    var processId = $("#numProces").val();
-    $.ajax({
-        url: '/process-management/api/v2/activities?processInstanceId=' + processId + '&active=true',
-        type: 'get',
-        success: result => {
-            var sequence = null;
-            var targetState = null;
-
-            if ($("#atividade").val() == ATIVIDADES.APROVADOR_ORIGEM) {
-                targetState = 37;
-                for (const task of result.items) {
-                    if (task.state.sequence == ATIVIDADES.APROVADOR_DESTINO) {
-                        sequence = task.movementSequence;
-                    }
-                }
-            } else if ($("#atividade").val() == ATIVIDADES.APROVADOR_DESTINO) {
-                targetState = 36;
-                for (const task of result.items) {
-                    if (task.state.sequence == ATIVIDADES.APROVADOR_ORIGEM) {
-                        sequence = task.movementSequence;
-                    }
-                }
-            }
-
-            DatasetFactory.getDataset("dsMovimentaAtividade", null, [
-                DatasetFactory.createConstraint("numProces", processId, "", ConstraintType.MUST),
-                DatasetFactory.createConstraint("movementSequence", sequence, "", ConstraintType.MUST),
-                DatasetFactory.createConstraint("assignee", $("#usuarioAprovadorDestino").val(), "", ConstraintType.MUST),
-                DatasetFactory.createConstraint("targetState", targetState, "", ConstraintType.MUST),
-            ], null, {
-                success: ds => {
-
-                }, error: e => {
-
-                }
-            });
-        }
-
-    });
 }

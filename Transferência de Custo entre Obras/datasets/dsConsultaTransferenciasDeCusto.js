@@ -3,23 +3,55 @@ function createDataset(fields, constraints, sortFields) {
         var constraints = getConstraints(constraints);
         // lancaErroSeConstraintsObrigatoriasNaoInformadas(constraints, ["IDMOV"]);
 
-        var query =
-            "SELECT " +
-            "ID_SOLICITACAO, " +
-            "CODCOLIGADA_ORIGEM, " +
-            "CCUSTO_ORIGEM, " +
-            "CODCOLIGADA_DESTINO, " +
-            "CCUSTO_DESTINO, " +
-            "SOLICITANTE, " +
-            "VALOR, " +
-            "OBSERVACAO, " +
-            "DATA_SOLICITACAO, " +
-            "DATA_COMPETENCIA, " +
-            "STATUS " +
-            "FROM TRANSFERENCIAS_DE_CUSTO "+
-            "INNER JOIN CastilhoRM.GCCUSTO"
+        var query = "";
+        query += "SELECT ";
+        query += "      ID_SOLICITACAO,  ";
+        query += "      CODCOLIGADA_ORIGEM,  ";
+        query += "      CCUSTO_ORIGEM,  ";
+        query += "      CODCOLIGADA_DESTINO,  ";
+        query += "      CCUSTO_DESTINO,  ";
+        query += "      SOLICITANTE,  ";
+        query += "      TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA.VALOR,  ";
+        query += "      OBSERVACAO,  ";
+        query += "      DATA_SOLICITACAO,  ";
+        query += "      DATA_COMPETENCIA,  ";
+        query += "      DATA_COMPETENCIA,  ";
+        query += "      DATA_COMPETENCIA,  ";
+        query += "      TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA.TRANSFERE_CUSTO, ";
+        query += "	    TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA.TRANSFERE_RECEITA, ";
+        query += "	    TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA.TIPO, ";
+        query += "	    TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA.ID as ID_TRANSFERENCIA, ";
+        query += "      STATUS  ";
+        query += "FROM TRANSFERENCIAS_DE_CUSTO ";
+        query += "INNER JOIN  TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA ON TRANSFERENCIAS_DE_CUSTO.ID = TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA.ID_TRANSFERENCIA ";
+        query += "WHERE 1=1 ";
 
-        var retorno = executaQuery(query, []);
+        var queryConstraints = [];
+
+        if (constraints.CODCOLIGADA_DESTINO) {
+            query += "AND CODCOLIGADA_DESTINO = ? ";
+            queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_DESTINO});
+        }
+        if (constraints.CODCOLIGADA_ORIGEM) {
+            query += "AND (CODCOLIGADA_ORIGEM = ? OR  CODCOLIGADA_DESTINO = ?) ";
+            queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_ORIGEM});
+            queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_ORIGEM});
+        }
+        if (constraints.CCUSTO_ORIGEM) {
+            query += "AND (CCUSTO_ORIGEM = ? OR CCUSTO_DESTINO = ?) ";
+            queryConstraints.push({type:"varchar", value: constraints.CCUSTO_ORIGEM});
+            queryConstraints.push({type:"varchar", value: constraints.CCUSTO_ORIGEM});
+        }
+        if (constraints.CCUSTO_DESTINO) {
+            query += "AND CCUSTO_DESTINO = ? ";
+            queryConstraints.push({type:"varchar", value: constraints.CCUSTO_DESTINO});
+        }
+        if (constraints.STATUS) {
+            query += "AND STATUS  =  ?";
+            queryConstraints.push({type:"int", value: constraints.STATUS});
+        }
+
+        var retorno = executaQuery(query, queryConstraints);
 
         return returnDataset("SUCCESS", "", JSON.stringify(retorno));
 
@@ -114,7 +146,7 @@ function executaQuery(query, constraints) {
         while (rs.next()) {
             var linha = {};
             for (var j = 1; j < columnCount + 1; j++) {
-                linha[rs.getMetaData().getColumnName(j)] = rs.getObject(rs.getMetaData().getColumnName(j)).toString() + "";
+                linha[rs.getMetaData().getColumnName(j)] = rs.getObject(rs.getMetaData().getColumnName(j)) + "";
             }
             retorno.push(linha);
         }

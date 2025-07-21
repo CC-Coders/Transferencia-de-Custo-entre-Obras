@@ -136,10 +136,9 @@ function insereNovoRegistro() {
         "   VALOR, " +
         "   OBSERVACAO, " +
         "   DATA_SOLICITACAO, " +
-        "   DATA_COMPETENCIA, " +
         "   STATUS)" +
         " VALUES " +
-        "(?,?,?,?,?,?,?,?,SYSDATETIME(),?,?)";
+        "(?,?,?,?,?,?,?,?,SYSDATETIME(),?)";
 
     return executaUpdate(query, [
         { type: "int", value: numProces },
@@ -150,7 +149,6 @@ function insereNovoRegistro() {
         { type: "varchar", value: SOLICITANTE },
         { type: "float", value: VALOR },
         { type: "varchar", value: OBSERVACAO },
-        { type: "date", value: DATA_COMPETENCIA },
         { type: "int", value: STATUS_TRANSFENCIA.EM_APROVACAO },
     ]);
 }
@@ -205,6 +203,9 @@ function insereTransferencias(ID_PAI) {
         var valor = moneyToFloat(hAPI.getCardValue("valorTotalTransferencia" + "___" + id));
         var itens = JSON.parse(hAPI.getCardValue("listItensTransferencia" + "___" + id));
 
+        var TRANSFERE_CUSTO = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? 1:0;
+        var TRANSFERE_RECEITA = hAPI.getCardValue("TRANSFERE_RECEITA") == "true" ? 1:0;
+
         var query = "INSERT INTO TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA (ID_TRANSFERENCIA, TIPO, VALOR, JUSTIFICATIVA, TRANSFERE_CUSTO, TRANSFERE_RECEITA) VALUES (?,?,?,?,?,?)";
 
         var ID_TRANSFERENCIA = executaUpdate(query, [
@@ -212,8 +213,8 @@ function insereTransferencias(ID_PAI) {
             { type: "varchar", value: tipo },
             { type: "varchar", value: valor },
             { type: "varchar", value: motivo },
-            { type: "int", value: 1 },
-            { type: "int", value: 0 },
+            { type: "int", value: TRANSFERE_CUSTO },
+            { type: "int", value: TRANSFERE_RECEITA },
         ]);
 
         for (var j = 0; j < itens.length; j++) {

@@ -74,12 +74,12 @@ function bindings() {
     $("#btnAprovar").on("click", function () {
         $("#decisao").val("Aprovado");
         const atividadeAtual = $("#atividade").val();
-        if (atividadeAtual == ATIVIDADES.APROVADOR_ORIGEM) {
-            aprovaObraOrigem();
-        }
-        else if (atividadeAtual == ATIVIDADES.APROVADOR_DESTINO) {
-            aprovaObraDestino();
-        }
+        // if (atividadeAtual == ATIVIDADES.APROVADOR_ORIGEM) {
+        //     aprovaObraOrigem();
+        // }
+        // else if (atividadeAtual == ATIVIDADES.APROVADOR_DESTINO) {
+        //     aprovaObraDestino();
+        // }
 
         parent.$("#send-process-button").click();
 

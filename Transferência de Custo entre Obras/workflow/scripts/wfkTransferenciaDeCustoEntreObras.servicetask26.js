@@ -26,9 +26,11 @@ function servicetask26(attempt, message) {
     hAPI.setCardValue("IDMOV_DESTINO", idmov);
 
 
+    updateDataCompetencia();
     atualizaStatusTransferencia(STATUS_TRANSFENCIA.APROVADO);
 }
 
+// Gera 1.1.93
 function getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO) {
     if (CODCOLIGADA_ORIGEM == CODCOLIGADA_DESTINO) {
         // Se transferencia entre Centro de Custo
@@ -70,6 +72,19 @@ function buscaIdDoProduto(CODCOLIGADA, CODIGOPRD) {
         { type: "varchar", value: CODIGOPRD },
     ], "/jdbc/FluigRM");
 }
+function buscaLocalEstoquePorNome(CODCOLIGADA, CODFILIAL, NOME) {
+    var ds = DatasetFactory.getDataset("LocalRM", null, [
+        DatasetFactory.createConstraint("clg", CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST),
+        DatasetFactory.createConstraint("cdFl", CODFILIAL, CODFILIAL, ConstraintType.MUST),
+    ], null);
+
+    for (var i = 0; i < ds.values.length; i++) {
+        var nomeLocalEstoque = ds.getValue(i, "nome");
+        if (NOME == nomeLocalEstoque) {
+            return ds.getValue(i, "codloc");
+        }
+    }
+}
 
 function geraMovimentos(CODCOLIGADA, CODCCUSTO, CODCOLIGADA_FORNECEDOR, NOMECCUSTO, PRODUTO) {
     var CODLOC = buscaLocalEstoquePorNome(CODCOLIGADA, 1, NOMECCUSTO);
@@ -91,9 +106,8 @@ function geraMovimentos(CODCOLIGADA, CODCCUSTO, CODCOLIGADA_FORNECEDOR, NOMECCUS
     return idmov;
 
 }
-
 function montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO) {
-    var URLFluig = getServerURL() + "portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=" + getValue("WKNumProces");
+    var URLFluig = getServerURL() + "/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=" + getValue("WKNumProces");
 
     var xml = "";
     xml += "<MovMovimento>";
@@ -205,6 +219,7 @@ function buscaCNPJDaColigada(CODCOLIGADA) {
     ], null);
     return ds.getValue(0, "CGC");
 }
+
 function ImportaMovimento(CODCOLIGADA, xml) {
     var ds = DatasetFactory.getDataset("ImportaMovRM", null, [
         DatasetFactory.createConstraint("xmlMov", xml, xml, ConstraintType.MUST),
@@ -224,25 +239,29 @@ function ImportaMovimento(CODCOLIGADA, xml) {
     }
 }
 
-function buscaLocalEstoquePorNome(CODCOLIGADA, CODFILIAL, NOME) {
-    var ds = DatasetFactory.getDataset("LocalRM", null, [
-        DatasetFactory.createConstraint("clg", CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST),
-        DatasetFactory.createConstraint("cdFl", CODFILIAL, CODFILIAL, ConstraintType.MUST),
-    ], null);
 
-    for (var i = 0; i < ds.values.length; i++) {
-        var nomeLocalEstoque = ds.getValue(i, "nome");
-        if (NOME == nomeLocalEstoque) {
-            return ds.getValue(i, "codloc");
-        }
-    }
-}
+
+
 function atualizaStatusTransferencia(STATUS) {
     var id = hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO");
 
     var query = "UPDATE TRANSFERENCIAS_DE_CUSTO SET STATUS = ? WHERE ID = ?";
     executaUpdate(query, [
         { type: "int", value: STATUS },
+        { type: "int", value: id },
+    ]);
+}
+function updateDataCompetencia(){
+    var date = getDateNow();
+    var id = hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO");
+
+    var query =
+        "UPDATE TRANSFERENCIAS_DE_CUSTO " +
+        "   SET DATA_COMPETENCIA = ? " +
+        "   WHERE ID = ? ";
+
+    return executaUpdate(query, [
+        { type: "varchar", value: date },
         { type: "int", value: id },
     ]);
 }

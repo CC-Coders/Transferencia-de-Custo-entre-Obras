@@ -1,5 +1,8 @@
 dataTableTransferencias = null;
+transferenciasETL = {};
 aprovacoesPendentes = [];
+obrasPermissaoUsuario = [];
+obrasPermissaoGeral = [];
 GCCUSTO = null;
 datatablesLanguage = {
     sEmptyTable: "Nenhum registro encontrado",
@@ -50,18 +53,19 @@ function init() {
     if (WCMAPI.isMobileAppMode()) {
         $("#dashboard").hide();
         $("#painelAprovacoes").show();
-    }else{
+    } else {
         $("#dashboard").show();
         $("#painelAprovacoes").hide();
         toggleDarkMode();
     }
 
     GCCUSTO = DatasetFactory.getDataset("GCCUSTO", null, null, null).values;
+    PreencheCamposFiltros();
     initDataTableTransferencias();
     consultaTransferencias();
     alimentaCharts();
-    atualizaChartProdutos();
-    buscaAprovacoesPendentesProUsuario("felipe").then(e=>{
+    // atualizaChartProdutos();
+    buscaAprovacoesPendentesProUsuario("felipe").then(e => {
         $("#counterAprovacaoPendente").text(e.length);
     });
     $("#filtros>.panel-heading").on("click", () => {
@@ -69,15 +73,36 @@ function init() {
         $("#arrowFiltro").toggleClass("flaticon-chevron-up");
         $("#arrowFiltro").toggleClass("flaticon-chevron-down");
     });
-    $("#cardAprovacoesPendentes").on("click", ()=>{
+    $("#cardAprovacoesPendentes").on("click", () => {
         $("#dashboard").hide();
         $("#painelAprovacoes").show();
     });
 
     $("#btnDarkMode").on("click", toggleDarkMode);
 
+    $("#btnConsultaTransferencias").on("click", function () {
+        consultaTransferencias();
+        alimentaCharts();
+        // atualizaChartProdutos();
+    });
+
+    $("#filtroColigadaOrigem").on("change", function () {
+        var CODCOLIGADA = $(this).val().split(" - ")[0];
+        var obras = obrasPermissaoUsuario.filter(e => e.CODCOLIGADA == CODCOLIGADA);
+        var html = obras.map(e => `<option>${e.CODCCUSTO} - ${e.perfil}</option>`).join("");
+
+        $("#filtroCCUSTOOrigem").html("<option value=''>Todos</option>" + html);
+    });
+    $("#filtroColigadaDestino").on("change", function () {
+        var CODCOLIGADA = $(this).val().split(" - ")[0];
+        var obras = obrasPermissaoGeral.filter(e => e.CODCOLIGADA == CODCOLIGADA);
+        var html = obras.map(e => `<option>${e.CODCCUSTO} - ${e.perfil}</option>`).join("");
+
+        $("#filtroCCUSTODestino").html("<option value=''>Todos</option>" + html);
+    });
+
     // loadBarChart();
-    loadGroupedBarChart("chart4");
+    // loadGroupedBarChart("chart4");
 
     var date = new Date();
     var mes = date.getMonth() + 1;
@@ -88,45 +113,157 @@ function init() {
 
 
 function consultaTransferencias() {
-    var ds = DatasetFactory.getDataset("dsConsultaTransferenciasDeCusto", null, null, null);
+    var ds = DatasetFactory.getDataset("dsConsultaTransferenciasDeCusto", null, buscaFiltros(), null);
     if (ds.values[0].STATUS != "SUCCESS") {
         showMessage("Erro ao Consultar Trânsferencias: ", ds.values[0].MENSAGEM, "warning");
     }
-
     transferencias = JSON.parse(ds.values[0].RESULT);
 
-
-    dataTableTransferencias.clear().draw();
-    for (const row of transferencias) {
-        row.DESC_CCUSTO_ORIGEM = findDescCCUSTO(row.CODCOLIGADA_ORIGEM, row.CCUSTO_ORIGEM);
-        row.DESC_CCUSTO_DESTINO = findDescCCUSTO(row.CODCOLIGADA_DESTINO, row.CCUSTO_DESTINO);
-
-        dataTableTransferencias.row.add(row);
-    }
-    dataTableTransferencias.draw();
-
-    totalizaCabecalhos(transferencias);
-
-
-    function totalizaCabecalhos(transferencias) {
-        var valorTotal = 0;
-        var valorPendenteAprovacao = 0;
-        for (const row of transferencias) {
-            var valor = parseFloat(row.VALOR);
-            valorTotal += valor;
-            if (row.STATUS == 1) {
-                valorPendenteAprovacao += valor;
+    var transferenciasCUSTO = transferencias.filter(e => e.TRANSFERE_CUSTO == "true");
+    var transferenciasCUSTO_ORIGEM = [];
+    var transferenciasCUSTO_DESTINO = [];
+    for (const row of transferenciasCUSTO) {
+        var CCUSTO_ORIGEM = row.CCUSTO_ORIGEM;
+        if ($("#filtroCCUSTOOrigem").val() == "" || $("#filtroCCUSTOOrigem").val().split(" - ")[0] == CCUSTO_ORIGEM) {
+            var found_ORIGEM = obrasPermissaoUsuario.find(e => e.CODCCUSTO == CCUSTO_ORIGEM);
+            if (found_ORIGEM) {
+                transferenciasCUSTO_ORIGEM.push(row);
             }
         }
 
-        $("#textValorTotal").text(floatToMoney(valorTotal));
-        $("#textValorPendente").text(floatToMoney(valorPendenteAprovacao));
+        var CCUSTO_DESTINO = row.CCUSTO_DESTINO;
+        if ($("#filtroCCUSTODestino").val() == "" || $("#filtroCCUSTODestino").val().split(" - ")[0] == CCUSTO_DESTINO) {
+
+            var found_DESTINO = obrasPermissaoUsuario.find(e => e.CODCCUSTO == CCUSTO_DESTINO);
+            if (found_DESTINO) {
+                transferenciasCUSTO_DESTINO.push(row);
+            }
+        }
+    }
+    transferenciasCUSTO = {
+        ORIGEM: transferenciasCUSTO_ORIGEM,
+        DESTINO: transferenciasCUSTO_DESTINO,
+    };
+
+    var transferenciasRECEITA = transferencias.filter(e => e.TRANSFERE_RECEITA == "true");
+    var transferenciasRECEITA_ORIGEM = [];
+    var transferenciasRECEITA_DESTINO = [];
+    for (const row of transferenciasRECEITA) {
+        var CCUSTO_ORIGEM = row.CCUSTO_ORIGEM;
+        if ($("#filtroCCUSTOOrigem").val() == "" || $("#filtroCCUSTOOrigem").val().split(" - ")[0] == CCUSTO_ORIGEM) {
+            var found_ORIGEM = obrasPermissaoUsuario.find(e => e.CODCCUSTO == CCUSTO_ORIGEM);
+            if (found_ORIGEM) {
+                transferenciasRECEITA_ORIGEM.push(row);
+            }
+        }
+
+        var CCUSTO_DESTINO = row.CCUSTO_DESTINO;
+        if ($("#filtroCCUSTODestino").val() == "" || $("#filtroCCUSTODestino").val().split(" - ")[0] == CCUSTO_DESTINO) {
+            var found_DESTINO = obrasPermissaoUsuario.find(e => e.CODCCUSTO == CCUSTO_DESTINO);
+            if (found_DESTINO) {
+                transferenciasRECEITA_DESTINO.push(row);
+            }
+        }
+    }
+
+    transferenciasRECEITA = {
+        ORIGEM: transferenciasRECEITA_ORIGEM,
+        DESTINO: transferenciasRECEITA_DESTINO,
+    };
+
+
+    transferenciasETL = {
+        CUSTO: transferenciasCUSTO,
+        RECEITA: transferenciasRECEITA
+    };
+
+    
+    dataTableTransferencias.clear().draw();
+    var linhasIncluidas = [];
+    for (const tipo of [transferenciasETL.CUSTO.ORIGEM, transferenciasETL.CUSTO.DESTINO, transferenciasETL.RECEITA.ORIGEM, transferenciasETL.RECEITA.DESTINO]) {
+        for (const row of tipo) {
+            row.DESC_CCUSTO_ORIGEM = findDescCCUSTO(row.CODCOLIGADA_ORIGEM, row.CCUSTO_ORIGEM);
+            row.DESC_CCUSTO_DESTINO = findDescCCUSTO(row.CODCOLIGADA_DESTINO, row.CCUSTO_DESTINO);
+
+            var found = linhasIncluidas.find(e=>e == row.ID_TRANSFERENCIA);
+            if (!found) {
+                dataTableTransferencias.row.add(row);
+                linhasIncluidas.push(row.ID_TRANSFERENCIA);
+            }
+    
+        }
+    }
+    dataTableTransferencias.draw();
+
+
+    totalizaCabecalhos(transferenciasCUSTO, transferenciasRECEITA);
+
+    function buscaFiltros() {
+        var constraints = [];
+
+        var CODCOLIGADA_ORIGEM = $("#filtroColigadaOrigem").val().split(" - ")[0];
+        if (CODCOLIGADA_ORIGEM) {
+            constraints.push(DatasetFactory.createConstraint("CODCOLIGADA_ORIGEM", CODCOLIGADA_ORIGEM, CODCOLIGADA_ORIGEM, ConstraintType.MUST));
+        }
+
+        var CODCOLIGADA_DESTINO = $("#filtroColigadaDestino").val().split(" - ")[0];
+        if (CODCOLIGADA_DESTINO) {
+            constraints.push(DatasetFactory.createConstraint("CODCOLIGADA_DESTINO", CODCOLIGADA_DESTINO, CODCOLIGADA_DESTINO, ConstraintType.MUST));
+        }
+
+        var CCUSTO_ORIGEM = $("#filtroCCUSTOOrigem").val().split(" - ")[0];
+        if (CCUSTO_ORIGEM) {
+            constraints.push(DatasetFactory.createConstraint("CCUSTO_ORIGEM", CCUSTO_ORIGEM, CCUSTO_ORIGEM, ConstraintType.MUST));
+        }
+
+        var CCUSTO_DESTINO = $("#filtroCCUSTODestino").val().split(" - ")[0];
+        if (CCUSTO_DESTINO) {
+            constraints.push(DatasetFactory.createConstraint("CCUSTO_DESTINO", CCUSTO_DESTINO, CCUSTO_DESTINO, ConstraintType.MUST));
+        }
+
+        var STATUS = $("#filtroStatus").val();
+        if (STATUS) {
+            constraints.push(DatasetFactory.createConstraint("STATUS", STATUS, STATUS, ConstraintType.MUST));
+        }
+
+        return constraints;
+
+    }
+    function totalizaCabecalhos(transferenciasCUSTO, transferenciasRECEITA) {
+        var valorTotalReceitaEnviada = 0;
+        for (const row of transferenciasRECEITA.ORIGEM) {
+            var valor = parseFloat(row.VALOR);
+            valorTotalReceitaEnviada += valor;
+        }
+
+        var valorTotalReceitaRecebida = 0;
+        for (const row of transferenciasRECEITA.DESTINO) {
+            var valor = parseFloat(row.VALOR);
+            valorTotalReceitaRecebida += valor;
+        }
+
+        var valorTotalCustoEnviado = 0;
+        for (const row of transferenciasCUSTO.ORIGEM) {
+            var valor = parseFloat(row.VALOR);
+            valorTotalCustoEnviado += valor;
+        }
+
+        var valorTotalCustoRecebido = 0;
+        for (const row of transferenciasCUSTO.DESTINO) {
+            var valor = parseFloat(row.VALOR);
+            valorTotalCustoRecebido += valor;
+        }
+
+
+        $("#textValorTotalReceitaRecebida").text(floatToMoney(valorTotalReceitaRecebida));
+        $("#textValorTotalReceitaEnviada").text(floatToMoney(valorTotalReceitaEnviada));
+        $("#textValorTotalCustoRecebido").text(floatToMoney(valorTotalCustoRecebido));
+        $("#textValorTotalCustoEnviado").text(floatToMoney(valorTotalCustoEnviado));
     }
     function findDescCCUSTO(CODCOLIGADA, CODCCUSTO) {
         var found = GCCUSTO.find(e => (e.CODCOLIGADA == CODCOLIGADA && e.CODCCUSTO == CODCCUSTO))
         return found.NOME;
     }
-
 }
 
 function initDataTableTransferencias() {
@@ -138,9 +275,18 @@ function initDataTableTransferencias() {
         columns: [
             {
                 data: "ID_SOLICITACAO",
+                className:"alignCenter",
+                render:function(data){
+                    return `<a style="color: skyblue;text-decoration: underline;" href="/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=${data}" target="_blank">${data}</a>`
+                }
+            },
+            {
+                data: "TIPO",
+                className:"alignCenter",
             },
             {
                 data: "CCUSTO_ORIGEM",
+                className:"alignCenter",
                 render: function (data, type, row) {
                     return row.CODCOLIGADA_ORIGEM + " - " + row.CCUSTO_ORIGEM + " - " + row.DESC_CCUSTO_ORIGEM;
                 },
@@ -149,6 +295,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: "CCUSTO_DESTINO",
+                className:"alignCenter",
                 render: function (data, type, row) {
                     return row.CODCOLIGADA_DESTINO + " - " + row.CCUSTO_DESTINO + " - " + row.DESC_CCUSTO_DESTINO;
                 },
@@ -156,11 +303,13 @@ function initDataTableTransferencias() {
                 type: "string"
             },
             {
-                data: "SOLICITANTE"
+                data: "SOLICITANTE",
+                className:"alignCenter",
             },
             {
                 data: "VALOR",
                 type: "num",
+                className:"alignCenter",
                 className: "dt-left",
                 render: function (data, type) {
                     if (type === "sort") {
@@ -172,6 +321,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: "DATA_SOLICITACAO",
+                className:"alignCenter",
                 render: function (data, type) {
                     if (type === "sort") {
                         return moment(data, "YYYY-MM-DD").valueOf();
@@ -182,16 +332,22 @@ function initDataTableTransferencias() {
             },
             {
                 data: "DATA_COMPETENCIA",
+                className:"alignCenter",
                 render: function (data, type) {
                     if (type === "sort") {
                         return moment(data, "YYYY-MM-DD").valueOf();
                     } else {
+                        console.log(data);
+                        if (!data || data == null  || data == "" || data == "null") {
+                            return "";
+                        }
                         return moment(data, "YYYY-MM-DD").format("DD/MM/YYYY");
                     }
                 }
             },
             {
                 data: "STATUS",
+                className:"alignCenter",
                 render: function (data) {
                     if (data == 1) {
                         return "Em andamento";
@@ -209,6 +365,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: null,
+                className:"alignCenter",
                 orderable: false,
                 render: function (data, type, row) {
                     return `<button class="btn btn-default btnDetalhesSolicitacao">
@@ -264,6 +421,9 @@ function loadChart1(id, data, colors) {
         ];
     }
 
+    while (data.length > 5) {
+        data.pop();
+    }
     const width = $("#" + id).closest("div").width();
     const height = 220;
     const radius = Math.min(width, height) / 2;
@@ -301,7 +461,8 @@ function loadChart1(id, data, colors) {
         .append("g");
 
     // Tooltip
-    const tooltip = d3.select("#d3-tooltip");
+    const tooltip = d3.select("#d3-tooltip"+ id);
+
     // Draw slices with mouse events
     arcs.append("path")
         .attr("d", arc)
@@ -309,15 +470,18 @@ function loadChart1(id, data, colors) {
         .on("mouseover", function (event, d) {
             tooltip
                 .style("display", "block")
+                .attr("class", "d3-tooltip")
                 .style("fill", "black")
                 .html(`<strong>${d.data.label}</strong>: ${floatToMoney(d.data.value)}`);
 
             d3.select(this).attr("stroke", "white").attr("stroke-width", 2);
         })
         .on("mousemove", function (event) {
+            var pointer = d3.pointer(event);
+            
             tooltip
-                .style("left", (event.pageX - 70) + "px")
-                .style("top", (event.pageY - 300) + "px");
+                .style("left", (pointer[0] +60) + "px")
+                .style("top", (pointer[1] + 100) + "px");
         })
         .on("mouseout", function () {
             tooltip.style("display", "none");
@@ -347,7 +511,7 @@ function loadChart1(id, data, colors) {
         .attr("x", 0)
         .attr("width", 18)
         .attr("height", 18)
-        .attr("fill", (d, i) => { console.log(d, i); return colors[i] });
+        .attr("fill", (d, i) => colors[i]);
 
     legendLeft.append("text")
         .attr("x", 20)
@@ -389,7 +553,8 @@ function loadBarChart() {
         .range([height - margin.bottom, margin.top]);
 
     // Tooltip div
-    const tooltip = d3.select("#d3-tooltip");
+    const tooltip = d3.select("#d3-tooltip")
+        .append("div");
 
     svg.append("g")
         .attr("fill", "#007bff")
@@ -429,7 +594,7 @@ function loadMultiLineChart(id, datasets, colorList) {
     if (!datasets) {
         datasets = [
             {
-                name: "Série 1",
+                name: "Recebimento",
                 values: [
                     { date: new Date(2025, 0, 1), value: 30 },
                     { date: new Date(2025, 1, 1), value: 80 },
@@ -441,7 +606,7 @@ function loadMultiLineChart(id, datasets, colorList) {
                 ]
             },
             {
-                name: "Série 2",
+                name: "Envio",
                 values: [
                     { date: new Date(2025, 0, 1), value: 50 },
                     { date: new Date(2025, 1, 1), value: 60 },
@@ -454,7 +619,8 @@ function loadMultiLineChart(id, datasets, colorList) {
             }
         ];
     }
-    if (!colorList) colorList = ["#008000", "#dd0426", "#38b000", "#ad2831"];
+    console.log("dataset", datasets)
+    if (!colorList) colorList = [ "#dd0426", "#38b000", "#008000", "#ad2831"];
 
     // Defensive: ensure all dates are Date objects
     datasets.forEach(serie => {
@@ -473,7 +639,8 @@ function loadMultiLineChart(id, datasets, colorList) {
 
     const width = $("#" + id).closest("div").width() || 350;
     const height = 320;
-    const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+    // Increased left margin for Y axis labels
+    const margin = { top: 20, right: 20, bottom: 40, left: 70 };
 
     d3.select("#" + id).selectAll("*").remove();
 
@@ -539,34 +706,76 @@ function loadMultiLineChart(id, datasets, colorList) {
             .attr("stroke-width", 2)
             .attr("d", line);
 
-        // Draw points
+        // Tooltip div (should exist in your HTML)
+        const tooltip = d3.select("#d3-tooltip"+id);
+
+        // Draw points with tooltip
         svg.selectAll(".point-" + i)
             .data(serie.values)
             .join("circle")
             .attr("class", "point-" + i)
             .attr("cx", d => x(d.date))
             .attr("cy", d => y(d.value))
-            .attr("r", 4)
-            .attr("fill", color(serie.name));
+            .attr("r", 6)
+            .attr("fill", color(serie.name))
+            .on("mouseover", function (event, d) {
+                tooltip
+                    .style("display", "block")
+                    .html(`<strong>${serie.name}</strong><br>${d3.timeFormat("%b/%Y")(d.date)}<br>Valor: ${floatToMoney(d.value)}`);
+                d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2);
+            })
+            .on("mousemove", function (event) {
+                var pointer = d3.pointer(event);            
+                tooltip
+                    .style("left", (pointer[0] -50) + "px")
+                    .style("top", (pointer[1] +70) + "px");
+            })
+            .on("mouseout", function () {
+                tooltip.style("display", "none");
+                d3.select(this).attr("stroke", null);
+            });
     });
 
-    // X Axis
+
+    // 1. Get unique months from your dataset
+    const uniqueMonths = Array.from(
+        new Set(
+            allValues.map(d => d3.timeMonth(d.date).getTime())
+        )
+    ).map(t => new Date(t));
+
+    // 2. Set the ticks to these months, with pt-BR month abbreviations
+    const ptBrMonths = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+    function ptBrMonthFormat(date) {
+        const m = date.getMonth();
+        const y = date.getFullYear().toString().slice(-2);
+        return ptBrMonths[m] + "/" + y;
+    }
     svg.append("g")
         .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat("%b/%y")));
+        .call(
+            d3.axisBottom(x)
+                .tickValues(uniqueMonths)
+                .tickFormat(ptBrMonthFormat)
+        );
 
-    // Y Axis
+    // Y Axis with money format
     svg.append("g")
         .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(y));
+        .call(
+            d3.axisLeft(y)
+                .tickFormat(function(d) {
+                    return floatToMoney(d).split(",")[0];
+                })
+        );
 
     // Legend
     const legend = svg.append("g")
-        .attr("transform", `translate(${width - margin.right - 100},${margin.top})`);
+        .attr("transform", `translate(${(width - margin.right) / 2 - 50},${height - 20})`);
 
     datasets.forEach((serie, i) => {
         const legendRow = legend.append("g")
-            .attr("transform", `translate(0,${i * 20})`);
+            .attr("transform", `translate(${i * 120},0)`);
         legendRow.append("rect")
             .attr("width", 15)
             .attr("height", 15)
@@ -574,11 +783,13 @@ function loadMultiLineChart(id, datasets, colorList) {
         legendRow.append("text")
             .attr("x", 20)
             .attr("y", 12)
-            .attr("fill", "#333")
+            .attr("fill", "#fff")
             .text(serie.name);
     });
+
+
 }
-function loadGroupedBarChart(id, data, groupKeys, colors) { 
+function loadGroupedBarChart(id, data, groupKeys, colors) {
     // Example data if not provided
     if (!data) {
         data = [
@@ -687,68 +898,6 @@ function loadGroupedBarChart(id, data, groupKeys, colors) {
 }
 
 function alimentaCharts() {
-    var recebimentoAcumuladoPorObra = [];
-    var envioAcumuladoPorObra = [];
-
-    for (const transferencia of transferencias) {
-        var CCustoObraOrigem = transferencia.CCUSTO_ORIGEM;
-        var VALOR = parseFloat(transferencia.VALOR);
-
-        var found = envioAcumuladoPorObra.find(e => { return e.CCUSTO == CCustoObraOrigem; });
-        if (found) {
-            found.value += VALOR;
-        }
-        else {
-            envioAcumuladoPorObra.push({
-                CCUSTO: CCustoObraOrigem,
-                NOME: transferencia.DESC_CCUSTO_ORIGEM,
-                label: CCustoObraOrigem + " - " + transferencia.DESC_CCUSTO_ORIGEM,
-                value: VALOR,
-            });
-        }
-
-
-        var CCustoObraDestino = transferencia.CCUSTO_DESTINO;
-        var found = recebimentoAcumuladoPorObra.find(e => { return e.CCUSTO == CCustoObraDestino; });
-        if (found) {
-            found.value += VALOR;
-        }
-        else {
-            recebimentoAcumuladoPorObra.push({
-                CCUSTO: CCustoObraDestino,
-                NOME: transferencia.DESC_CCUSTO_DESTINO,
-                label: CCustoObraDestino + " - " + transferencia.DESC_CCUSTO_DESTINO,
-                value: VALOR,
-            });
-        }
-    }
-
-    envioAcumuladoPorObra = envioAcumuladoPorObra.sort((a, b) => b.value - a.value);
-    while (envioAcumuladoPorObra.length > 5) {
-        envioAcumuladoPorObra.pop();
-    }
-    var index = 0;
-    for (const item of envioAcumuladoPorObra) {
-        item.index = index;
-        index++;
-    }
-
-
-    recebimentoAcumuladoPorObra = recebimentoAcumuladoPorObra.sort((a, b) => b.value - a.value);
-    while (recebimentoAcumuladoPorObra.length > 5) {
-        recebimentoAcumuladoPorObra.pop();
-    }
-    var index = 0;
-    for (const item of recebimentoAcumuladoPorObra) {
-        item.index = index;
-        index++;
-    }
-
-
-    console.log(envioAcumuladoPorObra)
-    console.log(recebimentoAcumuladoPorObra)
-
-
     var colorsEnvio = [
         "#9ef01a",
         "#38b000",
@@ -763,10 +912,281 @@ function alimentaCharts() {
         "#800e13",
         "#ad2831",
     ];
-    loadChart1("chart1", envioAcumuladoPorObra, colorsEnvio);
-    loadChart1("chart2", recebimentoAcumuladoPorObra, colorsRecebimento);
-    loadMultiLineChart("chart5");
+
+    // Carrega Envio de Custo
+    var envioCustoPorObra = [];
+    var index = 0;
+    for (const transferencia of transferenciasETL.CUSTO.ORIGEM) {
+        var CCustoObraOrigem = transferencia.CCUSTO_ORIGEM;
+        var VALOR = parseFloat(transferencia.VALOR);
+
+        var found = envioCustoPorObra.find(e => { return e.CCUSTO == CCustoObraOrigem; });
+        if (found) {
+            found.value += VALOR;
+            found.transferencias.push(transferencia);
+        }
+        else {
+            envioCustoPorObra.push({
+                index: index,
+                CCUSTO: CCustoObraOrigem,
+                NOME: transferencia.DESC_CCUSTO_ORIGEM,
+                label: CCustoObraOrigem + " - " + transferencia.DESC_CCUSTO_ORIGEM,
+                value: VALOR,
+                transferencias: [transferencia]
+            });
+            index++;
+        }
+    }
+    envioCustoPorObra = envioCustoPorObra.sort((a, b) => b.value - a.value);
+    console.log(envioCustoPorObra)
+    loadChart1("chart1", envioCustoPorObra, colorsEnvio);
+
+
+    // Carrega Recebimento de Custo
+    var recebimentoCustoPorObra = [];
+    var index = 0;
+    for (const transferencia of transferenciasETL.CUSTO.DESTINO) {
+        var CCustoObraDestino = transferencia.CCUSTO_DESTINO;
+        var VALOR = parseFloat(transferencia.VALOR);
+        var found = recebimentoCustoPorObra.find(e => { return e.CCUSTO == CCustoObraDestino; });
+        if (found) {
+            found.value += VALOR;
+            found.transferencias.push(transferencia);
+        }
+        else {
+            recebimentoCustoPorObra.push({
+                CCUSTO: CCustoObraDestino,
+                NOME: transferencia.DESC_CCUSTO_DESTINO,
+                label: CCustoObraDestino + " - " + transferencia.DESC_CCUSTO_DESTINO,
+                value: VALOR,
+                index: index,
+                transferencias: [transferencia]
+            });
+            index++;
+        }
+    }
+    recebimentoCustoPorObra = recebimentoCustoPorObra.sort((a, b) => b.value - a.value);
+    loadChart1("chart2", recebimentoCustoPorObra, colorsRecebimento);
+
+
+    // Carrega Envio de Receita
+    var envioReceitaPorObra = [];
+    var index = 0;
+    for (const transferencia of transferenciasETL.RECEITA.ORIGEM) {
+        var CCustoObraOrigem = transferencia.CCUSTO_ORIGEM;
+        var VALOR = parseFloat(transferencia.VALOR);
+
+        var found = envioReceitaPorObra.find(e => { return e.CCUSTO == CCustoObraOrigem; });
+        if (found) {
+            found.value += VALOR;
+            found.transferencias.push(transferencia);
+        }
+        else {
+            envioReceitaPorObra.push({
+                CCUSTO: CCustoObraOrigem,
+                NOME: transferencia.DESC_CCUSTO_ORIGEM,
+                label: CCustoObraOrigem + " - " + transferencia.DESC_CCUSTO_ORIGEM,
+                value: VALOR,
+                index: index,
+                transferencias: [transferencia]
+            });
+        }
+    }
+    envioReceitaPorObra = envioReceitaPorObra.sort((a, b) => b.value - a.value);
+    loadChart1("chart4", envioReceitaPorObra, colorsRecebimento);
+
+
+    // Carrega Recebimento de Receita
+    var recebimentoReceitaPorObra = [];
+    var index = 0;
+
+    for (const transferencia of transferenciasETL.RECEITA.DESTINO) {
+        var CCustoObraDestino = transferencia.CCUSTO_DESTINO;
+        var VALOR = parseFloat(transferencia.VALOR);
+        var found = recebimentoReceitaPorObra.find(e => { return e.CCUSTO == CCustoObraDestino; });
+        if (found) {
+            found.value += VALOR;
+            found.transferencias.push(transferencia);
+        }
+        else {
+            recebimentoReceitaPorObra.push({
+                CCUSTO: CCustoObraDestino,
+                NOME: transferencia.DESC_CCUSTO_DESTINO,
+                label: CCustoObraDestino + " - " + transferencia.DESC_CCUSTO_DESTINO,
+                value: VALOR,
+                index: index,
+                transferencias: [transferencia]
+            });
+            index++;
+        }
+    }
+    recebimentoReceitaPorObra = recebimentoReceitaPorObra.sort((a, b) => b.value - a.value);
+    loadChart1("chart3", recebimentoReceitaPorObra, colorsEnvio);
+
+
+
+    var enviosCusto = [];
+    for (const obra of envioCustoPorObra) {
+        for (const transferencia of obra.transferencias) {
+            var [ano, mes, dia] = transferencia.DATA_SOLICITACAO.split(" ")[0].split("-");
+            var date = new Date(ano, (mes - 1), 1);
+            enviosCusto.push({ date: date, value: parseFloat(transferencia.VALOR) })
+        }
+    }
+    var groupedEnviosCusto = [];
+    for (const row of enviosCusto) {
+        var found = groupedEnviosCusto.find(e => e.date.getTime() == row.date.getTime());
+        if (found) {
+            found.value += row.value;
+        }
+        else {
+            groupedEnviosCusto.push(row);
+        }
+
+    }
+    groupedEnviosCusto = groupedEnviosCusto.sort((a, b) => a.date.getTime() - b.date.getTime());
+    groupedEnviosCusto = insereMesesFaltando(groupedEnviosCusto);
+
+
+
+    var recebimentoCusto = [];
+    for (const obra of recebimentoCustoPorObra) {
+        for (const transferencia of obra.transferencias) {
+            var [ano, mes, dia] = transferencia.DATA_SOLICITACAO.split(" ")[0].split("-");
+            var date = new Date(ano, (mes - 1), 1);
+            recebimentoCusto.push({ date: date, value: parseFloat(transferencia.VALOR) })
+        }
+    }
+    var groupedRecebimentoCusto = [];
+    for (const row of recebimentoCusto) {
+        var found = groupedRecebimentoCusto.find(e => e.date.getTime() == row.date.getTime());
+        if (found) {
+            found.value += row.value;
+        }
+        else {
+            groupedRecebimentoCusto.push(row);
+        }
+    }
+    groupedRecebimentoCusto = groupedRecebimentoCusto.sort((a, b) => a.date.getTime() - b.date.getTime());
+    groupedRecebimentoCusto = insereMesesFaltando(groupedRecebimentoCusto);
+
+
+
+
+    var enviosReceita = [];
+    for (const obra of envioReceitaPorObra) {
+        for (const transferencia of obra.transferencias) {
+            var [ano, mes, dia] = transferencia.DATA_SOLICITACAO.split(" ")[0].split("-");
+            var date = new Date(ano, (mes - 1), 1);
+            enviosReceita.push({ date: date, value: parseFloat(transferencia.VALOR) })
+        }
+    }
+    var groupedEnviosReceita = [];
+    for (const row of enviosReceita) {
+        var found = groupedEnviosReceita.find(e => e.date.getTime() == row.date.getTime());
+        if (found) {
+            found.value += row.value;
+        }
+        else {
+            groupedEnviosReceita.push(row);
+        }
+
+    }
+    groupedEnviosReceita = groupedEnviosReceita.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+
+    var recebimentoReceita = [];
+    for (const obra of recebimentoReceitaPorObra) {
+        for (const transferencia of obra.transferencias) {
+            var [ano, mes, dia] = transferencia.DATA_SOLICITACAO.split(" ")[0].split("-");
+            var date = new Date(ano, (mes - 1), 1);
+            recebimentoReceita.push({ date: date, value: parseFloat(transferencia.VALOR) })
+        }
+    }
+    var groupedRecebimentoReceita = [];
+    for (const row of recebimentoReceita) {
+        var found = groupedRecebimentoReceita.find(e => e.date.getTime() == row.date.getTime());
+        if (found) {
+            found.value += row.value;
+        }
+        else {
+            groupedRecebimentoReceita.push(row);
+        }
+    }
+    groupedRecebimentoReceita = groupedRecebimentoReceita.sort((a, b) => a.date.getTime() - b.date.getTime());
+    
+
+    var [minDate, maxDate] = getMinDateEMaxDate(groupedEnviosReceita,groupedRecebimentoReceita, groupedRecebimentoCusto, groupedEnviosCusto);
+    console.log("minmax", minDate, maxDate)
+    groupedEnviosReceita = insereMesesFaltando(groupedEnviosReceita,minDate,maxDate);
+    groupedRecebimentoReceita = insereMesesFaltando(groupedRecebimentoReceita,minDate,maxDate);
+    groupedRecebimentoCusto = insereMesesFaltando(groupedRecebimentoCusto,minDate,maxDate);
+    groupedEnviosCusto = insereMesesFaltando(groupedEnviosCusto,minDate,maxDate);
+
+    console.log(groupedEnviosCusto)
+    console.log(groupedRecebimentoCusto)
+    loadMultiLineChart("chart5", [
+        { "name": "Recebimentos", values: groupedRecebimentoCusto },
+        { "name": "Envios", values: groupedEnviosCusto },
+    ]);
+    loadMultiLineChart("chart6", [
+        { "name": "Envios", values: groupedEnviosReceita },
+        { "name": "Recebimentos", values: groupedRecebimentoReceita },
+    ]);
 }
+function getMinDateEMaxDate(groupedEnviosReceita,groupedRecebimentoReceita, recebimentoCustoPorObra, envioCustoPorObra){
+    console.log(groupedEnviosReceita.length,groupedRecebimentoReceita.length, recebimentoCustoPorObra.length, envioCustoPorObra.length)
+    var minDate = new Date();
+    minDate.setDate(1);
+    if (groupedEnviosReceita.length>0) {
+        minDate = groupedEnviosReceita[0].date;
+    }
+    if (groupedRecebimentoReceita.length>0) {
+        minDate =minDate.getTime() > groupedRecebimentoReceita[0].date.getTime()? groupedRecebimentoReceita[0].date : minDate;            
+    }
+    if (recebimentoCustoPorObra.length>0) {
+        minDate =  minDate.getTime() > recebimentoCustoPorObra[0].date.getTime() ? recebimentoCustoPorObra[0].date : minDate;
+    }
+    if (envioCustoPorObra.length>0) {
+        minDate = minDate.getTime() > envioCustoPorObra[0].date.getTime() ? envioCustoPorObra[0].date : minDate;
+    }
+    
+
+    var maxDate = new Date();
+    maxDate.setDate(1);
+
+    if (groupedEnviosReceita.length>0) {
+        maxDate = groupedEnviosReceita[groupedEnviosReceita.length-1].date;
+    }
+    if (groupedRecebimentoReceita.length>0) {
+        maxDate = maxDate.getTime() < groupedRecebimentoReceita[groupedRecebimentoReceita.length-1].date.getTime() ? groupedRecebimentoReceita[groupedRecebimentoReceita.length-1].date : maxDate;
+    }
+    if (recebimentoCustoPorObra.length>0) {
+        maxDate = maxDate.getTime() < recebimentoCustoPorObra[recebimentoCustoPorObra.length-1].date.getTime() ? recebimentoCustoPorObra[recebimentoCustoPorObra.length-1].date : maxDate;
+    }
+    if (envioCustoPorObra.length>0) {
+        maxDate = maxDate.getTime() < envioCustoPorObra[envioCustoPorObra.length-1].date.getTime() ? envioCustoPorObra[envioCustoPorObra.length-1].date : maxDate;
+    }
+
+    console.log(minDate,maxDate);
+    return [minDate, maxDate];
+}
+function insereMesesFaltando(dataset, minDate, maxDate){
+    console.log(minDate, maxDate)
+    var dataVerificacao = moment(minDate);
+    var DataFim = moment(maxDate);
+    while (dataVerificacao <= DataFim) {
+        var found = dataset.find(e => moment(e.date).isSame(dataVerificacao, "month"));
+        if (!found) {
+            dataset.push({ date: dataVerificacao.toDate(), value: 0 });
+        }
+        dataVerificacao.add(1, "months");
+    }
+    dataset = dataset.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+    return dataset;
+}
+
 function abreModalTransferencia(idSolicitacao) {
     var ds = DatasetFactory.getDataset("dsTransferenciaDeCustoEntreObras", null, [
         DatasetFactory.createConstraint("metadata#active", "true", "true", ConstraintType.MUST),
@@ -782,61 +1202,44 @@ function abreModalTransferencia(idSolicitacao) {
         DatasetFactory.createConstraint("metadata#active", "true", "true", ConstraintType.MUST),
         DatasetFactory.createConstraint("metadata#id", documentId, documentId, ConstraintType.MUST),
         DatasetFactory.createConstraint("metadata#version", documentVersion, documentVersion, ConstraintType.MUST),
-        DatasetFactory.createConstraint("tablename", "tableItens", "tableItens", ConstraintType.MUST),
+        DatasetFactory.createConstraint("tablename", "tableTransferencias", "tableTransferencias", ConstraintType.MUST),
     ], null);
-    console.log(dsItens)
-
-
-
-
 
     var html =
         `<div class="row">
-        <div class="col-md-6">
-            <h3>Obra Origem</h3>
-            <h3>${formulario.ccustoObraOrigem}</h3>
-            <h4>Redução de Custo: ${formulario.valorObraOrigem}</h4>
-            <br>
+            <div class="col-md-6">
+                <h3><b>Obra Origem</b></h3>
+                <h3><b>${formulario.ccustoObraOrigem}</b></h3>
+                <h4><b>Total:</b> ${formulario.valorObraOrigem}</h4>
+                <br>
 
-            <b>Engenheiro: </b><span>${formulario.engenheiroObraOrigem}</span>
-            <b>Coordenador: </b><span>${formulario.coordenadorObraOrigem}</span>
-            <b>Diretor: </b><span>${formulario.diretorObraOrigem}</span>
+                <b>Engenheiro: </b><span>${formulario.engenheiroObraOrigem}</span><br>
+                <b>Coordenador: </b><span>${formulario.coordenadorObraOrigem}</span><br>
+                ${formulario.diretorObraOrigem ? `<b>Diretor: </b><span>${formulario.diretorObraOrigem}</span>`:""}
+            </div>
+            <div class="col-md-6">
+                <h3><b>Obra Destino</b></h3>
+                <h3><b>${formulario.ccustoObraDestino}</b></h3>
+                <h4><b>Total:</b> ${formulario.valorObraDestino}</h4>
+                <br>
+
+                <b>Engenheiro: </b><span>${formulario.engenheiroObraDestino}</span><br>
+                <b>Coordenador: </b><span>${formulario.coordenadorObraDestino}</span><br>
+                ${formulario.diretorObraDestino ? `<b>Diretor: </b><span>${formulario.diretorObraDestino}</span>`:""}
+            </div>
         </div>
-        <div class="col-md-6">
-            <h3>Obra Destino</h3>
-            <h3>${formulario.ccustoObraDestino}</h3>
-            <h4>Redução de Custo: ${formulario.valorObraDestino}</h4>
-            <br>
-
-            <b>Engenheiro: </b><span>${formulario.engenheiroObraDestino}</span>
-            <b>Coordenador: </b><span>${formulario.coordenadorObraDestino}</span>
-            <b>Diretor: </b><span>${formulario.diretorObraDestino}</span>
-        </div>
-    </div>
-    <div>
-        <table class="table">
-            <thead>
-                <tr>
-					<th style="color:black !important;">#</th>
-					<th style="color:black !important;">Produto</th>
-					<th style="color:black !important;">Descrição</th>
-					<th style="color:black !important;">QNTD</th>
-					<th style="color:black !important;">Valor Unit.</th>
-					<th style="color:black !important;">Valor Total</th>
-				</tr>
-            </thead>
-            <tbody>
-                ${geraLinhasItens(dsItens.values)}
-            </tbody>
-        </table
-    </div>`;
+        <div>
+            ${geraLinhasTransferencias(dsItens.values)}
+        </div>`;
 
 
+    var TRANSFERE_CUSTO = formulario.TRANSFERE_CUSTO;
+    var TRANSFERE_RECEITA = formulario.TRANSFERE_RECEITA;
 
-
+    var title = `Transferência de ${TRANSFERE_CUSTO == "true"? "Custo":"Receita"} #${idSolicitacao}`;
 
     var myModal = FLUIGC.modal({
-        title: 'Transferência de Custo #' + idSolicitacao,
+        title: title,
         content: html,
         id: 'fluig-modal',
         size: 'full',
@@ -852,56 +1255,84 @@ function abreModalTransferencia(idSolicitacao) {
         }
     });
 
+    function geraLinhasTransferencias(transferencias) {
+        var html = "";
+        var counter = 0;
 
 
-    function geraLinhasItens(itens) {
+        for (const transferencia of transferencias) {
+            var TIPO = transferencia.motivoTransferencia;
+            var MOTIVO = transferencia.textMotivoTransferencia;
+            var VALOR = transferencia.valorTotalTransferencia;
+            var itens = JSON.parse(transferencia.listItensTransferencia);
+
+            counter++;
+            html +=
+            `<div style="border: solid 1px black;border-radius: 20px;padding: 0px 20px; margin-bottom: 10px;">
+                <h3><b>${TIPO}</b></h3>
+                <b>Valor Total: </b><span>${VALOR}</span><br>
+                <p><b>Motivo: </b>${MOTIVO}</p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="color:black !important;">#</th>
+                            <th style="color:black !important;">Produto</th>
+                            <th style="color:black !important;">Descrição</th>
+                            <th style="color:black !important;">QNTD</th>
+                            <th style="color:black !important;">Valor Unit.</th>
+                            <th style="color:black !important;">Valor Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${geraLinhasItens(itens)}
+                    </tbody>
+                </table>
+
+            </div>`;
+        }
+
+        return html;
+    }
+    function geraLinhasItens(itens){
         var html = "";
         var counter = 0;
         for (const item of itens) {
+            var QUANTIDADE = item.QUANTIDADE;
+            var VALOR_UNITARIO = item.VALOR_UNITARIO;
+
+            var VALOR_TOTAL = moneyToFloat(QUANTIDADE) * moneyToFloat(VALOR_UNITARIO);
+
             counter++;
-            html +=
+            html+=  
                 `<tr>
-                <td style="color:black !important;">${counter}</td>
-                <td style="color:black !important;">${item.itemProduto}</td>
-                <td style="color:black !important;">${item.itemDescricao}</td>
-                <td style="color:black !important;">${item.itemQuantidade}</td>
-                <td style="color:black !important;">${item.itemValorUnit}</td>
-                <td style="color:black !important;">${item.itemValorTotal}</td>
-            </tr>`;
+                    <td style="color:black !important;">${counter}</td>
+                    <td style="color:black !important;">${item.CODPRODUTO} - ${item.DESCPRODUTO}</td>
+                    <td style="color:black !important;">${item.DESCRICAO}</td>
+                    <td style="color:black !important;">${item.QUANTIDADE}</td>
+                    <td style="color:black !important;">${item.VALOR_UNITARIO}</td>
+                    <td style="color:black !important;">${floatToMoney(VALOR_TOTAL)}</td>
+                </tr>`;
         }
 
         return html;
     }
 }
 
-function buscaAprovacoesPendentesProUsuario(userCode){
-    return new Promise((resolve, reject)=>{
+function buscaAprovacoesPendentesProUsuario(userCode) {
+    return new Promise((resolve, reject) => {
         $.ajax({
-            type:"GET",
-            url:`/process-management/api/v2/tasks?assignee=${userCode}&status=NOT_COMPLETED&processId=Transfer%C3%AAncia%20de%20Custo%20entre%20Obras&page=1&pageSize=1000`,
-            success:retorno=>{
+            type: "GET",
+            url: `/process-management/api/v2/tasks?assignee=${userCode}&status=NOT_COMPLETED&processId=Transfer%C3%AAncia%20de%20Custo%20entre%20Obras&page=1&pageSize=1000`,
+            success: retorno => {
                 resolve(retorno.items);
             },
-            error:e=>{
+            error: e => {
                 reject(e);
             }
         });
     });
 }
 
-
-// Utils
-function moneyToFloat(val) {
-    if (val.indexOf("R$") != -1) {
-        val = val.replace("R$", "").trim();
-    }
-
-    val = parseFloat(val.split(".").join("").replace(",", "."));
-    if (isNaN(val)) {
-        return 0;
-    }
-    return val;
-}
 function floatToMoney(val) {
     return parseFloat(val).toLocaleString('pt-BR', {
         style: 'currency',
@@ -923,6 +1354,17 @@ function showMessage(title, message, type) {
     });
 }
 
+function moneyToFloat(val) {
+    if (val.indexOf("R$") != -1) {
+        val = val.replace("R$", "").trim();
+    }
+
+    val = parseFloat(val.split(".").join("").replace(",", "."));
+    if (isNaN(val)) {
+        return 0;
+    }
+    return val;
+}
 
 
 function toggleDarkMode() {
@@ -936,4 +1378,44 @@ function toggleDarkMode() {
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
+}
+
+
+
+// Filtros
+function PreencheCamposFiltros() {
+    var USUARIO = WCMAPI.userCode;
+
+    var obrasComPermissaoDoUsuario = buscaObrasPorPermissaoDoUsuario(USUARIO);
+    var todasObras = buscaObrasPorPermissaoDoUsuario(USUARIO, true);
+
+    var coligadasPermissaoUsuario = [];
+    for (const obra of obrasComPermissaoDoUsuario) {
+        if (!coligadasPermissaoUsuario.find(e => e.CODCOLIGADA == obra.CODCOLIGADA)) {
+            coligadasPermissaoUsuario.push({ CODCOLIGADA: obra.CODCOLIGADA, NOME: obra.NOMEFANTASIA });
+        }
+    }
+
+    var coligadas = [];
+    for (const obra of todasObras) {
+        if (!coligadas.find(e => e.CODCOLIGADA == obra.CODCOLIGADA)) {
+            coligadas.push({ CODCOLIGADA: obra.CODCOLIGADA, NOME: obra.NOMEFANTASIA });
+        }
+    }
+
+    $("#filtroColigadaOrigem").html(geraHtmlOptions(coligadasPermissaoUsuario))
+    $("#filtroColigadaDestino").html(geraHtmlOptions(coligadas))
+
+    obrasPermissaoGeral = todasObras;
+    obrasPermissaoUsuario = obrasComPermissaoDoUsuario;
+
+    function geraHtmlOptions(coligadas) {
+        var html = "<option value=''>Todas</option>";
+
+        for (const coligada of coligadas) {
+            html += `<option value="${coligada.CODCOLIGADA} - ${coligada.NOME}">${coligada.CODCOLIGADA} - ${coligada.NOME}</option>`;
+        }
+
+        return html;
+    }
 }

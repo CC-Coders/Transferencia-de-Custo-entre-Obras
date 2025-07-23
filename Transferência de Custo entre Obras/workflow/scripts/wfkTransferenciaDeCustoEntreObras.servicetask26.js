@@ -8,12 +8,13 @@ function servicetask26(attempt, message) {
     var NOMECCUSTO_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[2];
 
     var PRODUTOS = getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO);
+    var CUSTO_OU_RECEITA = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? "CUSTO":"RECEITA";
 
 
     // Lanca ajuste para Obra Origem
     // Se for TRANSFERE_CUSTO, então a Obra Origem, recebe o PRODUTO AUMENTA_RESULTADO, pois está enviando o CUSTO
     // Porém, se for TRANSFERE_RECEITA, então a Obra Origem, recebe o PRODUTO DIMINUI_RESULTADO, pois está enviando a RECEITA
-    var PRODUTO_ORIGEM = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? PRODUTOS.AUMENTA_RESULTADO : PRODUTOS.DIMINUI_RESULTADO;
+    var PRODUTO_ORIGEM = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO;
     var idmov = geraMovimentos(CODCOLIGADA_ORIGEM, CODCCUSTO_ORIGEM, CODCOLIGADA_DESTINO, NOMECCUSTO_ORIGEM, PRODUTO_ORIGEM);
     hAPI.setCardValue("IDMOV_ORIGEM", idmov);
 
@@ -21,7 +22,7 @@ function servicetask26(attempt, message) {
     // Lanca ajuste para Obra Destino
     // Se for TRANSFERE_CUSTO, então a Obra Destino, recebe o PRODUTO DIMINUI_RESULTADO, pois está recebendo CUSTO
     // Porém, se for TRANSFERE_RECEITA, então a Obra Destino, recebe o PRODUTO AUMENTA_RESULTADO, pois está recebendo a RECEITA
-    var PRODUTO_DESTINO = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? PRODUTOS.DIMINUI_RESULTADO : PRODUTOS.AUMENTA_RESULTADO;
+    var PRODUTO_DESTINO = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO;
     var idmov = geraMovimentos(CODCOLIGADA_DESTINO, CODCCUSTO_DESTINO, CODCOLIGADA_ORIGEM, NOMECCUSTO_DESTINO, PRODUTO_DESTINO);
     hAPI.setCardValue("IDMOV_DESTINO", idmov);
 
@@ -35,30 +36,58 @@ function getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO) {
     if (CODCOLIGADA_ORIGEM == CODCOLIGADA_DESTINO) {
         // Se transferencia entre Centro de Custo
         var PRODUTOS = {
-            AUMENTA_RESULTADO: {
-                CODIGOPRD_COLIGADA1: "11.006.00110",
-                CODIGOPRD: "11.006.00110",
-                DESCPRD: "Ajustes gerenciais (+)",
-            },
-            DIMINUI_RESULTADO: {
-                CODIGOPRD_COLIGADA1: "11.006.00111",
-                CODIGOPRD: "11.006.00111",
-                DESCPRD: "Ajustes gerenciais (-)",
+            CUSTO:{
+                AUMENTA_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: "11.006.00110",
+                    CODIGOPRD: "11.006.00110",
+                    DESCPRD: "Ajustes gerenciais (+)",
+                },
+                DIMINUI_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: "11.006.00111",
+                    CODIGOPRD: "11.006.00111",
+                    DESCPRD: "Ajustes gerenciais (-)",
+                }
+            }, 
+            RECEITA:{
+                AUMENTA_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: "11.999.00001",
+                    CODIGOPRD: "11.999.00001",
+                    DESCPRD: "Receita de Obras (+)",
+                },
+                DIMINUI_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: "11.999.00000",
+                    CODIGOPRD: "11.999.00000",
+                    DESCPRD: "Receita de Obras (-)",
+                }
             }
         }
         return PRODUTOS;
     } else {
         // Se Transferencia entre Coligadas
         var PRODUTOS = {
-            AUMENTA_RESULTADO: {
-                CODIGOPRD_COLIGADA1: "11.006.00160",
-                CODIGOPRD: "11.006.00158",
-                DESCPRD: "Ajuste entre coligadas (+)",
+            CUSTO:{
+                AUMENTA_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: "11.006.00160",
+                    CODIGOPRD: "11.006.00158",
+                    DESCPRD: "Ajuste entre coligadas (+)",
+                },
+                DIMINUI_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: "11.006.00161",
+                    CODIGOPRD: "11.006.00159",
+                    DESCPRD: "Ajuste entre coligadas (-)",
+                }
             },
-            DIMINUI_RESULTADO: {
-                CODIGOPRD_COLIGADA1: "11.006.00161",
-                CODIGOPRD: "11.006.00159",
-                DESCPRD: "Ajuste entre coligadas (-)",
+            RECEITA:{
+                AUMENTA_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: "11.999.00001",
+                    CODIGOPRD: "11.999.00001",
+                    DESCPRD: "Receita de Obras (+)",
+                },
+                DIMINUI_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: "11.999.00000",
+                    CODIGOPRD: "11.999.00000",
+                    DESCPRD: "Receita de Obras (-)",
+                }
             }
         }
         return PRODUTOS;

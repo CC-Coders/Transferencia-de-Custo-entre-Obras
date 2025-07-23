@@ -1,5 +1,3 @@
-var listaProdutos = null;
-var htmlListProdutos = null;
 var listUnidadesMedida = ["H","KG","L","M","M2","M3","DIA","MÊS","PC","SC","T","UN"];
 const ATIVIDADES = {
     INICIO_0: 0,
@@ -146,10 +144,6 @@ function loadAtividadeInicio() {
             $("#diretorObraOrigem").val(aprovadores.diretor);
             $("#CODCOLIGADA").val(value.split(" - ")[0]);
             $("#motivoTransferencia").change();
-            loadListaItens().then(() => {
-                // Inicia a tabela de itens com a Primeira Linha
-                adicionaNovaTransferencia();
-            });
         }
     });
     $('#ccustoObraDestino').selectize({
@@ -183,13 +177,12 @@ function loadAtividadeAjuste() {
     marcaEmVerdeAprovados();
     alteraIconesECorDosValores();
     preencheCamposDeObras();
-    loadListaItens().then(() => {
         updateCounterRowsTableItens();
         carregaTabelaItensDasTransferencias();
 
         $(".panelTransferencia:last>.panel-heading").click();
 
-        $(".motivoTransferencia").each(function () {
+        $(".motivoTransferencia:not(:first)").each(function () {
             var val = $(this).val() ? $(this).val() : $(this).text();
             $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text(val);
         });
@@ -198,7 +191,6 @@ function loadAtividadeAjuste() {
             $(this).closest(".panelTransferencia").find(".spanValorTransferencia").text(val);
         });
 
-    })
 
 
     $('#ccustoObraOrigem').selectize({
@@ -209,10 +201,6 @@ function loadAtividadeAjuste() {
             $("#diretorObraOrigem").val(aprovadores.diretor);
             $("#CODCOLIGADA").val(value.split(" - ")[0]);
             $("#motivoTransferencia").change();
-            loadListaItens().then(() => {
-                // Inicia a tabela de itens com a Primeira Linha
-
-            });
         }
     });
     $('#ccustoObraDestino').selectize({
@@ -245,6 +233,7 @@ function loadAtividadeAjuste() {
         $("#aprovadoObraOrigem").val("");
 
         $("#decisao").val();
+        $("#decisaoAprovadorObraOrigem, #decisaoAprovadorObraDestino").val("");
     }
 }
 function loadAtividadesAprovacao() {

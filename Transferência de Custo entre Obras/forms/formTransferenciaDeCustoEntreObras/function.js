@@ -16,6 +16,12 @@ function extraiAprovadoresDaLista(lista) {
         }
     }
 
+    
+    // Condição inserida para Testes
+    engenherio = !engenherio ? "gabriel.persike" : engenherio;
+    coordenador = !coordenador ? "gabriel.persike" : coordenador;
+    diretor = !diretor ? "gabriel.persike" : diretor;
+
     return { engenherio, coordenador, diretor };
 }
 function preencheCamposDeObras() {
@@ -156,6 +162,24 @@ function adicionaNovaTransferencia() {
         $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text($(this).val());
         salvaItensDasTransferenciasNoCampoHidden();
 
+        var produtos = carregaListaDeProdutos($(this).val());
+        $(this).closest(".panelTransferencia").find(".tableItens").find(".itemProduto").each(function(){
+            try {
+                $(this)[0].selectize.clear();
+                $(this)[0].selectize.clearOptions();
+                var control = $(this)[0].selectize;
+    
+                for (const produto of produtos) {
+                    control.addOption({
+                        value: produto.VISUAL,
+                        text: produto.VISUAL
+                    });
+                }
+            } catch (error) {
+                
+            }
+        });
+        
         if (isTipoCusto) {
             $("#TRANSFERE_CUSTO").val("true");
             $("#TRANSFERE_RECEITA").val("");
@@ -165,6 +189,7 @@ function adicionaNovaTransferencia() {
             $("#TRANSFERE_RECEITA").val("true");
             alteraIconesECorDosValores();
         }
+
     });
     $(".panelTransferencia:last .panel-heading").on("click", function () {
         $(".panelTransferencia:not(:first)").not($(this).closest(".panelTransferencia")).find(".panel-heading").find(".iconarrow").addClass("flaticon-chevron-up").removeClass("flaticon-chevron-down");
@@ -179,10 +204,8 @@ function adicionaNovaTransferencia() {
     $(".panelTransferencia:not(:last):not(:first)").find(".panel-body").slideUp();
     $(".panelTransferencia:not(:last):not(:first)").find(".panel-heading").find(".iconarrow").addClass("flaticon-chevron-up").removeClass("flaticon-chevron-down");
 
-
     criaTabelaItens($(".panelTransferencia:last").find(".divTabelaItens"));
     criaLinhaItem($(".panelTransferencia:last").find(".divTabelaItens").find("table>tbody"));
-
 }
 function criaTabelaItens(target, readonly) {
     var htmlTabela =
@@ -230,7 +253,6 @@ function criaLinhaItem(target, values = null, readonly) {
     var itemValorTotal = values ? floatToMoney(moneyToFloat(values.VALOR_UNITARIO) * moneyToFloat(values.QUANTIDADE)) : "";
     var textReadonly = readonly ? "readonly" : "";
 
-
     var htmlLinha =
         `<tr>
             <td style="width: 1%;"></td>
@@ -275,16 +297,10 @@ function criaLinhaItem(target, values = null, readonly) {
     }
 
     function loadLinhaItem(target) {
+        var tipoTransferencia = $(target).closest(".panelTransferencia").find(".motivoTransferencia").val();
         var val = $(target).find(".itemProduto").attr("value");
-        $(target).find(".itemProduto").html(htmlListProdutos);
+        $(target).find(".itemProduto").html(carregaListaDeProdutos(tipoTransferencia).map(e=>`<option value="${e.VISUAL}">${e.VISUAL}</option>`));
         $(target).find(".itemProduto").selectize();
-        $(target).find(".itemProduto").on("change", function () {
-            var value = $(this).val();
-            var UN = listaProdutos.find(e => e == value);
-            if (UN) {
-                $(this).closest("tr").find(".itemUN").val(UN.CODUNDCONTROLE);
-            }
-        });
 
         $(target).find(".itemProduto")[0].selectize.setValue(val);
 
@@ -361,38 +377,48 @@ function calculaValorTotalItem(tr) {
     var valorTotal = quantidade * valor;
     $(tr).find(".itemValorTotal").val(floatToMoney(valorTotal));
 }
-async function loadListaItens() {
-    listaProdutos = await buscaProdutos($("#CODCOLIGADA").val());
-    htmlListProdutos = montaHtmlListaProdutos(listaProdutos);
+function carregaListaDeProdutos(value){
+    if (!value) {
+        return [];
+    }
+    if (value == "Insumos") {
+        var ds = DatasetFactory.getDataset("BuscaProdutosRM", null, [
+            DatasetFactory.createConstraint("CODCOLIGADA", "1", "1", ConstraintType.MUST),
+            DatasetFactory.createConstraint("TipoProduto", "OC/OS", "OC/OS", ConstraintType.MUST)
+        ], null);
 
-    function buscaProdutos(CODCOLIGADA) {
-        return new Promise((resolve, reject) => {
-            DatasetFactory.getDataset("BuscaProdutosRM", null, [
-                DatasetFactory.createConstraint("CODCOLIGADA", CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST),
-                DatasetFactory.createConstraint("TipoProduto", "OC/OS", "OC/OS", ConstraintType.MUST)
-            ], null, {
-                success: (produtos => {
-                    resolve(produtos.values);
-                }),
-                error: (error) => {
-                    FLUIGC.toast({
-                        title: "Erro ao buscar produtos: ",
-                        message: error,
-                        type: "warning"
-                    });
-                    reject();
-                }
+        var Produtos = ds.values;
+        return Produtos;
+    }
+
+
+    var ds = DatasetFactory.getDataset("dsBuscaProdutosTransferenciasDeCusto", null,[
+        DatasetFactory.createConstraint("TIPO_TRANSFERENCIA", value, value, ConstraintType.MUST)
+    ],null);
+
+    if (ds.values[0].STATUS != "SUCCESS") {
+        showMessage(ds.values[0].MENSAGEM,"","warning");
+        throw ds.values[0].MENSAGEM;
+    }
+
+    var produtos = (ds.values[0].RESULT);
+    if (typeof produtos  == "string") {
+        produtos = JSON.parse(ds.values[0].RESULT);
+    }
+    console.log(produtos)
+    return produtos;
+
+    $(target).find("select.itemProduto").each(function(){
+        var selectizeTarget = $(this)[0].selectize;
+        selectizeTarget.clearOptions();
+
+        for (const produto of produtos) {
+            selectizeTarget.addOption({
+                value: produto.VISUAL,
+                text: produto.VISUAL
             });
-        });
-    }
-
-    function montaHtmlListaProdutos(listaProdutos) {
-        var html = "<option></option>";
-        for (const produto of listaProdutos) {
-            html += `<option value="${produto.VISUAL}">${produto.VISUAL}</option>`;
         }
-        return html;
-    }
+    });
 }
 
 
@@ -497,7 +523,7 @@ function movimentaAtividadeParaReprovacao() {
             var assignee = null
 
             if ($("#atividade").val() == ATIVIDADES.APROVADOR_ORIGEM) {
-                targetState = 37;
+                targetState = 9;
                 assignee = $("#usuarioAprovadorDestino").val();
                 for (const task of result.items) {
                     if (task.state.sequence == ATIVIDADES.APROVADOR_DESTINO) {
@@ -505,7 +531,7 @@ function movimentaAtividadeParaReprovacao() {
                     }
                 }
             } else if ($("#atividade").val() == ATIVIDADES.APROVADOR_DESTINO) {
-                targetState = 36;
+                targetState = 10;
                 assignee = $("#usuarioAprovadorOrigem").val();
                 for (const task of result.items) {
                     if (task.state.sequence == ATIVIDADES.APROVADOR_ORIGEM) {

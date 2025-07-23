@@ -29,6 +29,7 @@ function displayFields(form,customHTML){
 
 
     form.setValue("textObservacao","");
+    form.setValue("decisao","");
 }
 
 

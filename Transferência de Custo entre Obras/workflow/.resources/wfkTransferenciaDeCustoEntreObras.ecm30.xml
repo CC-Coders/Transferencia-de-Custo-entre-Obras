@@ -9,7 +9,7 @@
     <active>true</active>
     <publicProcess>false</publicProcess>
     <volumeId>Default</volumeId>
-    <categoryId></categoryId>
+    <categoryId>Gerenciais</categoryId>
     <managerEngineAllocationId>Papel</managerEngineAllocationId>
     <managerEngineAllocationConfiguration>&lt;AssignmentController&gt;&lt;Role&gt;admin&lt;/Role&gt;&lt;/AssignmentController&gt;</managerEngineAllocationConfiguration>
     <snapshotFrequency>0</snapshotFrequency>
@@ -29,7 +29,7 @@
     <processDefinitionVersionPK>
       <companyId>1</companyId>
       <processId>Transferência de Custos entre Obras</processId>
-      <version>124</version>
+      <version>126</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
     <formId>28837</formId>
@@ -1203,7 +1203,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>124</version>
+        <version>126</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1215,7 +1215,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>124</version>
+        <version>126</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1227,7 +1227,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>3</expressionOrder>
-        <version>124</version>
+        <version>126</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1239,7 +1239,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>124</version>
+        <version>126</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1251,7 +1251,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>124</version>
+        <version>126</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1263,7 +1263,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>3</expressionOrder>
-        <version>124</version>
+        <version>126</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1275,7 +1275,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>124</version>
+        <version>126</version>
         <sequence>44</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1289,7 +1289,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>124</version>
+        <version>126</version>
         <sequence>44</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1808,12 +1808,13 @@
     var NOMECCUSTO_DESTINO = hAPI.getCardValue(&quot;ccustoObraDestino&quot;).split(&quot; - &quot;)[2];
 
     var PRODUTOS = getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO);
+    var CUSTO_OU_RECEITA = hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? &quot;CUSTO&quot;:&quot;RECEITA&quot;;
 
 
     // Lanca ajuste para Obra Origem
     // Se for TRANSFERE_CUSTO, então a Obra Origem, recebe o PRODUTO AUMENTA_RESULTADO, pois está enviando o CUSTO
     // Porém, se for TRANSFERE_RECEITA, então a Obra Origem, recebe o PRODUTO DIMINUI_RESULTADO, pois está enviando a RECEITA
-    var PRODUTO_ORIGEM = hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? PRODUTOS.AUMENTA_RESULTADO : PRODUTOS.DIMINUI_RESULTADO;
+    var PRODUTO_ORIGEM = hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO;
     var idmov = geraMovimentos(CODCOLIGADA_ORIGEM, CODCCUSTO_ORIGEM, CODCOLIGADA_DESTINO, NOMECCUSTO_ORIGEM, PRODUTO_ORIGEM);
     hAPI.setCardValue(&quot;IDMOV_ORIGEM&quot;, idmov);
 
@@ -1821,7 +1822,7 @@
     // Lanca ajuste para Obra Destino
     // Se for TRANSFERE_CUSTO, então a Obra Destino, recebe o PRODUTO DIMINUI_RESULTADO, pois está recebendo CUSTO
     // Porém, se for TRANSFERE_RECEITA, então a Obra Destino, recebe o PRODUTO AUMENTA_RESULTADO, pois está recebendo a RECEITA
-    var PRODUTO_DESTINO = hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? PRODUTOS.DIMINUI_RESULTADO : PRODUTOS.AUMENTA_RESULTADO;
+    var PRODUTO_DESTINO = hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO;
     var idmov = geraMovimentos(CODCOLIGADA_DESTINO, CODCCUSTO_DESTINO, CODCOLIGADA_ORIGEM, NOMECCUSTO_DESTINO, PRODUTO_DESTINO);
     hAPI.setCardValue(&quot;IDMOV_DESTINO&quot;, idmov);
 
@@ -1835,30 +1836,58 @@ function getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO) {
     if (CODCOLIGADA_ORIGEM == CODCOLIGADA_DESTINO) {
         // Se transferencia entre Centro de Custo
         var PRODUTOS = {
-            AUMENTA_RESULTADO: {
-                CODIGOPRD_COLIGADA1: &quot;11.006.00110&quot;,
-                CODIGOPRD: &quot;11.006.00110&quot;,
-                DESCPRD: &quot;Ajustes gerenciais (+)&quot;,
-            },
-            DIMINUI_RESULTADO: {
-                CODIGOPRD_COLIGADA1: &quot;11.006.00111&quot;,
-                CODIGOPRD: &quot;11.006.00111&quot;,
-                DESCPRD: &quot;Ajustes gerenciais (-)&quot;,
+            CUSTO:{
+                AUMENTA_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: &quot;11.006.00110&quot;,
+                    CODIGOPRD: &quot;11.006.00110&quot;,
+                    DESCPRD: &quot;Ajustes gerenciais (+)&quot;,
+                },
+                DIMINUI_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: &quot;11.006.00111&quot;,
+                    CODIGOPRD: &quot;11.006.00111&quot;,
+                    DESCPRD: &quot;Ajustes gerenciais (-)&quot;,
+                }
+            }, 
+            RECEITA:{
+                AUMENTA_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: &quot;11.999.00001&quot;,
+                    CODIGOPRD: &quot;11.999.00001&quot;,
+                    DESCPRD: &quot;Receita de Obras (+)&quot;,
+                },
+                DIMINUI_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: &quot;11.999.00000&quot;,
+                    CODIGOPRD: &quot;11.999.00000&quot;,
+                    DESCPRD: &quot;Receita de Obras (-)&quot;,
+                }
             }
         }
         return PRODUTOS;
     } else {
         // Se Transferencia entre Coligadas
         var PRODUTOS = {
-            AUMENTA_RESULTADO: {
-                CODIGOPRD_COLIGADA1: &quot;11.006.00160&quot;,
-                CODIGOPRD: &quot;11.006.00158&quot;,
-                DESCPRD: &quot;Ajuste entre coligadas (+)&quot;,
+            CUSTO:{
+                AUMENTA_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: &quot;11.006.00160&quot;,
+                    CODIGOPRD: &quot;11.006.00158&quot;,
+                    DESCPRD: &quot;Ajuste entre coligadas (+)&quot;,
+                },
+                DIMINUI_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: &quot;11.006.00161&quot;,
+                    CODIGOPRD: &quot;11.006.00159&quot;,
+                    DESCPRD: &quot;Ajuste entre coligadas (-)&quot;,
+                }
             },
-            DIMINUI_RESULTADO: {
-                CODIGOPRD_COLIGADA1: &quot;11.006.00161&quot;,
-                CODIGOPRD: &quot;11.006.00159&quot;,
-                DESCPRD: &quot;Ajuste entre coligadas (-)&quot;,
+            RECEITA:{
+                AUMENTA_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: &quot;11.999.00001&quot;,
+                    CODIGOPRD: &quot;11.999.00001&quot;,
+                    DESCPRD: &quot;Receita de Obras (+)&quot;,
+                },
+                DIMINUI_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: &quot;11.999.00000&quot;,
+                    CODIGOPRD: &quot;11.999.00000&quot;,
+                    DESCPRD: &quot;Receita de Obras (-)&quot;,
+                }
             }
         }
         return PRODUTOS;
@@ -2856,7 +2885,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>124</version>
+        <version>126</version>
         <linkSequence>11</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -2867,7 +2896,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>124</version>
+        <version>126</version>
         <linkSequence>12</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -2878,7 +2907,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>124</version>
+        <version>126</version>
         <linkSequence>43</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -2889,7 +2918,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>124</version>
+        <version>126</version>
         <linkSequence>47</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -2900,7 +2929,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>124</version>
+        <version>126</version>
         <linkSequence>47</linkSequence>
         <bendSequence>2</bendSequence>
       </processLinkBendPK>

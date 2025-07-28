@@ -273,6 +273,10 @@ function loadAtividadesAprovacao() {
     escondeDiretoresSeValorNoLimiteDoCoordenador();
     geraTabelaHistorico();
     marcaEmVerdeAprovados();
+    
+    if($("#isMobile").val() == "true"){
+        carregaTabelaTransferenciasMobile();
+    }
 }
 
 

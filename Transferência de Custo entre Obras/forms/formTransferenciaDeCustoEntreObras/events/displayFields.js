@@ -18,6 +18,7 @@ function displayFields(form,customHTML){
     form.setValue("formMode", form.getFormMode());
     form.setValue("userCode", USUARIO);
     form.setValue("atividade", ATIVIDADE);
+    form.setValue("isMobile", form.getMobile());
 
     form.setValue("dateSolicitacao", dataHoje);
     form.setValue("dataSolicitacao", dataHoje.split("-").reverse().join("/"));

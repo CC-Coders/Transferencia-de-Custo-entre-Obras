@@ -421,6 +421,66 @@ function carregaListaDeProdutos(value){
     });
 }
 
+function carregaTabelaTransferenciasMobile(){
+    $("#tableTransferencias>tbody>tr:not(:first)").each(function(){
+        var tipo = $(this).find(".motivoTransferencia").val();
+        var valorTotal = $(this).find(".valorTotalTransferencia").val();
+        var Justificativa = $(this).find(".textMotivoTransferencia").val();
+        var itens = JSON.parse($(this).find(".listItensTransferencia").val());
+
+        var html = 
+        `<div class="panel panel-primary">
+            <div class="panel panel-heading">
+                <b>Tipo: </b><span>${tipo}</span><br>
+            </div>
+            <div class="panel-body">
+                <div>
+                    <b>Valor: </b><span>${valorTotal}</span><br>
+                    <b>Justificativa: </b>
+                    <p>${Justificativa}</p>
+                </div>
+                <div>
+                    ${geraHTMLItens(itens)}
+                </div>
+            </div>
+        </div>`;
+
+        console.log(html)
+
+        $("#divPanelTransfenreciasMobile").append(html);
+        $("#divPanelTransfenreciasMobile").show();
+        $("#divPanelTransfenrecias").hide();
+
+
+    });
+
+    function geraHTMLItens(itens){
+        var html = "";
+        for (const item of itens) {
+            var counter = 1;
+            html+=
+            `<div style="border:solid 1px black; border-radius:20px; padding:10px;">
+                <b>Produto:</b><br>
+                <span>${item.CODPRODUTO} - ${item.DESCPRODUTO}</span><br><br>
+                
+                <b>Descrição:</b><br>
+                <span>${item.DESCRICAO}</span><br><br>
+                
+                <b>Quantidade:</b><br>
+                <span>${item.QUANTIDADE} ${item.UN}</span><br><br>
+                
+                <b>Valor Unitário:</b><br>
+                <span>${item.VALOR_UNITARIO}</span><br><br>
+                
+                <b>Valor Total:</b><br>
+                <span>${floatToMoney(moneyToFloat(item.VALOR_UNITARIO) * moneyToFloat(item.QUANTIDADE))}</span>
+            </div>`
+            counter++;
+        }
+        return html;
+    }
+}
+
 
 // Historico
 async function geraTabelaHistorico() {

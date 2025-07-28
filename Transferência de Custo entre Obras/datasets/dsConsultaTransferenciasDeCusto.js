@@ -15,8 +15,6 @@ function createDataset(fields, constraints, sortFields) {
         query += "      OBSERVACAO,  ";
         query += "      DATA_SOLICITACAO,  ";
         query += "      DATA_COMPETENCIA,  ";
-        query += "      DATA_COMPETENCIA,  ";
-        query += "      DATA_COMPETENCIA,  ";
         query += "      TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA.TRANSFERE_CUSTO, ";
         query += "	    TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA.TRANSFERE_RECEITA, ";
         query += "	    TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA.TIPO, ";

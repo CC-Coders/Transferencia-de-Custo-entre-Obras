@@ -177,7 +177,7 @@ function consultaTransferencias() {
         RECEITA: transferenciasRECEITA
     };
 
-    
+
     dataTableTransferencias.clear().draw();
     var linhasIncluidas = [];
     for (const tipo of [transferenciasETL.CUSTO.ORIGEM, transferenciasETL.CUSTO.DESTINO, transferenciasETL.RECEITA.ORIGEM, transferenciasETL.RECEITA.DESTINO]) {
@@ -185,12 +185,12 @@ function consultaTransferencias() {
             row.DESC_CCUSTO_ORIGEM = findDescCCUSTO(row.CODCOLIGADA_ORIGEM, row.CCUSTO_ORIGEM);
             row.DESC_CCUSTO_DESTINO = findDescCCUSTO(row.CODCOLIGADA_DESTINO, row.CCUSTO_DESTINO);
 
-            var found = linhasIncluidas.find(e=>e == row.ID_TRANSFERENCIA);
+            var found = linhasIncluidas.find(e => e == row.ID_TRANSFERENCIA);
             if (!found) {
                 dataTableTransferencias.row.add(row);
                 linhasIncluidas.push(row.ID_TRANSFERENCIA);
             }
-    
+
         }
     }
     dataTableTransferencias.draw();
@@ -275,18 +275,18 @@ function initDataTableTransferencias() {
         columns: [
             {
                 data: "ID_SOLICITACAO",
-                className:"alignCenter",
-                render:function(data){
+                className: "alignCenter",
+                render: function (data) {
                     return `<a style="color: skyblue;text-decoration: underline;" href="/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=${data}" target="_blank">${data}</a>`
                 }
             },
             {
                 data: "TIPO",
-                className:"alignCenter",
+                className: "alignCenter",
             },
             {
                 data: "CCUSTO_ORIGEM",
-                className:"alignCenter",
+                className: "alignCenter",
                 render: function (data, type, row) {
                     return row.CODCOLIGADA_ORIGEM + " - " + row.CCUSTO_ORIGEM + " - " + row.DESC_CCUSTO_ORIGEM;
                 },
@@ -295,7 +295,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: "CCUSTO_DESTINO",
-                className:"alignCenter",
+                className: "alignCenter",
                 render: function (data, type, row) {
                     return row.CODCOLIGADA_DESTINO + " - " + row.CCUSTO_DESTINO + " - " + row.DESC_CCUSTO_DESTINO;
                 },
@@ -304,12 +304,12 @@ function initDataTableTransferencias() {
             },
             {
                 data: "SOLICITANTE",
-                className:"alignCenter",
+                className: "alignCenter",
             },
             {
                 data: "VALOR",
                 type: "num",
-                className:"alignCenter",
+                className: "alignCenter",
                 className: "dt-left",
                 render: function (data, type) {
                     if (type === "sort") {
@@ -321,7 +321,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: "DATA_SOLICITACAO",
-                className:"alignCenter",
+                className: "alignCenter",
                 render: function (data, type) {
                     if (type === "sort") {
                         return moment(data, "YYYY-MM-DD").valueOf();
@@ -332,13 +332,13 @@ function initDataTableTransferencias() {
             },
             {
                 data: "DATA_COMPETENCIA",
-                className:"alignCenter",
+                className: "alignCenter",
                 render: function (data, type) {
                     if (type === "sort") {
                         return moment(data, "YYYY-MM-DD").valueOf();
                     } else {
                         console.log(data);
-                        if (!data || data == null  || data == "" || data == "null") {
+                        if (!data || data == null || data == "" || data == "null") {
                             return "";
                         }
                         return moment(data, "YYYY-MM-DD").format("DD/MM/YYYY");
@@ -347,7 +347,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: "STATUS",
-                className:"alignCenter",
+                className: "alignCenter",
                 render: function (data) {
                     if (data == 1) {
                         return "Em andamento";
@@ -365,7 +365,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: null,
-                className:"alignCenter",
+                className: "alignCenter",
                 orderable: false,
                 render: function (data, type, row) {
                     return `<button class="btn btn-default btnDetalhesSolicitacao">
@@ -461,7 +461,7 @@ function loadChart1(id, data, colors) {
         .append("g");
 
     // Tooltip
-    const tooltip = d3.select("#d3-tooltip"+ id);
+    const tooltip = d3.select("#d3-tooltip" + id);
 
     // Draw slices with mouse events
     arcs.append("path")
@@ -478,9 +478,9 @@ function loadChart1(id, data, colors) {
         })
         .on("mousemove", function (event) {
             var pointer = d3.pointer(event);
-            
+
             tooltip
-                .style("left", (pointer[0] +60) + "px")
+                .style("left", (pointer[0] + 60) + "px")
                 .style("top", (pointer[1] + 100) + "px");
         })
         .on("mouseout", function () {
@@ -620,7 +620,7 @@ function loadMultiLineChart(id, datasets, colorList) {
         ];
     }
     console.log("dataset", datasets)
-    if (!colorList) colorList = [ "#dd0426", "#38b000", "#008000", "#ad2831"];
+    if (!colorList) colorList = ["#dd0426", "#38b000", "#008000", "#ad2831"];
 
     // Defensive: ensure all dates are Date objects
     datasets.forEach(serie => {
@@ -707,7 +707,7 @@ function loadMultiLineChart(id, datasets, colorList) {
             .attr("d", line);
 
         // Tooltip div (should exist in your HTML)
-        const tooltip = d3.select("#d3-tooltip"+id);
+        const tooltip = d3.select("#d3-tooltip" + id);
 
         // Draw points with tooltip
         svg.selectAll(".point-" + i)
@@ -725,10 +725,10 @@ function loadMultiLineChart(id, datasets, colorList) {
                 d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2);
             })
             .on("mousemove", function (event) {
-                var pointer = d3.pointer(event);            
+                var pointer = d3.pointer(event);
                 tooltip
-                    .style("left", (pointer[0] -50) + "px")
-                    .style("top", (pointer[1] +70) + "px");
+                    .style("left", (pointer[0] - 50) + "px")
+                    .style("top", (pointer[1] + 70) + "px");
             })
             .on("mouseout", function () {
                 tooltip.style("display", "none");
@@ -764,7 +764,7 @@ function loadMultiLineChart(id, datasets, colorList) {
         .attr("transform", `translate(${margin.left},0)`)
         .call(
             d3.axisLeft(y)
-                .tickFormat(function(d) {
+                .tickFormat(function (d) {
                     return floatToMoney(d).split(",")[0];
                 })
         );
@@ -1028,7 +1028,11 @@ function alimentaCharts() {
     var enviosCusto = [];
     for (const obra of envioCustoPorObra) {
         for (const transferencia of obra.transferencias) {
-            var [ano, mes, dia] = transferencia.DATA_SOLICITACAO.split(" ")[0].split("-");
+            var data = transferencia.DATA_COMPETENCIA;
+            if (!data) {
+                data = getDataHoje();
+            }
+            var [ano, mes, dia] = data.split(" ")[0].split("-");
             var date = new Date(ano, (mes - 1), 1);
             enviosCusto.push({ date: date, value: parseFloat(transferencia.VALOR) })
         }
@@ -1052,7 +1056,11 @@ function alimentaCharts() {
     var recebimentoCusto = [];
     for (const obra of recebimentoCustoPorObra) {
         for (const transferencia of obra.transferencias) {
-            var [ano, mes, dia] = transferencia.DATA_SOLICITACAO.split(" ")[0].split("-");
+            var data = transferencia.DATA_COMPETENCIA;
+            if (!data) {
+                data = getDataHoje();
+            }
+            var [ano, mes, dia] = data.split(" ")[0].split("-");
             var date = new Date(ano, (mes - 1), 1);
             recebimentoCusto.push({ date: date, value: parseFloat(transferencia.VALOR) })
         }
@@ -1076,8 +1084,11 @@ function alimentaCharts() {
     var enviosReceita = [];
     for (const obra of envioReceitaPorObra) {
         for (const transferencia of obra.transferencias) {
-            var [ano, mes, dia] = transferencia.DATA_SOLICITACAO.split(" ")[0].split("-");
-            var date = new Date(ano, (mes - 1), 1);
+            var data = transferencia.DATA_COMPETENCIA;
+            if (!data) {
+                data = getDataHoje();
+            }
+            var [ano, mes, dia] = data.split(" ")[0].split("-"); var date = new Date(ano, (mes - 1), 1);
             enviosReceita.push({ date: date, value: parseFloat(transferencia.VALOR) })
         }
     }
@@ -1098,8 +1109,11 @@ function alimentaCharts() {
     var recebimentoReceita = [];
     for (const obra of recebimentoReceitaPorObra) {
         for (const transferencia of obra.transferencias) {
-            var [ano, mes, dia] = transferencia.DATA_SOLICITACAO.split(" ")[0].split("-");
-            var date = new Date(ano, (mes - 1), 1);
+            var data = transferencia.DATA_COMPETENCIA;
+            if (!data) {
+                data = getDataHoje();
+            }
+            var [ano, mes, dia] = data.split(" ")[0].split("-"); var date = new Date(ano, (mes - 1), 1);
             recebimentoReceita.push({ date: date, value: parseFloat(transferencia.VALOR) })
         }
     }
@@ -1114,14 +1128,14 @@ function alimentaCharts() {
         }
     }
     groupedRecebimentoReceita = groupedRecebimentoReceita.sort((a, b) => a.date.getTime() - b.date.getTime());
-    
 
-    var [minDate, maxDate] = getMinDateEMaxDate(groupedEnviosReceita,groupedRecebimentoReceita, groupedRecebimentoCusto, groupedEnviosCusto);
+
+    var [minDate, maxDate] = getMinDateEMaxDate(groupedEnviosReceita, groupedRecebimentoReceita, groupedRecebimentoCusto, groupedEnviosCusto);
     console.log("minmax", minDate, maxDate)
-    groupedEnviosReceita = insereMesesFaltando(groupedEnviosReceita,minDate,maxDate);
-    groupedRecebimentoReceita = insereMesesFaltando(groupedRecebimentoReceita,minDate,maxDate);
-    groupedRecebimentoCusto = insereMesesFaltando(groupedRecebimentoCusto,minDate,maxDate);
-    groupedEnviosCusto = insereMesesFaltando(groupedEnviosCusto,minDate,maxDate);
+    groupedEnviosReceita = insereMesesFaltando(groupedEnviosReceita, minDate, maxDate);
+    groupedRecebimentoReceita = insereMesesFaltando(groupedRecebimentoReceita, minDate, maxDate);
+    groupedRecebimentoCusto = insereMesesFaltando(groupedRecebimentoCusto, minDate, maxDate);
+    groupedEnviosCusto = insereMesesFaltando(groupedEnviosCusto, minDate, maxDate);
 
     console.log(groupedEnviosCusto)
     console.log(groupedRecebimentoCusto)
@@ -1134,44 +1148,44 @@ function alimentaCharts() {
         { "name": "Recebimentos", values: groupedRecebimentoReceita },
     ]);
 }
-function getMinDateEMaxDate(groupedEnviosReceita,groupedRecebimentoReceita, recebimentoCustoPorObra, envioCustoPorObra){
-    console.log(groupedEnviosReceita.length,groupedRecebimentoReceita.length, recebimentoCustoPorObra.length, envioCustoPorObra.length)
+function getMinDateEMaxDate(groupedEnviosReceita, groupedRecebimentoReceita, recebimentoCustoPorObra, envioCustoPorObra) {
+    console.log(groupedEnviosReceita.length, groupedRecebimentoReceita.length, recebimentoCustoPorObra.length, envioCustoPorObra.length)
     var minDate = new Date();
     minDate.setDate(1);
-    if (groupedEnviosReceita.length>0) {
+    if (groupedEnviosReceita.length > 0) {
         minDate = groupedEnviosReceita[0].date;
     }
-    if (groupedRecebimentoReceita.length>0) {
-        minDate =minDate.getTime() > groupedRecebimentoReceita[0].date.getTime()? groupedRecebimentoReceita[0].date : minDate;            
+    if (groupedRecebimentoReceita.length > 0) {
+        minDate = minDate.getTime() > groupedRecebimentoReceita[0].date.getTime() ? groupedRecebimentoReceita[0].date : minDate;
     }
-    if (recebimentoCustoPorObra.length>0) {
-        minDate =  minDate.getTime() > recebimentoCustoPorObra[0].date.getTime() ? recebimentoCustoPorObra[0].date : minDate;
+    if (recebimentoCustoPorObra.length > 0) {
+        minDate = minDate.getTime() > recebimentoCustoPorObra[0].date.getTime() ? recebimentoCustoPorObra[0].date : minDate;
     }
-    if (envioCustoPorObra.length>0) {
+    if (envioCustoPorObra.length > 0) {
         minDate = minDate.getTime() > envioCustoPorObra[0].date.getTime() ? envioCustoPorObra[0].date : minDate;
     }
-    
+
 
     var maxDate = new Date();
     maxDate.setDate(1);
 
-    if (groupedEnviosReceita.length>0) {
-        maxDate = groupedEnviosReceita[groupedEnviosReceita.length-1].date;
+    if (groupedEnviosReceita.length > 0) {
+        maxDate = groupedEnviosReceita[groupedEnviosReceita.length - 1].date;
     }
-    if (groupedRecebimentoReceita.length>0) {
-        maxDate = maxDate.getTime() < groupedRecebimentoReceita[groupedRecebimentoReceita.length-1].date.getTime() ? groupedRecebimentoReceita[groupedRecebimentoReceita.length-1].date : maxDate;
+    if (groupedRecebimentoReceita.length > 0) {
+        maxDate = maxDate.getTime() < groupedRecebimentoReceita[groupedRecebimentoReceita.length - 1].date.getTime() ? groupedRecebimentoReceita[groupedRecebimentoReceita.length - 1].date : maxDate;
     }
-    if (recebimentoCustoPorObra.length>0) {
-        maxDate = maxDate.getTime() < recebimentoCustoPorObra[recebimentoCustoPorObra.length-1].date.getTime() ? recebimentoCustoPorObra[recebimentoCustoPorObra.length-1].date : maxDate;
+    if (recebimentoCustoPorObra.length > 0) {
+        maxDate = maxDate.getTime() < recebimentoCustoPorObra[recebimentoCustoPorObra.length - 1].date.getTime() ? recebimentoCustoPorObra[recebimentoCustoPorObra.length - 1].date : maxDate;
     }
-    if (envioCustoPorObra.length>0) {
-        maxDate = maxDate.getTime() < envioCustoPorObra[envioCustoPorObra.length-1].date.getTime() ? envioCustoPorObra[envioCustoPorObra.length-1].date : maxDate;
+    if (envioCustoPorObra.length > 0) {
+        maxDate = maxDate.getTime() < envioCustoPorObra[envioCustoPorObra.length - 1].date.getTime() ? envioCustoPorObra[envioCustoPorObra.length - 1].date : maxDate;
     }
 
-    console.log(minDate,maxDate);
+    console.log(minDate, maxDate);
     return [minDate, maxDate];
 }
-function insereMesesFaltando(dataset, minDate, maxDate){
+function insereMesesFaltando(dataset, minDate, maxDate) {
     console.log(minDate, maxDate)
     var dataVerificacao = moment(minDate);
     var DataFim = moment(maxDate);
@@ -1215,7 +1229,7 @@ function abreModalTransferencia(idSolicitacao) {
 
                 <b>Engenheiro: </b><span>${formulario.engenheiroObraOrigem}</span><br>
                 <b>Coordenador: </b><span>${formulario.coordenadorObraOrigem}</span><br>
-                ${formulario.diretorObraOrigem ? `<b>Diretor: </b><span>${formulario.diretorObraOrigem}</span>`:""}
+                ${formulario.diretorObraOrigem ? `<b>Diretor: </b><span>${formulario.diretorObraOrigem}</span>` : ""}
             </div>
             <div class="col-md-6">
                 <h3><b>Obra Destino</b></h3>
@@ -1225,7 +1239,7 @@ function abreModalTransferencia(idSolicitacao) {
 
                 <b>Engenheiro: </b><span>${formulario.engenheiroObraDestino}</span><br>
                 <b>Coordenador: </b><span>${formulario.coordenadorObraDestino}</span><br>
-                ${formulario.diretorObraDestino ? `<b>Diretor: </b><span>${formulario.diretorObraDestino}</span>`:""}
+                ${formulario.diretorObraDestino ? `<b>Diretor: </b><span>${formulario.diretorObraDestino}</span>` : ""}
             </div>
         </div>
         <div>
@@ -1236,7 +1250,7 @@ function abreModalTransferencia(idSolicitacao) {
     var TRANSFERE_CUSTO = formulario.TRANSFERE_CUSTO;
     var TRANSFERE_RECEITA = formulario.TRANSFERE_RECEITA;
 
-    var title = `Transferência de ${TRANSFERE_CUSTO == "true"? "Custo":"Receita"} #${idSolicitacao}`;
+    var title = `Transferência de ${TRANSFERE_CUSTO == "true" ? "Custo" : "Receita"} #${idSolicitacao}`;
 
     var myModal = FLUIGC.modal({
         title: title,
@@ -1268,7 +1282,7 @@ function abreModalTransferencia(idSolicitacao) {
 
             counter++;
             html +=
-            `<div style="border: solid 1px black;border-radius: 20px;padding: 0px 20px; margin-bottom: 10px;">
+                `<div style="border: solid 1px black;border-radius: 20px;padding: 0px 20px; margin-bottom: 10px;">
                 <h3><b>${TIPO}</b></h3>
                 <b>Valor Total: </b><span>${VALOR}</span><br>
                 <p><b>Motivo: </b>${MOTIVO}</p>
@@ -1293,7 +1307,7 @@ function abreModalTransferencia(idSolicitacao) {
 
         return html;
     }
-    function geraLinhasItens(itens){
+    function geraLinhasItens(itens) {
         var html = "";
         var counter = 0;
         for (const item of itens) {
@@ -1303,7 +1317,7 @@ function abreModalTransferencia(idSolicitacao) {
             var VALOR_TOTAL = moneyToFloat(QUANTIDADE) * moneyToFloat(VALOR_UNITARIO);
 
             counter++;
-            html+=  
+            html +=
                 `<tr>
                     <td style="color:black !important;">${counter}</td>
                     <td style="color:black !important;">${item.CODPRODUTO} - ${item.DESCPRODUTO}</td>
@@ -1417,5 +1431,32 @@ function PreencheCamposFiltros() {
         }
 
         return html;
+    }
+}
+
+
+function getDataHoje(format = "AAAA-MM-DD") {
+    //AAAA-MM-DD Formato PadrÃ£o caso nÃ£o seja informado o Formato 
+
+    var date = new Date();
+
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+
+    if (day < 10) {
+        day = "0" + day;
+    }
+    if (month < 10) {
+        month = "0" + month;
+    }
+
+    if (format.toUpperCase() == "DD/MM/AAAA") {
+        return [day, month, year].join("/");
+    } else if (format.toUpperCase() == "AAAA-MM-DD") {
+        return [year, month, day].join("-");
+    } else {
+        console.error("Formato da Data invÃ¡lido (" + format.toUpperCase() + ")");
+        throw "Formato da Data invÃ¡lido (" + format.toUpperCase() + ")";
     }
 }

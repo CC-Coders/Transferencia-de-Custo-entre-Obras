@@ -1,4 +1,5 @@
 function servicetask26(attempt, message) {
+    try {
     var CODCOLIGADA_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[0];
     var CODCCUSTO_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[1];
     var NOMECCUSTO_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[2];
@@ -29,6 +30,13 @@ function servicetask26(attempt, message) {
 
     updateDataCompetencia();
     atualizaStatusTransferencia(STATUS_TRANSFENCIA.APROVADO);
+    if (CODCOLIGADA_ORIGEM != CODCOLIGADA_DESTINO) {
+        // Se Coligada de Origem for Diferente de Destino, informa a Controladoria
+        EnviaEmail("gabriel.persike@castilho.com.br");
+    }
+    } catch (error) {
+        throw error;
+    }
 }
 
 // Gera 1.1.93
@@ -265,6 +273,69 @@ function ImportaMovimento(CODCOLIGADA, xml) {
         else if (ds.values[0][0] == "true") {
             return ds.values[0][2];
         }
+    }
+}
+
+
+function EnviaEmail(emails) {
+    var CorpoEmail = "";
+    CorpoEmail += "Olá, <br>";
+    CorpoEmail += "Segue abaixo as informações das Transferência de "+(hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? "CUSTO":"RECEITA")+" entre Coligadas<br>";
+    CorpoEmail += "<br>";
+    CorpoEmail += "<h4>OBRA ORIGEM</h4>";
+    CorpoEmail += "<b>Coligada: </b><span>" + hAPI.getCardValue("ccustoObraOrigem").split(" - ")[0] + "</span><br>";
+    CorpoEmail += "<b>Centro de Custo: </b><span>" + hAPI.getCardValue("ccustoObraOrigem") + "</span><br>";
+    CorpoEmail += "<br>";
+    CorpoEmail += "<h4>OBRA DESTINO</h4>";
+    CorpoEmail += "<b>Coligada: </b><span>" + hAPI.getCardValue("ccustoObraDestino").split(" - ")[0] + "</span><br>";
+    CorpoEmail += "<b>Centro de Custo: </b><span>" + hAPI.getCardValue("ccustoObraDestino") + "</span><br>";
+    CorpoEmail += "<br>";
+    CorpoEmail += "<b>Valor: </b><span>" + FormataValorParaMoeda(parseFloat(hAPI.getCardValue("valorTotal"))) + "</span><br>";
+    CorpoEmail += "<b>Data Competência: </b><span>" + getDateNow().split("-").reverse().join("/") + "</span><br>";
+    CorpoEmail += "<br>";
+    CorpoEmail += "Para mais informações, <a href='http://desenvolvimento.castilho.com.br:3232/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=" + getValue("WKNumProces") + "'>clique aqui</a>.";
+
+    var url = 'http://fluig.castilho.com.br:1010';//Prod
+    // var url = 'http://homologacao.castilho.com.br:2020';//Homolog
+
+    var data = {
+        "to": emails,
+        from: "fluig@construtoracastilho.com.br", //Prod
+        "subject": "Transferência de "+(hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? "CUSTO":"RECEITA")+" entre Coligadas - #" + getValue("WKNumProces"), //   subject
+        "templateId": "TPL_PADRAO_CASTILHO", // Email template Id previously registered
+        "dialectId": "pt_BR", //Email dialect , if not informed receives pt_BR , email dialect ("pt_BR", "en_US", "es")
+        "param": {
+            "CORPO_EMAIL": CorpoEmail,
+            "SERVER_URL": url,
+            "TENANT_ID": "1"
+        }
+    };
+
+
+    var clientService = fluigAPI.getAuthorizeClientService();
+    var data = {
+        companyId: getValue("WKCompany") + '',
+        serviceCode: 'ServicoFluig',
+        endpoint: '/api/public/alert/customEmailSender',
+        method: 'post',
+        params: data,
+        options: {
+            encoding: 'UTF-8',
+            mediaType: 'application/json',
+            useSSL: true
+        },
+        headers: {
+            "Content-Type": 'application/json;charset=UTF-8'
+        }
+    };
+
+
+    var vo = clientService.invoke(JSON.stringify(data));
+
+    if (vo.getResult() == null || vo.getResult().isEmpty()) {
+        throw new Exception("Retorno está vazio");
+    } else {
+        return vo.getResult();
     }
 }
 

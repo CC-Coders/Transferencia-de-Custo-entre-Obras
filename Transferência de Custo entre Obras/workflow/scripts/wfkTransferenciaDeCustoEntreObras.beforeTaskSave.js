@@ -10,9 +10,9 @@ var ATIVIDADES = {
 };
 
 var STATUS_TRANSFENCIA = {
-    "EM_APROVACAO":1,
-    "APROVADO":2,
-    "CANCELADO":3,
+    "EM_APROVACAO": 1,
+    "APROVADO": 2,
+    "CANCELADO": 3,
 }
 
 function beforeTaskSave(colleagueId, nextSequenceId, userList) {
@@ -24,7 +24,7 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {
 
         // Insere nova Linha na tabela de Transferencias
         var id = insereNovoRegistro();
-        
+
         // Salva o ID da Transferencia no campo ID_TRANSFERENCIAS_DE_CUSTO
         hAPI.setCardValue("ID_TRANSFERENCIAS_DE_CUSTO", id);
 
@@ -49,13 +49,13 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {
             if (ATIVIDADE == ATIVIDADES.APROVADOR_DESTINO) {
                 verificaSeAprovadorTambemAprovaObraOrigem();
             }
-            else if(ATIVIDADE == ATIVIDADES.APROVADOR_ORIGEM){
+            else if (ATIVIDADE == ATIVIDADES.APROVADOR_ORIGEM) {
                 verificaSeAprovadorTambemAprovaObraDestino();
             }
         }
 
         // Se reprovado marca a Reprovacao nas Duas Obras para Retornar ao Inicio
-        if(decisao == "Reprovado") {
+        if (decisao == "Reprovado") {
             hAPI.setCardValue("aprovadoObraOrigem", "Reprovado");
             hAPI.setCardValue("aprovadoObraDestino", "Reprovado");
         }
@@ -70,44 +70,44 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {
 
 
 // Verifica Aprovadores em comum entre Obra Origem e Destino
-function verificaSeAprovadorTambemAprovaObraDestino(){
+function verificaSeAprovadorTambemAprovaObraDestino() {
     var aprovador = hAPI.getCardValue("usuarioAprovadorOrigem");
 
-            var engenheiroObraDestino = hAPI.getCardValue("engenheiroObraDestino");
-            var coordenadorObraDestino = hAPI.getCardValue("coordenadorObraDestino");
-            var diretorObraDestino = hAPI.getCardValue("diretorObraDestino");
+    var engenheiroObraDestino = hAPI.getCardValue("engenheiroObraDestino");
+    var coordenadorObraDestino = hAPI.getCardValue("coordenadorObraDestino");
+    var diretorObraDestino = hAPI.getCardValue("diretorObraDestino");
 
-            // Verifica se o Usuario Aprovador, tambem é aprovador na Obra Destino
-            // Se sim, aprova tambem na outra obra
-            if (aprovador == engenheiroObraDestino) {
-                hAPI.setCardValue("aprovadoEngenheiroObraDestino", "true");
-            }
-            if (aprovador == coordenadorObraDestino) {
-                hAPI.setCardValue("aprovadoCoordenadorObraDestino", "true");
-            }
-            if (aprovador == diretorObraDestino) {
-                hAPI.setCardValue("aprovadoDiretorObraDestino", "true");
-            }
+    // Verifica se o Usuario Aprovador, tambem é aprovador na Obra Destino
+    // Se sim, aprova tambem na outra obra
+    if (aprovador == engenheiroObraDestino) {
+        hAPI.setCardValue("aprovadoEngenheiroObraDestino", "true");
+    }
+    if (aprovador == coordenadorObraDestino) {
+        hAPI.setCardValue("aprovadoCoordenadorObraDestino", "true");
+    }
+    if (aprovador == diretorObraDestino) {
+        hAPI.setCardValue("aprovadoDiretorObraDestino", "true");
+    }
 }
-function verificaSeAprovadorTambemAprovaObraOrigem(){
-   var aprovador = hAPI.getCardValue("usuarioAprovadorDestino");
+function verificaSeAprovadorTambemAprovaObraOrigem() {
+    var aprovador = hAPI.getCardValue("usuarioAprovadorDestino");
 
-            var engenheiroObraOrigem = hAPI.getCardValue("engenheiroObraOrigem");
-            var coordenadorObraOrigem = hAPI.getCardValue("coordenadorObraOrigem");
-            var diretorObraOrigem = hAPI.getCardValue("diretorObraOrigem");
+    var engenheiroObraOrigem = hAPI.getCardValue("engenheiroObraOrigem");
+    var coordenadorObraOrigem = hAPI.getCardValue("coordenadorObraOrigem");
+    var diretorObraOrigem = hAPI.getCardValue("diretorObraOrigem");
 
 
-            if (aprovador == engenheiroObraOrigem) {
-                // Se o aprovador for o Engenheiro também do destino marca como aprovado
-                hAPI.setCardValue("aprovadoEngenheiroObraOrigem", "true");
-            }
-            if (aprovador == coordenadorObraOrigem) {
-                hAPI.setCardValue("aprovadoCoordenadorObraOrigem", "true");
-            }
-            if (aprovador == diretorObraOrigem) {
-                hAPI.setCardValue("aprovadoDiretorObraOrigem", "true");
-                hAPI.setCardValue("aprovadoObraOrigem", "true");
-            }
+    if (aprovador == engenheiroObraOrigem) {
+        // Se o aprovador for o Engenheiro também do destino marca como aprovado
+        hAPI.setCardValue("aprovadoEngenheiroObraOrigem", "true");
+    }
+    if (aprovador == coordenadorObraOrigem) {
+        hAPI.setCardValue("aprovadoCoordenadorObraOrigem", "true");
+    }
+    if (aprovador == diretorObraOrigem) {
+        hAPI.setCardValue("aprovadoDiretorObraOrigem", "true");
+        hAPI.setCardValue("aprovadoObraOrigem", "true");
+    }
 }
 
 
@@ -203,8 +203,8 @@ function insereTransferencias(ID_PAI) {
         var valor = moneyToFloat(hAPI.getCardValue("valorTotalTransferencia" + "___" + id));
         var itens = JSON.parse(hAPI.getCardValue("listItensTransferencia" + "___" + id));
 
-        var TRANSFERE_CUSTO = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? 1:0;
-        var TRANSFERE_RECEITA = hAPI.getCardValue("TRANSFERE_RECEITA") == "true" ? 1:0;
+        var TRANSFERE_CUSTO = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? 1 : 0;
+        var TRANSFERE_RECEITA = hAPI.getCardValue("TRANSFERE_RECEITA") == "true" ? 1 : 0;
 
         var query = "INSERT INTO TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA (ID_TRANSFERENCIA, TIPO, VALOR, JUSTIFICATIVA, TRANSFERE_CUSTO, TRANSFERE_RECEITA) VALUES (?,?,?,?,?,?)";
 
@@ -295,7 +295,6 @@ function insereHistorico(ID_PAI) {
         { type: "varchar", value: movimentacao },
     ]);
 }
-
 
 // Utils
 function moneyToFloat(val) {
@@ -407,4 +406,7 @@ function executaUpdate(query, constraints) {
             conn.close();
         }
     }
+}
+function FormataValorParaMoeda(valor) {
+    return 'R$ ' + valor.toFixed(2).replace('.', ',');
 }

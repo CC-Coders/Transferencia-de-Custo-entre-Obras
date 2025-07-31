@@ -22,6 +22,12 @@ function extraiAprovadoresDaLista(lista) {
     coordenador = !coordenador ? "gabriel.persike" : coordenador;
     diretor = !diretor ? "gabriel.persike" : diretor;
 
+
+    // Condição inserida para lançamento das transferencias Pela Controladoria
+    engenherio = "andre.bernardino";
+    coordenador = "andre.bernardino";
+    diretor = "andre.bernardino";
+
     return { engenherio, coordenador, diretor };
 }
 function preencheCamposDeObras() {
@@ -450,8 +456,6 @@ function carregaTabelaTransferenciasMobile(){
         $("#divPanelTransfenreciasMobile").append(html);
         $("#divPanelTransfenreciasMobile").show();
         $("#divPanelTransfenrecias").hide();
-
-
     });
 
     function geraHTMLItens(itens){
@@ -474,7 +478,7 @@ function carregaTabelaTransferenciasMobile(){
                 
                 <b>Valor Total:</b><br>
                 <span>${floatToMoney(moneyToFloat(item.VALOR_UNITARIO) * moneyToFloat(item.QUANTIDADE))}</span>
-            </div>`
+            </div>`;
             counter++;
         }
         return html;
@@ -500,8 +504,6 @@ async function geraTabelaHistorico() {
         $("#divLinhasHistorico").append(html);
         $(".divImageUser:last").append(await BuscaImagemUsuario(usuario));
     }
-
-
 
     async function gerahtml(usuario, dataMovimento, observacao, movimentacao) {
         dataMovimento = dataMovimento.split(" ");

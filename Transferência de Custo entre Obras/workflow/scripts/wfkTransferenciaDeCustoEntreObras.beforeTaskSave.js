@@ -123,7 +123,7 @@ function insereNovoRegistro() {
     var VALOR = moneyToFloat(hAPI.getCardValue("valorObraDestino"));
     var OBSERVACAO = hAPI.getCardValue("textMotivoTransferencia");
 
-    var DATA_COMPETENCIA = hAPI.getCardValue("dataCompetencia").split("/").reverse().join("-");
+    
 
     var query =
         "INSERT INTO TRANSFERENCIAS_DE_CUSTO (" +

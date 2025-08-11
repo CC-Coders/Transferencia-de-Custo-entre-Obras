@@ -33,6 +33,8 @@
     <!-- Castilho Dev Guide -->
     <script
         src="http://desenvolvimento.castilho.com.br:3232/castilho_dev_guide/resources/js/castilho-consultas-rm.js"></script>
+    <script
+        src="http://desenvolvimento.castilho.com.br:3232/castilho_dev_guide/resources/js/castilho-utils.js"></script>
     <link rel="stylesheet"
         href="http://desenvolvimento.castilho.com.br:3232/castilho_dev_guide/resources/css/castilho_dev_guide.css" />
     <link rel="stylesheet"
@@ -54,6 +56,11 @@
     <!-- Chart -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
 
+    
+    <!-- Swal -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 
     <style>
         #landing {
@@ -67,7 +74,7 @@
             <h1 style="margin-top: 0px;">
                 TRANSFERÊNCIAS DE CUSTO ENTRE OBRAS
                 <button class="btn btn-primary" id="cardAprovacoesPendentes"
-                    style="position: absolute; right: 40px; top: 20px; border-radius: 20px; display: none;">
+                    style="position: absolute; right: 40px; top: 20px; border-radius: 20px;">
                     <span class="counter-group">
                         Minhas Aprovações
                         <a href="#" id="counterAprovacaoPendente"
@@ -204,7 +211,8 @@
                             <div class="chartWrapper">
                                 <div class="chartWrapper" style="margin-bottom: 0px;">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title" style="padding-bottom: 0px;">Custos Recebidos por Obra</h3>
+                                        <h3 class="panel-title" style="padding-bottom: 0px;">Custos Recebidos por Obra
+                                        </h3>
                                     </div>
                                     <div class="" style="padding: 0px;">
                                         <svg id="chart2" width="250" height="250"></svg>
@@ -256,7 +264,8 @@
                             <div class="chartWrapper">
                                 <div class="chartWrapper" style="margin-bottom: 0px;">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title" style="padding-bottom: 0px;">Receitas Recebidas por Obra</h3>
+                                        <h3 class="panel-title" style="padding-bottom: 0px;">Receitas Recebidas por Obra
+                                        </h3>
                                     </div>
                                     <div class="" style="padding: 0px;">
                                         <svg id="chart3" width="250" height="250"></svg>
@@ -270,7 +279,8 @@
                             <div class="chartWrapper">
                                 <div class="chartWrapper" style="margin-bottom: 0px;">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title" style="padding-bottom: 0px;">Receitas Enviadas por Obra</h3>
+                                        <h3 class="panel-title" style="padding-bottom: 0px;">Receitas Enviadas por Obra
+                                        </h3>
                                     </div>
                                     <div class="" style="padding: 0px;">
                                         <svg id="chart4" width="250" height="250"></svg>
@@ -321,147 +331,60 @@
 
     <div id="painelAprovacoes">
         <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">Aprovação de Redução de Custo</h3>
-            </div>
             <div class="panel-body">
-                <h2 style="margin-bottom: 5px;">SOLICITAÇÃO</h2>
-                <hr style="margin-bottom: 10px; margin-top: 0px;">
-                <b>Número: </b><span>123456</span><br>
-                <b>Solicitante: </b><span>gabriel.persike</span><br>
-                <b>Data Competencia: </b><span>09/07/2025</span><br>
-                <b>Valor: </b> <span>R$ 250,00</span> <br>
-                <b>Motivo: </b>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt amet, dolorum magnam iste odio libero
-                    pariatur molestias fuga. Odit iste excepturi, asperiores neque consequuntur libero cupiditate
-                    repellat quam maiores recusandae.</p>
-
-                <h2 style="margin-bottom: 5px;">ORIGEM <small>(redução de custo)</small></h2>
-                <hr style="margin-bottom: 10px; margin-top: 0px;">
-                <b>Obra: </b> <span>1.1.001 - Matriz Curitiba</span><br>
                 <div>
-                    <b>Engenheiro: </b><span>Felipe</span><br>
-                    <b>Coordenador: </b><span>Eduardo</span><br>
-                    <b>Diretor: </b><span>Augusto</span><br>
-                </div>
-                <br>
-
-                <h2 style="margin-bottom: 5px;">DESTINO <small>(aumento de custo)</small></h2>
-                <hr style="margin-bottom: 10px; margin-top: 0px;">
-                <b>Obra: </b> <span>1.2.023 - Obra Toledo II</span><br>
-                <div>
-                    <b>Engenheiro: </b><span>Claudio.pecanha</span><br>
-                    <b>Coordenador: </b><span>Eduardo</span><br>
-                    <b>Diretor: </b><span>Augusto</span><br>
+                    <h2 style="margin-bottom: 5px;">SOLICITAÇÃO</h2>
+                    <hr style="margin-bottom: 10px; margin-top: 0px;">
+                    <b>Número: </b><span id="textAprovacaoNumProcess">123456</span><br>
+                    <b>Solicitante: </b><span id="textAprovacaoSolicitante">gabriel.persike</span><br>
+                    <b>Valor: </b> <span id="textAprovacaoValorTotal">R$ 250,00</span> <br>
                 </div>
 
-                <h2 style="margin-bottom: 5px;">ITENS</h2>
-                <hr style="margin-bottom: 10px; margin-top: 0px;">
                 <div class="row">
-                    <div class="col-md-3">
-                        <div class="card-item">
-                            <div style="display: flex;align-items: center;">
-                                <div style="margin-right: 21px;">
-                                    #1
-                                </div>
-                                <div>
-                                    <b>10.001.0213012 - Nome do Produto</b> <br>
-                                    <small>20 TO x R$ 100,00</small><br>
-                                    <span>Descrição extra</span><br>
-                                    <b>R$ 2.000,00</b>
-                                </div>
-                            </div>
+                    <div class="col-md-6">
+                        <h2 style="margin-bottom: 5px;">ORIGEM <small style="color: white;" id="textAprovacaoTipoOrigem">(redução de custo)</small></h2>
+                        <hr style="margin-bottom: 10px; margin-top: 0px;">
+                        <b>Obra: </b> <span id="textAprovacaoObraOrigem">1.1.001 - Matriz Curitiba</span><br>
+                        <div>
+                            <b>Engenheiro: </b><span id="textAprovacaoEngenheiroOrigem">Felipe</span><br>
+                            <b>Coordenador: </b><span id="textAprovacaoCoordenadorOrigem">Eduardo</span><br>
+                            <b>Diretor: </b><span id="textAprovacaoDiretorOrigem">Augusto</span><br>
                         </div>
                         <br>
                     </div>
-                    <div class="col-md-3">
-                        <div class="card-item">
-                            <div style="display: flex;align-items: center;">
-                                <div style="margin-right: 21px;">
-                                    #1
-                                </div>
-                                <div>
-                                    <b>10.001.0213012 - Nome do Produto</b> <br>
-                                    <small>20 TO x R$ 100,00</small><br>
-                                    <span>Descrição extra</span><br>
-                                    <b>R$ 2.000,00</b>
-                                </div>
-                            </div>
+                    <div class="col-md-6">
+                        <h2 style="margin-bottom: 5px;">DESTINO <small style="color: white;" id="textAprovacaoTipoDestino">(aumento de custo)</small></h2>
+                        <hr style="margin-bottom: 10px; margin-top: 0px;">
+                        <b>Obra: </b> <span id="textAprovacaoObraDestino">1.2.023 - Obra Toledo II</span><br>
+                        <div>
+                            <b>Engenheiro: </b><span id="textAprovacaoEngenheiroDestino">Claudio.pecanha</span><br>
+                            <b>Coordenador: </b><span id="textAprovacaoCoordenadorDestino">Eduardo</span><br>
+                            <b>Diretor: </b><span id="textAprovacaoDiretorDestino">Augusto</span><br>
                         </div>
-                        <br>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card-item">
-                            <div style="display: flex;align-items: center;">
-                                <div style="margin-right: 21px;">
-                                    #1
-                                </div>
-                                <div>
-                                    <b>10.001.0213012 - Nome do Produto</b> <br>
-                                    <small>20 TO x R$ 100,00</small><br>
-                                    <span>Descrição extra</span><br>
-                                    <b>R$ 2.000,00</b>
-                                </div>
-                            </div>
-                        </div>
-                        <br>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card-item">
-                            <div style="display: flex;align-items: center;">
-                                <div style="margin-right: 21px;">
-                                    #1
-                                </div>
-                                <div>
-                                    <b>10.001.0213012 - Nome do Produto</b> <br>
-                                    <small>20 TO x R$ 100,00</small><br>
-                                    <span>Descrição extra</span><br>
-                                    <b>R$ 2.000,00</b>
-                                </div>
-                            </div>
-                        </div>
-                        <br>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card-item">
-                            <div style="display: flex;align-items: center;">
-                                <div style="margin-right: 21px;">
-                                    #1
-                                </div>
-                                <div>
-                                    <b>10.001.0213012 - Nome do Produto</b> <br>
-                                    <small>20 TO x R$ 100,00</small><br>
-                                    <span>Descrição extra</span><br>
-                                    <b>R$ 2.000,00</b>
-                                </div>
-                            </div>
-                        </div>
-                        <br>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card-item">
-                            <div style="display: flex;align-items: center;">
-                                <div style="margin-right: 21px;">
-                                    #1
-                                </div>
-                                <div>
-                                    <b>10.001.0213012 - Nome do Produto</b> <br>
-                                    <small>20 TO x R$ 100,00</small><br>
-                                    <span>Descrição extra</span><br>
-                                    <b>R$ 2.000,00</b>
-                                </div>
-                            </div>
-                        </div>
-                        <br>
                     </div>
                 </div>
-                <br>
-                <h2 style="margin-bottom: 5px;">HISTÓRICO</h2>
-                <hr style="margin-bottom: 10px; margin-top: 0px;">
 
+                <div>
+                    <h2 style="margin-bottom: 5px;">TRANSFERÊNCIAS</h2>
+                    <hr style="margin-bottom: 10px; margin-top: 0px;">
+                    <div id="divTransferencias"></div>
+                    <br>
+                </div>
+
+                <div>
+                    <h2 style="margin-bottom: 5px;">HISTÓRICO</h2>
+                    <hr style="margin-bottom: 10px; margin-top: 0px;">
+                    <div id="divLinhasHistorico"></div>
+                </div>
+
+                <div>
+                    <label for="textAreaObservacao">Observação:</label>
+                    <textarea name="textAreaObservacao" id="textAreaObservacao" class="form-control" rows=4></textarea>
+                </div>
+                <br>
                 <div style="text-align: center;">
-                    <button class="btn btn-success" style="margin-right: 10px;">Aprovar</button>
-                    <button class="btn btn-danger">Reprovar</button>
+                    <button class="btn btn-success" id="btnAprovar" style="margin-right: 10px;">Aprovar</button>
+                    <button class="btn btn-danger" id="btnReprovar">Reprovar</button>
                 </div>
             </div>
         </div>

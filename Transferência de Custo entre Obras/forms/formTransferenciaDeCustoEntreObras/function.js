@@ -24,9 +24,9 @@ function extraiAprovadoresDaLista(lista) {
 
 
     // Condição inserida para lançamento das transferencias Pela Controladoria
-    engenherio = "andre.bernardino";
-    coordenador = "andre.bernardino";
-    diretor = "andre.bernardino";
+    engenherio = "fernando.ribeiro";
+    coordenador = "fernando.ribeiro";
+    diretor = "fernando.ribeiro";
 
     return { engenherio, coordenador, diretor };
 }
@@ -34,13 +34,13 @@ function preencheCamposDeObras() {
     var USUARIO = $("#solicitante").val();
 
     var val = $("#ccustoObraOrigem").val();
-    var obrasComPermissaoDoUsuario = buscaObrasPorPermissaoDoUsuario(USUARIO);
+    var hasPermissaoGeral = usuarioComPermissaoGeralNasObras();
+    var obrasComPermissaoDoUsuario = buscaObrasPorPermissaoDoUsuario(USUARIO,hasPermissaoGeral);
     $("#ccustoObraOrigem").html(geraHtmlOptions(obrasComPermissaoDoUsuario));
     $("#ccustoObraOrigem").val(val);
 
 
     var val2 = $("#ccustoObraDestino").val();
-    console.log("val2", val2);
     var todasObras = buscaObrasPorPermissaoDoUsuario(USUARIO, true);
     $("#ccustoObraDestino").html(geraHtmlOptions(todasObras));
     $("#ccustoObraDestino").val(val2);
@@ -137,6 +137,18 @@ function alteraIconesECorDosValores(){
             $("#iconObraDestino").removeClass("iconNotStonks").addClass("iconStonks");
             $("#valorObraDestino").attr("style", "color: green !important");
             $("#valorObraOrigem").attr("style", "color: red !important");
+    }
+}
+function usuarioComPermissaoGeralNasObras(){
+    var ds = DatasetFactory.getDataset("colleagueGroup", null,[
+        DatasetFactory.createConstraint("colleagueId", $("#userCode").val(),$("#userCode").val(), ConstraintType.MUST),
+        DatasetFactory.createConstraint("groupId", "Controladoria","Controladoria", ConstraintType.MUST),
+    ],null);
+
+    if (ds.values.length>0) {
+        return true;
+    }else{
+        return false;
     }
 }
 

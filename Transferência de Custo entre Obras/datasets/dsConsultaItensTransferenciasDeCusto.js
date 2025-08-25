@@ -2,7 +2,7 @@ function createDataset(fields, constraints, sortFields) {
     try {
         var constraints = getConstraints(constraints);
 
-        var query = "SELECT TOP 5 SUM(VALOR_UNITARIO*QUANTIDADE) AS SOMA, CODIGO_PRODUTO, DESCRICAO_PRODUTO FROM TRANSFERENCIAS_DE_CUSTO_ITENS GROUP BY CODIGO_PRODUTO, DESCRICAO_PRODUTO ORDER BY SUM(VALOR_UNITARIO*QUANTIDADE) DESC";
+        var query = "SELECT SUM(VALOR_UNITARIO*QUANTIDADE) AS SOMA, CODIGO_PRODUTO, DESCRICAO_PRODUTO FROM TRANSFERENCIAS_DE_CUSTO_ITENS GROUP BY CODIGO_PRODUTO, DESCRICAO_PRODUTO ORDER BY SUM(VALOR_UNITARIO*QUANTIDADE) DESC";
         var retorno = executaQuery(query,[],"/jdbc/CastilhoCustom");
         return returnDataset("SUCCESS", "", JSON.stringify(retorno));
 

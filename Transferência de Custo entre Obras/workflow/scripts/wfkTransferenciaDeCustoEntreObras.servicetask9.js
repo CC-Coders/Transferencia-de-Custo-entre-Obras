@@ -5,6 +5,9 @@ function servicetask9(attempt, message) {
         // Se Decisao == "", significar que o Processo foi iniciado e Define o Primeiro Aprovador
         defineProximoAprovador();
         hAPI.setCardValue("decisaoAprovadorObraDestino", "Aprovação");
+        if (hAPI.getCardValue("usuarioAprovadorDestino") == "") {
+            hAPI.setCardValue("usuarioAprovadorDestino", "gabriel.persike");
+        }
         return true;
     }
 

@@ -26,10 +26,10 @@ function createDataset(fields, constraints, sortFields) {
 
         var queryConstraints = [];
 
-        if (constraints.CODCOLIGADA_DESTINO) {
-            query += "AND CODCOLIGADA_DESTINO = ? ";
-            queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_DESTINO});
-        }
+        // if (constraints.CODCOLIGADA_DESTINO) {
+        //     query += "AND CODCOLIGADA_DESTINO = ? ";
+        //     queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_DESTINO});
+        // }
         if (constraints.CODCOLIGADA_ORIGEM) {
             query += "AND (CODCOLIGADA_ORIGEM = ? OR  CODCOLIGADA_DESTINO = ?) ";
             queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_ORIGEM});
@@ -40,10 +40,10 @@ function createDataset(fields, constraints, sortFields) {
             queryConstraints.push({type:"varchar", value: constraints.CCUSTO_ORIGEM});
             queryConstraints.push({type:"varchar", value: constraints.CCUSTO_ORIGEM});
         }
-        if (constraints.CCUSTO_DESTINO) {
-            query += "AND CCUSTO_DESTINO = ? ";
-            queryConstraints.push({type:"varchar", value: constraints.CCUSTO_DESTINO});
-        }
+        // if (constraints.CCUSTO_DESTINO) {
+        //     query += "AND CCUSTO_DESTINO = ? ";
+        //     queryConstraints.push({type:"varchar", value: constraints.CCUSTO_DESTINO});
+        // }
         if (constraints.STATUS) {
             query += "AND STATUS  =  ?";
             queryConstraints.push({type:"int", value: constraints.STATUS});

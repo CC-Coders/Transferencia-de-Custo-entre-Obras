@@ -33,7 +33,7 @@ function createDataset(fields, constraints, sortFields) {
             var query = "SELECT CODIGOPRD + ' - ' + NOMEFANTASIA AS VISUAL  ";
             query += " FROM TPRODUTO "
             query += "WHERE  ";
-            query += "NOMEFANTASIA like 'Serviço%'  ";
+            query += "(NOMEFANTASIA like 'Serviço%' OR CODIGOPRD = '21.001.00002' )";
             query += "AND TPRODUTO.INATIVO = 0 ";
             query += "AND TPRODUTO.ULTIMONIVEL = 1 ";
             query += "AND TPRODUTO.CODCOLPRD = 1 ";

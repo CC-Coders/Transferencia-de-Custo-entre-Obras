@@ -94,32 +94,20 @@
             <div class="panel-body" style="display: none; border-radius: 20px;">
                 <div class="row">
                     <div class="col-md-3">
-                        <label for="">Coligada Obra Origem</label>
-                        <select name="filtroColigadaOrigem" id="filtroColigadaOrigem" class="form-control"></select>
-                        <br>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="">C. Custo Obra Origem</label>
-                        <select name="filtroCCUSTOOrigem" id="filtroCCUSTOOrigem" class="form-control">
-                            <option value="">Todos</option>
+                        <label for="">Coligada</label>
+                        <select name="filtroColigadaOrigem" id="filtroColigadaOrigem">
+                            <option value="">Todas</option>
                         </select>
                         <br>
                     </div>
                     <div class="col-md-3">
-                        <label for="">Coligada Obra Destino</label>
-                        <select name="filtroColigadaDestino" id="filtroColigadaDestino" class="form-control"></select>
-                        <br>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="">C. Custo Obra Destino</label>
-                        <select name="filtroCCUSTODestino" id="filtroCCUSTODestino" class="form-control">
-                            <option value="">Todos</option>
+                        <label for="">Obra</label>
+                        <select name="filtroCCUSTOOrigem" id="filtroCCUSTOOrigem">
+                            <option value="">Todas</option>
                         </select>
                         <br>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-3">
+                      <div class="col-md-3">
                         <label for="">Tipo</label>
                         <select name="filtroTipoTransferencia" id="filtroTipoTransferencia" class="form-control">
                             <option value="">Todos</option>
@@ -143,6 +131,21 @@
                             <option value="3">Cancelado</option>
                         </select>
                     </div>
+                    <!-- <div class="col-md-3">
+                        <label for="">Coligada Obra Destino</label>
+                        <select name="filtroColigadaDestino" id="filtroColigadaDestino" class="form-control"></select>
+                        <br>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="">C. Custo Obra Destino</label>
+                        <select name="filtroCCUSTODestino" id="filtroCCUSTODestino" class="form-control">
+                            <option value="">Todos</option>
+                        </select>
+                        <br>
+                    </div> -->
+                </div>
+                <div class="row">
+                  
                 </div>
                 <br>
                 <div class="row">

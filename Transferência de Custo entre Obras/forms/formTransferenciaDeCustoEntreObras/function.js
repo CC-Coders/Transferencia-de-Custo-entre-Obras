@@ -574,7 +574,7 @@ function atualizaValorTotal() {
         $(this).find("input[name^='valorTotalTransferencia']").val(floatToMoney(valorTotalPorTranferencia));
     });
 
-    $("#valorObraOrigem").val("- " + floatToMoney(valorTotal));
+    $("#valorObraOrigem").val(floatToMoney(valorTotal));
     $("#valorObraDestino").val(floatToMoney(valorTotal));
     $("#valorTotal").val(valorTotal);
     escondeDiretoresSeValorNoLimiteDoCoordenador();

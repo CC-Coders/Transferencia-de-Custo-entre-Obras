@@ -1,40 +1,43 @@
 function servicetask26(attempt, message) {
     try {
-    var CODCOLIGADA_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[0];
-    var CODCCUSTO_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[1];
-    var NOMECCUSTO_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[2];
+        updateDataCompetencia();
+        atualizaStatusTransferencia(STATUS_TRANSFENCIA.APROVADO);
 
-    var CODCOLIGADA_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[0];
-    var CODCCUSTO_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[1];
-    var NOMECCUSTO_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[2];
+        var CODCOLIGADA_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[0];
+        var CODCCUSTO_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[1];
+        var NOMECCUSTO_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[2];
 
-    var PRODUTOS = getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO);
-    var CUSTO_OU_RECEITA = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? "CUSTO":"RECEITA";
+        var CODCOLIGADA_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[0];
+        var CODCCUSTO_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[1];
+        var NOMECCUSTO_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[2];
 
-
-    // Lanca ajuste para Obra Origem
-    // Se for TRANSFERE_CUSTO, então a Obra Origem, recebe o PRODUTO AUMENTA_RESULTADO, pois está enviando o CUSTO
-    // Porém, se for TRANSFERE_RECEITA, então a Obra Origem, recebe o PRODUTO DIMINUI_RESULTADO, pois está enviando a RECEITA
-    var PRODUTO_ORIGEM = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO;
-    var idmov = geraMovimentos(CODCOLIGADA_ORIGEM, CODCCUSTO_ORIGEM, CODCOLIGADA_DESTINO, NOMECCUSTO_ORIGEM, PRODUTO_ORIGEM);
-    hAPI.setCardValue("IDMOV_ORIGEM", idmov);
+        var PRODUTOS = getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO);
+        var CUSTO_OU_RECEITA = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? "CUSTO":"RECEITA";
 
 
-    // Lanca ajuste para Obra Destino
-    // Se for TRANSFERE_CUSTO, então a Obra Destino, recebe o PRODUTO DIMINUI_RESULTADO, pois está recebendo CUSTO
-    // Porém, se for TRANSFERE_RECEITA, então a Obra Destino, recebe o PRODUTO AUMENTA_RESULTADO, pois está recebendo a RECEITA
-    var PRODUTO_DESTINO = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO;
-    var idmov = geraMovimentos(CODCOLIGADA_DESTINO, CODCCUSTO_DESTINO, CODCOLIGADA_ORIGEM, NOMECCUSTO_DESTINO, PRODUTO_DESTINO);
-    hAPI.setCardValue("IDMOV_DESTINO", idmov);
+        // Lanca ajuste para Obra Origem
+        // Se for TRANSFERE_CUSTO, então a Obra Origem, recebe o PRODUTO AUMENTA_RESULTADO, pois está enviando o CUSTO
+        // Porém, se for TRANSFERE_RECEITA, então a Obra Origem, recebe o PRODUTO DIMINUI_RESULTADO, pois está enviando a RECEITA
+        var PRODUTO_ORIGEM = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO;
+        var idmov = geraMovimentos(CODCOLIGADA_ORIGEM, CODCCUSTO_ORIGEM, CODCOLIGADA_DESTINO, NOMECCUSTO_ORIGEM, PRODUTO_ORIGEM);
+        hAPI.setCardValue("IDMOV_ORIGEM", idmov);
 
 
-    updateDataCompetencia();
-    atualizaStatusTransferencia(STATUS_TRANSFENCIA.APROVADO);
-    if (CODCOLIGADA_ORIGEM != CODCOLIGADA_DESTINO) {
-        // Se Coligada de Origem for Diferente de Destino, informa a Controladoria
-        EnviaEmail("gabriel.persike@castilho.com.br");
-    }
+        // Lanca ajuste para Obra Destino
+        // Se for TRANSFERE_CUSTO, então a Obra Destino, recebe o PRODUTO DIMINUI_RESULTADO, pois está recebendo CUSTO
+        // Porém, se for TRANSFERE_RECEITA, então a Obra Destino, recebe o PRODUTO AUMENTA_RESULTADO, pois está recebendo a RECEITA
+        var PRODUTO_DESTINO = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO;
+        var idmov = geraMovimentos(CODCOLIGADA_DESTINO, CODCCUSTO_DESTINO, CODCOLIGADA_ORIGEM, NOMECCUSTO_DESTINO, PRODUTO_DESTINO);
+        hAPI.setCardValue("IDMOV_DESTINO", idmov);
+
+
+    
+        if (CODCOLIGADA_ORIGEM != CODCOLIGADA_DESTINO) {
+            // Se Coligada de Origem for Diferente de Destino, informa a Controladoria
+            EnviaEmail("contabilidade@castilho.com.br; control@castilho.com.br; informatica@castilho.com.br; padilha@castilho.com.br");
+        }
     } catch (error) {
+        log.error(error);
         throw error;
     }
 }
@@ -293,7 +296,7 @@ function EnviaEmail(emails) {
     CorpoEmail += "<b>Valor: </b><span>" + FormataValorParaMoeda(parseFloat(hAPI.getCardValue("valorTotal"))) + "</span><br>";
     CorpoEmail += "<b>Data Competência: </b><span>" + getDateNow().split("-").reverse().join("/") + "</span><br>";
     CorpoEmail += "<br>";
-    CorpoEmail += "Para mais informações, <a href='http://desenvolvimento.castilho.com.br:3232/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=" + getValue("WKNumProces") + "'>clique aqui</a>.";
+    CorpoEmail += "Para mais informações, <a href='http://fluig.castilho.com.br:1010/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=" + getValue("WKNumProces") + "'>clique aqui</a>.";
 
     var url = 'http://fluig.castilho.com.br:1010';//Prod
     // var url = 'http://homologacao.castilho.com.br:2020';//Homolog
@@ -346,7 +349,7 @@ function atualizaStatusTransferencia(STATUS) {
     var id = hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO");
 
     var query = "UPDATE TRANSFERENCIAS_DE_CUSTO SET STATUS = ? WHERE ID = ?";
-    executaUpdate(query, [
+    executeUpdateSemResult(query, [
         { type: "int", value: STATUS },
         { type: "int", value: id },
     ]);
@@ -360,7 +363,7 @@ function updateDataCompetencia(){
         "   SET DATA_COMPETENCIA = ? " +
         "   WHERE ID = ? ";
 
-    return executaUpdate(query, [
+    return executeUpdateSemResult(query, [
         { type: "varchar", value: date },
         { type: "int", value: id },
     ]);
@@ -414,6 +417,54 @@ function executaQuery(query, constraints, dataSorce) {
         }
 
         return retorno;
+
+    } catch (e) {
+        log.error("ERRO==============> " + e.message);
+        throw e;
+    } finally {
+        if (stmt != null) {
+            stmt.close();
+        }
+        if (conn != null) {
+            conn.close();
+        }
+    }
+}
+function executeUpdateSemResult(query, constraints) {
+    var dataSource = "/jdbc/CastilhoCustom";
+    var ic = new javax.naming.InitialContext();
+    var ds = ic.lookup(dataSource);
+
+    log.info("wfkTransferenciaDeCustoEntreObras.beforeTaskSave: executandoQuery");
+    log.info(query);
+    try {
+        var conn = ds.getConnection();
+        var stmt = conn.prepareStatement(query, Packages.java.sql.Statement.RETURN_GENERATED_KEYS);
+
+        var counter = 1;
+        for (var i = 0; i < constraints.length; i++) {
+            var val = constraints[i];
+            if (val.type == "int") {
+                stmt.setInt(counter, val.value);
+            }
+            else if (val.type == "float") {
+                stmt.setFloat(counter, val.value);
+            }
+            else if (val.type == "date") {
+                stmt.setString(counter, val.value);
+            }
+            else if (val.type == "datetime") {
+                stmt.setString(counter, val.value);
+            } else {
+                stmt.setString(counter, val.value);
+            }
+            counter++;
+        }
+
+        log.info("wfkTransferenciaDeCustoEntreObras.beforeTaskSave: executandoQuery"+constraints.length)
+
+       stmt.execute();
+
 
     } catch (e) {
         log.error("ERRO==============> " + e.message);

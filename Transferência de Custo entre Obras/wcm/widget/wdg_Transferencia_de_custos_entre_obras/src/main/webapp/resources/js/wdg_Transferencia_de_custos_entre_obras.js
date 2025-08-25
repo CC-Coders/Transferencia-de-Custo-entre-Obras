@@ -60,6 +60,10 @@ function init() {
         toggleDarkMode();
     }
 
+    $('#filtroColigadaOrigem').selectize();
+    $('#filtroCCUSTOOrigem').selectize();
+
+
     GCCUSTO = DatasetFactory.getDataset("GCCUSTO", null, null, null).values;
     PreencheCamposFiltros();
     initDataTableTransferencias();
@@ -96,17 +100,19 @@ function init() {
     $("#filtroColigadaOrigem").on("change", function () {
         var CODCOLIGADA = $(this).val().split(" - ")[0];
         var obras = obrasPermissaoUsuario.filter((e) => e.CODCOLIGADA == CODCOLIGADA);
-        var html = obras.map((e) => `<option>${e.CODCCUSTO} - ${e.perfil}</option>`).join("");
+        var options = [{value:"",text:"Todos"}];
 
-        $("#filtroCCUSTOOrigem").html("<option value=''>Todos</option>" + html);
-    });
-    $("#filtroColigadaDestino").on("change", function () {
-        var CODCOLIGADA = $(this).val().split(" - ")[0];
-        var obras = obrasPermissaoGeral.filter((e) => e.CODCOLIGADA == CODCOLIGADA);
-        var html = obras.map((e) => `<option>${e.CODCCUSTO} - ${e.perfil}</option>`).join("");
+       obras.forEach((e) => {options.push({value:`${e.CODCCUSTO} - ${e.perfil}`, text:`${e.CODCCUSTO} - ${e.perfil}`})});
 
-        $("#filtroCCUSTODestino").html("<option value=''>Todos</option>" + html);
+        $("#filtroCCUSTOOrigem")[0].selectize.addOption(options);
     });
+    // $("#filtroColigadaDestino").on("change", function () {
+    //     var CODCOLIGADA = $(this).val().split(" - ")[0];
+    //     var obras = obrasPermissaoGeral.filter((e) => e.CODCOLIGADA == CODCOLIGADA);
+    //     var html = obras.map((e) => `<option>${e.CODCCUSTO} - ${e.perfil}</option>`).join("");
+
+    //     $("#filtroCCUSTODestino").html("<option value=''>Todos</option>" + html);
+    // });
 
     var date = new Date();
     var mes = date.getMonth() + 1;
@@ -128,17 +134,19 @@ function consultaTransferencias() {
     var transferenciasCUSTO_DESTINO = [];
     for (const row of transferenciasCUSTO) {
         var CCUSTO_ORIGEM = row.CCUSTO_ORIGEM;
-        if ($("#filtroCCUSTOOrigem").val() == "" || $("#filtroCCUSTOOrigem").val().split(" - ")[0] == CCUSTO_ORIGEM) {
+        var CODCOLIGADA_ORIGEM = row.CODCOLIGADA_ORIGEM;
+        if (($("#filtroCCUSTOOrigem").val() == "" || $("#filtroCCUSTOOrigem").val().split(" - ")[0] == CCUSTO_ORIGEM) && ($("#filtroColigadaOrigem").val() == "" || $("#filtroColigadaOrigem").val().split(" - ")[0] == CODCOLIGADA_ORIGEM)) {
             var found_ORIGEM = obrasPermissaoUsuario.find((e) => e.CODCCUSTO == CCUSTO_ORIGEM);
-            if (found_ORIGEM) {
+            if (found_ORIGEM || usuarioComPermissaoGeral()) {
                 transferenciasCUSTO_ORIGEM.push(row);
             }
         }
 
         var CCUSTO_DESTINO = row.CCUSTO_DESTINO;
-        if ($("#filtroCCUSTODestino").val() == "" || $("#filtroCCUSTODestino").val().split(" - ")[0] == CCUSTO_DESTINO) {
+        var CODCOLIGADA_DESTINO = row.CODCOLIGADA_DESTINO;
+        if (($("#filtroCCUSTOOrigem").val() == "" || $("#filtroCCUSTOOrigem").val().split(" - ")[0] == CCUSTO_DESTINO) && ($("#filtroColigadaOrigem").val() == "" || $("#filtroColigadaOrigem").val().split(" - ")[0] == CODCOLIGADA_DESTINO)) {
             var found_DESTINO = obrasPermissaoUsuario.find((e) => e.CODCCUSTO == CCUSTO_DESTINO);
-            if (found_DESTINO) {
+            if (found_DESTINO || usuarioComPermissaoGeral()) {
                 transferenciasCUSTO_DESTINO.push(row);
             }
         }
@@ -155,15 +163,15 @@ function consultaTransferencias() {
         var CCUSTO_ORIGEM = row.CCUSTO_ORIGEM;
         if ($("#filtroCCUSTOOrigem").val() == "" || $("#filtroCCUSTOOrigem").val().split(" - ")[0] == CCUSTO_ORIGEM) {
             var found_ORIGEM = obrasPermissaoUsuario.find((e) => e.CODCCUSTO == CCUSTO_ORIGEM);
-            if (found_ORIGEM) {
+            if (found_ORIGEM ||usuarioComPermissaoGeral()) {
                 transferenciasRECEITA_ORIGEM.push(row);
             }
         }
 
         var CCUSTO_DESTINO = row.CCUSTO_DESTINO;
-        if ($("#filtroCCUSTODestino").val() == "" || $("#filtroCCUSTODestino").val().split(" - ")[0] == CCUSTO_DESTINO) {
+        if ($("#filtroCCUSTOOrigem").val() == "" || $("#filtroCCUSTOOrigem").val().split(" - ")[0] == CCUSTO_DESTINO) {
             var found_DESTINO = obrasPermissaoUsuario.find((e) => e.CODCCUSTO == CCUSTO_DESTINO);
-            if (found_DESTINO) {
+            if (found_DESTINO || usuarioComPermissaoGeral()) {
                 transferenciasRECEITA_DESTINO.push(row);
             }
         }
@@ -205,20 +213,20 @@ function consultaTransferencias() {
             constraints.push(DatasetFactory.createConstraint("CODCOLIGADA_ORIGEM", CODCOLIGADA_ORIGEM, CODCOLIGADA_ORIGEM, ConstraintType.MUST));
         }
 
-        var CODCOLIGADA_DESTINO = $("#filtroColigadaDestino").val().split(" - ")[0];
-        if (CODCOLIGADA_DESTINO) {
-            constraints.push(DatasetFactory.createConstraint("CODCOLIGADA_DESTINO", CODCOLIGADA_DESTINO, CODCOLIGADA_DESTINO, ConstraintType.MUST));
-        }
+        // var CODCOLIGADA_DESTINO = $("#filtroColigadaDestino").val().split(" - ")[0];
+        // if (CODCOLIGADA_DESTINO) {
+        //     constraints.push(DatasetFactory.createConstraint("CODCOLIGADA_DESTINO", CODCOLIGADA_DESTINO, CODCOLIGADA_DESTINO, ConstraintType.MUST));
+        // }
 
         var CCUSTO_ORIGEM = $("#filtroCCUSTOOrigem").val().split(" - ")[0];
         if (CCUSTO_ORIGEM) {
             constraints.push(DatasetFactory.createConstraint("CCUSTO_ORIGEM", CCUSTO_ORIGEM, CCUSTO_ORIGEM, ConstraintType.MUST));
         }
 
-        var CCUSTO_DESTINO = $("#filtroCCUSTODestino").val().split(" - ")[0];
-        if (CCUSTO_DESTINO) {
-            constraints.push(DatasetFactory.createConstraint("CCUSTO_DESTINO", CCUSTO_DESTINO, CCUSTO_DESTINO, ConstraintType.MUST));
-        }
+        // var CCUSTO_DESTINO = $("#filtroCCUSTODestino").val().split(" - ")[0];
+        // if (CCUSTO_DESTINO) {
+        //     constraints.push(DatasetFactory.createConstraint("CCUSTO_DESTINO", CCUSTO_DESTINO, CCUSTO_DESTINO, ConstraintType.MUST));
+        // }
 
         var STATUS = $("#filtroStatus").val();
         if (STATUS) {
@@ -388,7 +396,7 @@ function initDataTableTransferencias() {
 }
 function abreModalTransferencia(idSolicitacao) {
     var ds = DatasetFactory.getDataset(
-        "dsTransferenciaDeCustoEntreObras",
+        "dsFormTransferenciasDeCustoEntreObras",
         null,
         [
             DatasetFactory.createConstraint("metadata#active", "true", "true", ConstraintType.MUST),
@@ -402,7 +410,7 @@ function abreModalTransferencia(idSolicitacao) {
     var documentVersion = formulario["metadata#version"];
 
     var dsItens = DatasetFactory.getDataset(
-        "dsTransferenciaDeCustoEntreObras",
+        "dsFormTransferenciasDeCustoEntreObras",
         null,
         [
             DatasetFactory.createConstraint("metadata#active", "true", "true", ConstraintType.MUST),
@@ -516,7 +524,7 @@ function abreModalTransferencia(idSolicitacao) {
                     <td style="color:black !important;">${counter}</td>
                     <td style="color:black !important;">${item.CODPRODUTO} - ${item.DESCPRODUTO}</td>
                     <td style="color:black !important;">${item.DESCRICAO}</td>
-                    <td style="color:black !important;">${item.QUANTIDADE}</td>
+                    <td style="color:black !important;">${item.QUANTIDADE} ${item.UN}</td>
                     <td style="color:black !important;">${item.VALOR_UNITARIO}</td>
                     <td style="color:black !important;">${floatToMoney(VALOR_TOTAL)}</td>
                 </tr>`;
@@ -547,9 +555,10 @@ function alimentaCharts() {
         } else {
             envioCustoPorObra.push({
                 index: index,
+                CODCOLIGADA : transferencia.CODCOLIGADA_ORIGEM,
                 CCUSTO: CCustoObraOrigem,
                 NOME: transferencia.DESC_CCUSTO_ORIGEM,
-                label: CCustoObraOrigem + " - " + transferencia.DESC_CCUSTO_ORIGEM,
+                label: transferencia.CODCOLIGADA_ORIGEM + " - " +  CCustoObraOrigem + " - " + transferencia.DESC_CCUSTO_ORIGEM,
                 value: VALOR,
                 transferencias: [transferencia],
             });
@@ -574,11 +583,12 @@ function alimentaCharts() {
             found.transferencias.push(transferencia);
         } else {
             recebimentoCustoPorObra.push({
+                index: index,
+                CODCOLIGADA: transferencia.CODCOLIGADA_DESTINO,
                 CCUSTO: CCustoObraDestino,
                 NOME: transferencia.DESC_CCUSTO_DESTINO,
-                label: CCustoObraDestino + " - " + transferencia.DESC_CCUSTO_DESTINO,
+                label: transferencia.CODCOLIGADA_DESTINO + " - " + CCustoObraDestino + " - " + transferencia.DESC_CCUSTO_DESTINO,
                 value: VALOR,
-                index: index,
                 transferencias: [transferencia],
             });
             index++;
@@ -602,11 +612,12 @@ function alimentaCharts() {
             found.transferencias.push(transferencia);
         } else {
             envioReceitaPorObra.push({
+                index: index,
+                CODCOLIGADA: transferencia.CODCOLIGADA_ORIGEM,
                 CCUSTO: CCustoObraOrigem,
                 NOME: transferencia.DESC_CCUSTO_ORIGEM,
-                label: CCustoObraOrigem + " - " + transferencia.DESC_CCUSTO_ORIGEM,
+                label:transferencia.CODCOLIGADA_ORIGEM +" - "+ CCustoObraOrigem + " - " + transferencia.DESC_CCUSTO_ORIGEM,
                 value: VALOR,
-                index: index,
                 transferencias: [transferencia],
             });
         }
@@ -629,11 +640,12 @@ function alimentaCharts() {
             found.transferencias.push(transferencia);
         } else {
             recebimentoReceitaPorObra.push({
+                index: index,
+                CODCOLIGADA: transferencia.CODCOLIGADA_DESTINO,
                 CCUSTO: CCustoObraDestino,
                 NOME: transferencia.DESC_CCUSTO_DESTINO,
-                label: CCustoObraDestino + " - " + transferencia.DESC_CCUSTO_DESTINO,
+                label:transferencia.CODCOLIGADA_DESTINO + " - " + CCustoObraDestino + " - " + transferencia.DESC_CCUSTO_DESTINO,
                 value: VALOR,
-                index: index,
                 transferencias: [transferencia],
             });
             index++;
@@ -1287,7 +1299,7 @@ function loadGroupedBarChart(id, data, groupKeys, colors) {
 function PreencheCamposFiltros() {
     var USUARIO = WCMAPI.userCode;
 
-    var obrasComPermissaoDoUsuario = buscaObrasPorPermissaoDoUsuario(USUARIO);
+    var obrasComPermissaoDoUsuario = buscaObrasPorPermissaoDoUsuario(USUARIO, usuarioComPermissaoGeral());
     var todasObras = buscaObrasPorPermissaoDoUsuario(USUARIO, true);
 
     var coligadasPermissaoUsuario = [];
@@ -1304,20 +1316,21 @@ function PreencheCamposFiltros() {
         }
     }
 
-    $("#filtroColigadaOrigem").html(geraHtmlOptions(coligadasPermissaoUsuario));
-    $("#filtroColigadaDestino").html(geraHtmlOptions(coligadas));
+    $("#filtroColigadaOrigem")[0].selectize.addOption(geraOptionsSelectize(coligadasPermissaoUsuario));
+    // $("#filtroColigadaDestino").html(geraHtmlOptions(coligadas));
 
     obrasPermissaoGeral = todasObras;
     obrasPermissaoUsuario = obrasComPermissaoDoUsuario;
 
-    function geraHtmlOptions(coligadas) {
-        var html = "<option value=''>Todas</option>";
+    function geraOptionsSelectize(coligadas) {
+        var options = []
 
+        options.push({value:"",text:"Todas"});
         for (const coligada of coligadas) {
-            html += `<option value="${coligada.CODCOLIGADA} - ${coligada.NOME}">${coligada.CODCOLIGADA} - ${coligada.NOME}</option>`;
+            options.push({value:`${coligada.CODCOLIGADA} - ${coligada.NOME}`,text:`${coligada.CODCOLIGADA} - ${coligada.NOME}`});
         }
 
-        return html;
+        return options;
     }
 }
 
@@ -1326,7 +1339,7 @@ function promiseBuscaAprovacoesPendentesProUsuario(userCode) {
     return new Promise((resolve, reject) => {
         $.ajax({
             type: "GET",
-            url: `/process-management/api/v2/tasks?assignee=${userCode}&status=NOT_COMPLETED&processId=Transfer%C3%AAncia%20de%20Custo%20entre%20Obras&page=1&pageSize=1000`,
+            url: `/process-management/api/v2/tasks?assignee=${userCode}&status=NOT_COMPLETED&processId=Transferência%20de%20Custos%20entre%20Obras&page=1&pageSize=1000`,
             success: (retorno) => {
                 resolve(retorno.items);
             },
@@ -1413,7 +1426,7 @@ async function asyncBuscaSolicitacoesPendentes(user) {
         function promiseBuscaTransferencias(documentId, documentVersion) {
             return new Promise((resolve, reject) => {
                 DatasetFactory.getDataset(
-                    "dsTransferenciaDeCustoEntreObras",
+                    "dsFormTransferenciasDeCustoEntreObras",
                     null,
                     [
                         DatasetFactory.createConstraint("metadata#id", documentId, documentId, ConstraintType.MUST),
@@ -1479,7 +1492,7 @@ async function asyncBuscaSolicitacoesPendentes(user) {
         function promiseBuscaHistorico(documentId, documentVersion) {
             return new Promise((resolve, reject) => {
                 DatasetFactory.getDataset(
-                    "dsTransferenciaDeCustoEntreObras",
+                    "dsFormTransferenciasDeCustoEntreObras",
                     null,
                     [
                         DatasetFactory.createConstraint("metadata#id", documentId, documentId, ConstraintType.MUST),
@@ -1548,7 +1561,7 @@ async function asyncBuscaSolicitacoesPendentes(user) {
 function promiseBuscaDadosDaSolicitacao(NUMPROCES) {
     return new Promise((resolve, reject) => {
         DatasetFactory.getDataset(
-            "dsTransferenciaDeCustoEntreObras",
+            "dsFormTransferenciasDeCustoEntreObras",
             null,
             [
                 DatasetFactory.createConstraint("metadata#active", "true", "true", ConstraintType.MUST),
@@ -1702,6 +1715,22 @@ function MovimentarProcesso(NUMPROCES, decisao, atividade, movementSequence, use
                 }
             },
         });
+    }
+}
+
+
+function usuarioComPermissaoGeral(){
+    var ds = DatasetFactory.getDataset("colleagueGroup",null,[
+        DatasetFactory.createConstraint("colleagueId", WCMAPI.userCode, WCMAPI.userCode, ConstraintType.MUST),
+        DatasetFactory.createConstraint("groupId", "Controladoria", "Controladoria", ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("groupId", "Administradores TI", "Administradores TI", ConstraintType.SHOULD),
+    ],null);
+
+    if (ds.values.length==0) {
+        return false;
+    }
+    else{
+        return true;
     }
 }
 

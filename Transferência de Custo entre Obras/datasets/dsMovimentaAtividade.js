@@ -33,14 +33,14 @@ function movimentaAtividades(numProces, movementSequence, assignee, targetState)
     var clientService = fluigAPI.getAuthorizeClientService();
     var data = {
         companyId: getValue("WKCompany") + '',
-        serviceCode: 'ServicoFluig',
+        serviceCode: 'FluigREST',
         endpoint: '/process-management/api/v2/requests/'+numProces+'/move',
         method: 'post',
         params: {
             "movementSequence": movementSequence+"",
             "assignee": assignee+"",
             "targetState": targetState+"",
-            "targetAssignee": "fluig",
+            "targetAssignee": "fluig2",
             "subProcessTargetState": "0",
             "comment": "Tarefa reprovada automaticamente.",
             "asManager": true,

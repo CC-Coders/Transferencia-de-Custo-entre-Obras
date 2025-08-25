@@ -121,7 +121,6 @@ function insereNovoRegistro() {
     var SOLICITANTE = hAPI.getCardValue("solicitante");
 
     var VALOR = moneyToFloat(hAPI.getCardValue("valorObraDestino"));
-    var OBSERVACAO = hAPI.getCardValue("textMotivoTransferencia");
 
     
 
@@ -134,13 +133,13 @@ function insereNovoRegistro() {
         "   CCUSTO_DESTINO, " +
         "   SOLICITANTE, " +
         "   VALOR, " +
-        "   OBSERVACAO, " +
         "   DATA_SOLICITACAO, " +
         "   STATUS)" +
+        " OUTPUT Inserted.ID "+
         " VALUES " +
-        "(?,?,?,?,?,?,?,?,SYSDATETIME(),?)";
+        "(?,?,?,?,?,?,?,SYSDATETIME(),?)";
 
-    return executaUpdate(query, [
+    return executeInsert(query, [
         { type: "int", value: numProces },
         { type: "int", value: CODCOLIGADA_ORIGEM },
         { type: "varchar", value: CCUSTO_ORIGEM },
@@ -148,7 +147,6 @@ function insereNovoRegistro() {
         { type: "varchar", value: CCUSTO_DESTINO },
         { type: "varchar", value: SOLICITANTE },
         { type: "float", value: VALOR },
-        { type: "varchar", value: OBSERVACAO },
         { type: "int", value: STATUS_TRANSFENCIA.EM_APROVACAO },
     ]);
 }
@@ -161,33 +159,30 @@ function atualizaTransferencia() {
     var CCUSTO_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[1];
 
     var VALOR = moneyToFloat(hAPI.getCardValue("valorObraDestino"));
-    var DATA_COMPETENCIA = hAPI.getCardValue("dataCompetencia").split("/").reverse().join("-");
 
     var query = "UPDATE TRANSFERENCIAS_DE_CUSTO SET ";
     query += " CODCOLIGADA_ORIGEM = ?,";
     query += " CCUSTO_ORIGEM = ?,";
     query += " CODCOLIGADA_DESTINO = ?,";
     query += " CCUSTO_DESTINO = ?,";
-    query += " VALOR = ?,";
-    query += " DATA_COMPETENCIA = ? ";
+    query += " VALOR = ? ";
     query += " WHERE ID = ?";
 
-    executaUpdate(query, [
+    executeUpdate(query, [
         { type: "int", value: CODCOLIGADA_ORIGEM },
         { type: "varchar", value: CCUSTO_ORIGEM },
         { type: "int", value: CODCOLIGADA_DESTINO },
         { type: "varchar", value: CCUSTO_DESTINO },
         { type: "float", value: VALOR },
-        { type: "varchar", value: DATA_COMPETENCIA },
         { type: "int", value: id },
     ]);
 
 
     var query = "DELETE FROM TRANSFERENCIAS_DE_CUSTO_ITENS WHERE ID_TRANSFERENCIA IN (SELECT ID FROM TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA WHERE ID_TRANSFERENCIA = ?)";
-    executaUpdate(query, [{ type: "int", value: id }]);
+    executeUpdate(query, [{ type: "int", value: id }]);
 
     var query = "DELETE FROM TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA WHERE ID_TRANSFERENCIA = ?";
-    executaUpdate(query, [{ type: "int", value: id }]);
+    executeUpdate(query, [{ type: "int", value: id }]);
 
     insereTransferencias(id);
     insereHistorico(id);
@@ -206,9 +201,9 @@ function insereTransferencias(ID_PAI) {
         var TRANSFERE_CUSTO = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? 1 : 0;
         var TRANSFERE_RECEITA = hAPI.getCardValue("TRANSFERE_RECEITA") == "true" ? 1 : 0;
 
-        var query = "INSERT INTO TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA (ID_TRANSFERENCIA, TIPO, VALOR, JUSTIFICATIVA, TRANSFERE_CUSTO, TRANSFERE_RECEITA) VALUES (?,?,?,?,?,?)";
+        var query = "INSERT INTO TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA (ID_TRANSFERENCIA, TIPO, VALOR, JUSTIFICATIVA, TRANSFERE_CUSTO, TRANSFERE_RECEITA) OUTPUT Inserted.ID  VALUES (?,?,?,?,?,?)";
 
-        var ID_TRANSFERENCIA = executaUpdate(query, [
+        var ID_TRANSFERENCIA = executeInsert(query, [
             { type: "int", value: ID_PAI },
             { type: "varchar", value: tipo },
             { type: "varchar", value: valor },
@@ -235,7 +230,7 @@ function insereItem(ID_TRANSFERENCIA, item) {
         " VALOR_UNITARIO) " +
         " VALUES (?,?,?,?,?,?,?)";
 
-    executaUpdate(query, [
+    executeInsert(query, [
         { type: "int", value: ID_TRANSFERENCIA },
         { type: "varchar", value: item.CODPRODUTO },
         { type: "varchar", value: item.DESCPRODUTO },
@@ -287,7 +282,7 @@ function insereHistorico(ID_PAI) {
         " VALUES " +
         "  (?,?,?,?,?)";
 
-    executaUpdate(query, [
+    executeInsert(query, [
         { type: "int", value: ID_PAI },
         { type: "varchar", value: usuario },
         { type: "varchar", value: data },
@@ -354,11 +349,13 @@ function getDateNow() {
     var dateTime = [ano, mes, dia].join("-");
     return dateTime
 }
-function executaUpdate(query, constraints) {
+function executeInsert(query, constraints) {
     var dataSource = "/jdbc/CastilhoCustom";
     var ic = new javax.naming.InitialContext();
     var ds = ic.lookup(dataSource);
 
+    log.info("wfkTransferenciaDeCustoEntreObras.beforeTaskSave: executandoQuery");
+    log.info(query);
     try {
         var conn = ds.getConnection();
         var stmt = conn.prepareStatement(query, Packages.java.sql.Statement.RETURN_GENERATED_KEYS);
@@ -383,17 +380,68 @@ function executaUpdate(query, constraints) {
             counter++;
         }
 
-        var rows = stmt.executeUpdate();
-        log.info("rows");
-        log.dir(rows);
+        log.info("wfkTransferenciaDeCustoEntreObras.beforeTaskSave: executandoQuery"+query.length)
 
-        var rs = stmt.getGeneratedKeys();
-        if (rs.next()) {
-            var id = parseInt(rs.getInt(1));
-            log.info("id");
-            log.dir(id);
-            return id;
+       var hasResultSet = stmt.execute();
+        if (hasResultSet) {
+            var rs = stmt.getResultSet();
+            if (rs.next()) {
+                var id = rs.getInt(1);
+                log.info("id");
+                log.dir(id);
+                return id;
+            }
         }
+
+
+
+    } catch (e) {
+        log.error("ERRO==============> " + e.message);
+        throw e;
+    } finally {
+        if (stmt != null) {
+            stmt.close();
+        }
+        if (conn != null) {
+            conn.close();
+        }
+    }
+}
+function executeUpdate(query, constraints) {
+    var dataSource = "/jdbc/CastilhoCustom";
+    var ic = new javax.naming.InitialContext();
+    var ds = ic.lookup(dataSource);
+
+    log.info("wfkTransferenciaDeCustoEntreObras.beforeTaskSave: executandoQuery");
+    log.info(query);
+    try {
+        var conn = ds.getConnection();
+        var stmt = conn.prepareStatement(query, Packages.java.sql.Statement.RETURN_GENERATED_KEYS);
+
+        var counter = 1;
+        for (var i = 0; i < constraints.length; i++) {
+            var val = constraints[i];
+            if (val.type == "int") {
+                stmt.setInt(counter, val.value);
+            }
+            else if (val.type == "float") {
+                stmt.setFloat(counter, val.value);
+            }
+            else if (val.type == "date") {
+                stmt.setString(counter, val.value);
+            }
+            else if (val.type == "datetime") {
+                stmt.setString(counter, val.value);
+            } else {
+                stmt.setString(counter, val.value);
+            }
+            counter++;
+        }
+
+        log.info("wfkTransferenciaDeCustoEntreObras.beforeTaskSave: executandoQuery"+constraints.length)
+
+       stmt.execute();
+
 
     } catch (e) {
         log.error("ERRO==============> " + e.message);

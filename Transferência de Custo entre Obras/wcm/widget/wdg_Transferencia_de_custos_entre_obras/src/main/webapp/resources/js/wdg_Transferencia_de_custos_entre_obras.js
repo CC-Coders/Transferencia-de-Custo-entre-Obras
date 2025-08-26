@@ -1448,16 +1448,22 @@ async function asyncBuscaSolicitacoesPendentes(user) {
         function preencheTransferencias(transferencias) {
             var html = "";
             for (const transferencia of transferencias) {
-                html += `<div class="panel panel-primary">
+                html += 
+                `<div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><div style="display: flex;justify-content: space-between;"><span>${transferencia.motivoTransferencia}</span> <span>${
-                    transferencia.valorTotalTransferencia
-                }</span></div></h3>
+                        <h3 class="panel-title">
+                            <div style="display: flex;justify-content: space-between;">
+                                <span>${transferencia.motivoTransferencia}</span> 
+                                <span>${transferencia.valorTotalTransferencia}</span>
+                            </div>
+                        </h3>
                     </div>
                     <div class="panel-body" style="background-color: darkgray !important;">
                         <b>Justificativa: </b><p>${transferencia.textMotivoTransferencia}</p>
                         <br/>
-                        ${geraHtmlItensTransferencia(transferencia.listItensTransferencia)}
+                        <div class="row">
+                            ${geraHtmlItensTransferencia(transferencia.listItensTransferencia)}
+                        </div>
                     </div>
                 </div>`;
             }
@@ -1470,16 +1476,16 @@ async function asyncBuscaSolicitacoesPendentes(user) {
             var counter = 0;
             for (const item of itens) {
                 counter++;
-                html += `<div class="col-md-3">
+                html += 
+                `<div class="col-md-3">
                     <div class="card-item">
                         <div style="display: flex;align-items: center;">
                             <div style="margin-right: 21px;">#${counter}</div>
-                                <div>
-                                    <b>${item.CODPRODUTO} - ${item.DESCPRODUTO}</b> <br>
-                                    <small>${item.QUANTIDADE} ${item.UN} x ${item.VALOR_UNITARIO}</small><br>
-                                    <span>${item.DESCRICAO}</span><br>
-                                    <b>${floatToMoney(moneyToFloat(item.QUANTIDADE) * moneyToFloat(item.VALOR_UNITARIO))}</b>
-                                </div>
+                            <div>
+                                <b>${item.CODPRODUTO} - ${item.DESCPRODUTO}</b> <br>
+                                <small>${item.QUANTIDADE} ${item.UN} x ${item.VALOR_UNITARIO}</small><br>
+                                <span>${item.DESCRICAO}</span><br>
+                                <b>${floatToMoney(moneyToFloat(item.QUANTIDADE) * moneyToFloat(item.VALOR_UNITARIO))}</b>
                             </div>
                         </div>
                         <br>
@@ -1724,6 +1730,8 @@ function usuarioComPermissaoGeral(){
         DatasetFactory.createConstraint("colleagueId", WCMAPI.userCode, WCMAPI.userCode, ConstraintType.MUST),
         DatasetFactory.createConstraint("groupId", "Controladoria", "Controladoria", ConstraintType.SHOULD),
         DatasetFactory.createConstraint("groupId", "Administradores TI", "Administradores TI", ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("groupId", "Matriz", "Matriz", ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("groupId", "Diretoria", "Diretoria", ConstraintType.SHOULD),
     ],null);
 
     if (ds.values.length==0) {

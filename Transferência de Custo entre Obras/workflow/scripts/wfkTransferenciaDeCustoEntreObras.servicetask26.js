@@ -120,7 +120,7 @@ function buscaLocalEstoquePorNome(CODCOLIGADA, CODFILIAL, NOME) {
 
     for (var i = 0; i < ds.values.length; i++) {
         var nomeLocalEstoque = ds.getValue(i, "nome");
-        if (NOME == nomeLocalEstoque) {
+        if (NOME == nomeLocalEstoque || (NOME == "Obra VLI Manutenção" && nomeLocalEstoque == "Obra VLI Paulista")) {
             return ds.getValue(i, "codloc");
         }
     }

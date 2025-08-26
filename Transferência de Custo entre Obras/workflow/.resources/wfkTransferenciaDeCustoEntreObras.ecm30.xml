@@ -29,7 +29,7 @@
     <processDefinitionVersionPK>
       <companyId>1</companyId>
       <processId>Transferência de Custos entre Obras</processId>
-      <version>30</version>
+      <version>31</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
     <formId>1782503</formId>
@@ -1203,7 +1203,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>30</version>
+        <version>31</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1215,7 +1215,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>30</version>
+        <version>31</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1227,7 +1227,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>3</expressionOrder>
-        <version>30</version>
+        <version>31</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1239,7 +1239,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>30</version>
+        <version>31</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1251,7 +1251,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>30</version>
+        <version>31</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1263,7 +1263,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>3</expressionOrder>
-        <version>30</version>
+        <version>31</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1275,7 +1275,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>30</version>
+        <version>31</version>
         <sequence>44</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1289,7 +1289,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>30</version>
+        <version>31</version>
         <sequence>44</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1920,7 +1920,7 @@ function buscaLocalEstoquePorNome(CODCOLIGADA, CODFILIAL, NOME) {
 
     for (var i = 0; i &lt; ds.values.length; i++) {
         var nomeLocalEstoque = ds.getValue(i, &quot;nome&quot;);
-        if (NOME == nomeLocalEstoque) {
+        if (NOME == nomeLocalEstoque || (NOME == &quot;Obra VLI Manutenção&quot; &amp;&amp; nomeLocalEstoque == &quot;Obra VLI Paulista&quot;)) {
             return ds.getValue(i, &quot;codloc&quot;);
         }
     }
@@ -3060,7 +3060,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>30</version>
+        <version>31</version>
         <linkSequence>11</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3071,7 +3071,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>30</version>
+        <version>31</version>
         <linkSequence>12</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3082,7 +3082,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>30</version>
+        <version>31</version>
         <linkSequence>43</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3093,7 +3093,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>30</version>
+        <version>31</version>
         <linkSequence>47</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3104,7 +3104,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>30</version>
+        <version>31</version>
         <linkSequence>47</linkSequence>
         <bendSequence>2</bendSequence>
       </processLinkBendPK>

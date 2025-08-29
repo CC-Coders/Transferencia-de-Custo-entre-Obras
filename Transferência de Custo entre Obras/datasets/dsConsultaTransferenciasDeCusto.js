@@ -40,6 +40,11 @@ function createDataset(fields, constraints, sortFields) {
             queryConstraints.push({type:"varchar", value: constraints.CCUSTO_ORIGEM});
             queryConstraints.push({type:"varchar", value: constraints.CCUSTO_ORIGEM});
         }
+
+        if (constraints.TIPO) {
+            query += "AND (TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA.TIPO = ?) ";
+            queryConstraints.push({type:"varchar", value: constraints.TIPO});
+        }
         // if (constraints.CCUSTO_DESTINO) {
         //     query += "AND CCUSTO_DESTINO = ? ";
         //     queryConstraints.push({type:"varchar", value: constraints.CCUSTO_DESTINO});

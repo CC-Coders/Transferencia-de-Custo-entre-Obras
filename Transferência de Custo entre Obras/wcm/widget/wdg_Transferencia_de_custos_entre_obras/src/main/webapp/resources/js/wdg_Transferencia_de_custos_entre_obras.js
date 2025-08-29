@@ -228,6 +228,11 @@ function consultaTransferencias() {
         //     constraints.push(DatasetFactory.createConstraint("CCUSTO_DESTINO", CCUSTO_DESTINO, CCUSTO_DESTINO, ConstraintType.MUST));
         // }
 
+        var TIPO = $("#filtroTipoTransferencia").val();
+        if (TIPO) {
+            constraints.push(DatasetFactory.createConstraint("TIPO", TIPO, TIPO, ConstraintType.MUST));
+        }
+
         var STATUS = $("#filtroStatus").val();
         if (STATUS) {
             constraints.push(DatasetFactory.createConstraint("STATUS", STATUS, STATUS, ConstraintType.MUST));

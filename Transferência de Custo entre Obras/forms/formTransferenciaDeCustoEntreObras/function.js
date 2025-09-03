@@ -581,14 +581,8 @@ function atualizaValorTotal() {
     $("#valorObraOrigem").val(floatToMoney(valorTotal));
     $("#valorObraDestino").val(floatToMoney(valorTotal));
     $("#valorTotal").val(valorTotal);
-    escondeDiretoresSeValorNoLimiteDoCoordenador();
 }
-function escondeDiretoresSeValorNoLimiteDoCoordenador(){
-    var valorTotal = parseFloat($("#valorTotal").val());
-    if (valorTotal < 200000) {
-        $("#diretorObraOrigem, #diretorObraDestino").closest("div").hide();
-    }
-}
+
 
 function movimentaAtividadeParaReprovacao() {
     var processId = $("#numProces").val();

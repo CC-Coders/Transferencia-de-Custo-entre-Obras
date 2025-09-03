@@ -2,7 +2,16 @@
 function servicetask9(attempt, message) {
     var decisao = hAPI.getCardValue("decisao");
     if (decisao=="") {
-        // Se Decisao == "", significar que o Processo foi iniciado e Define o Primeiro Aprovador
+        // Se Decisao == "", significar que o Processo foi iniciado
+
+        //Verifica se os Aprovadores não são todos iguais entre Origem e Destino
+        var isTodosAprovadoresIguaisOrigemDestino = verificaSeTotalmenteAprovado();
+        if (isTodosAprovadoresIguaisOrigemDestino == true) {
+            hAPI.setCardValue("decisaoAprovadorObraDestino", "Aprovado");
+            return true;
+        }
+
+        // Define primeiro Aprovador
         defineProximoAprovador();
         hAPI.setCardValue("decisaoAprovadorObraDestino", "Aprovação");
         if (hAPI.getCardValue("usuarioAprovadorDestino") == "") {
@@ -32,8 +41,6 @@ function servicetask9(attempt, message) {
 }
 
 function defineProximoAprovador(){
-    var valorTotalTransferencia = parseFloat(hAPI.getCardValue("valorTotal"));
-
     // Verifica quais níveis já aprovaram
     var isAprovadoPeloEngenheiro = hAPI.getCardValue("aprovadoEngenheiroObraDestino") == "true";
     var isAprovadoCoordenador = hAPI.getCardValue("aprovadoCoordenadorObraDestino") == "true";
@@ -54,7 +61,7 @@ function defineProximoAprovador(){
         hAPI.setCardValue("usuarioAprovadorDestino", hAPI.getCardValue("coordenadorObraDestino"));
         return;
     }
-    if (valorTotalTransferencia > 250000 && !isAprovadoDiretor && !mesmoDiretorOrigemDestino) {
+    if (!isAprovadoDiretor && !mesmoDiretorOrigemDestino) {
         hAPI.setCardValue("usuarioAprovadorDestino", hAPI.getCardValue("diretorObraDestino"));
         return;
     }
@@ -77,8 +84,6 @@ function marcaAprovacaoDoAprovador() {
     }
 }
 function verificaSeTotalmenteAprovado(){
-    var valorTotalTransferencia = parseFloat(hAPI.getCardValue("valorTotal"));
-
     // Verifica casos que o nível de Aprovação é o mesmo na Origem e Destino
     var mesmoEngenheiroOrigemDestino = hAPI.getCardValue("engenheiroObraDestino") == hAPI.getCardValue("engenheiroObraOrigem");
     var mesmoCoordenadorOrigemDestino = hAPI.getCardValue("coordenadorObraDestino") == hAPI.getCardValue("coordenadorObraOrigem");
@@ -88,16 +93,8 @@ function verificaSeTotalmenteAprovado(){
     var isAprovadoCoordenador = hAPI.getCardValue("aprovadoCoordenadorObraDestino") == "true";
     var isAprovadoDiretor = hAPI.getCardValue("aprovadoDiretorObraDestino") == "true";
 
-    log.info("verificaSeTotalmenteAprovado: Init");
-    log.info("verificaSeTotalmenteAprovado: " + hAPI.getCardValue("aprovadoEngenheiroObraDestino"));
-    log.info("verificaSeTotalmenteAprovado: " + isAprovadoEngenheiro);
-
-    if ((isAprovadoEngenheiro || mesmoEngenheiroOrigemDestino) && (isAprovadoCoordenador || mesmoCoordenadorOrigemDestino)) {
-        log.info("verificaSeTotalmenteAprovado: enge e coord aprovado");
-        if ((isAprovadoDiretor || mesmoDiretorOrigemDestino) || valorTotalTransferencia < 250000) {
-            log.info("verificaSeTotalmenteAprovado: dir aprovado");
-            return true;
-        }
+    if ((isAprovadoEngenheiro || mesmoEngenheiroOrigemDestino) && (isAprovadoCoordenador || mesmoCoordenadorOrigemDestino) && (isAprovadoDiretor || mesmoDiretorOrigemDestino)) {
+        return true;
     }
 
     return false;

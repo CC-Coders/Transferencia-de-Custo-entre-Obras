@@ -270,7 +270,6 @@ function loadAtividadesAprovacao() {
     $(".textMotivoTransferencia, .motivoTransferencia").attr("readonly", "readonly");
     $("#btnAdicionarTransferencia").hide();
 
-    escondeDiretoresSeValorNoLimiteDoCoordenador();
     geraTabelaHistorico();
     marcaEmVerdeAprovados();
     
@@ -287,12 +286,6 @@ var beforeSendValidate = function () {
     const atividadeAtual = $("#atividade").val();
     if (atividadeAtual == ATIVIDADES.INICIO || atividadeAtual == ATIVIDADES.INICIO_0) {
         valida = validaPreenchimentoForm();
-        if (valida) {
-            var valorTotal = parseFloat($("#valorTotal").val());
-            if (valorTotal < 200000) {
-                $("#diretorObraOrigem, #diretorObraDestino").val("");
-            }
-        }
     }
 
     if (atividadeAtual == ATIVIDADES.APROVADOR_DESTINO || atividadeAtual == ATIVIDADES.APROVADOR_ORIGEM) {

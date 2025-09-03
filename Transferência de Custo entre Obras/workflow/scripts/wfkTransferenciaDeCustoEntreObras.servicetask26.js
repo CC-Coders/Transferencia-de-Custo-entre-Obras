@@ -61,14 +61,14 @@ function getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO) {
             }, 
             RECEITA:{
                 AUMENTA_RESULTADO: {
-                    CODIGOPRD_COLIGADA1: "11.999.00001",
-                    CODIGOPRD: "11.999.00001",
-                    DESCPRD: "Receita de Obras (+)",
+                    CODIGOPRD_COLIGADA1: "11.006.00108",
+                    CODIGOPRD: "11.006.00108",
+                    DESCPRD: "Recebimentos (+)",
                 },
                 DIMINUI_RESULTADO: {
-                    CODIGOPRD_COLIGADA1: "11.999.00000",
-                    CODIGOPRD: "11.999.00000",
-                    DESCPRD: "Receita de Obras (-)",
+                    CODIGOPRD_COLIGADA1: "11.006.00109",
+                    CODIGOPRD: "11.006.00109",
+                    DESCPRD: "Recebimentos (-)",
                 }
             }
         }
@@ -90,14 +90,14 @@ function getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO) {
             },
             RECEITA:{
                 AUMENTA_RESULTADO: {
-                    CODIGOPRD_COLIGADA1: "11.999.00001",
-                    CODIGOPRD: "11.999.00001",
-                    DESCPRD: "Receita de Obras (+)",
+                    CODIGOPRD_COLIGADA1: "11.006.00108",
+                    CODIGOPRD: "11.006.00108",
+                    DESCPRD: "Recebimentos (+)",
                 },
-                DIMINUI_RESULTADO: {
-                    CODIGOPRD_COLIGADA1: "11.999.00000",
-                    CODIGOPRD: "11.999.00000",
-                    DESCPRD: "Receita de Obras (-)",
+                  DIMINUI_RESULTADO: {
+                    CODIGOPRD_COLIGADA1: "11.006.00109",
+                    CODIGOPRD: "11.006.00109",
+                    DESCPRD: "Recebimentos (-)",
                 }
             }
         }

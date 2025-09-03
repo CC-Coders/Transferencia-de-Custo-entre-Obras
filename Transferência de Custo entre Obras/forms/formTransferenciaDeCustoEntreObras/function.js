@@ -24,9 +24,9 @@ function extraiAprovadoresDaLista(lista) {
 
 
     // Condição inserida para lançamento das transferencias Pela Controladoria
-    engenherio = "fernando.ribeiro";
-    coordenador = "fernando.ribeiro";
-    diretor = "fernando.ribeiro";
+    // engenherio = "fernando.ribeiro";
+    // coordenador = "fernando.ribeiro";
+    // diretor = "fernando.ribeiro";
 
     return { engenherio, coordenador, diretor };
 }
@@ -395,48 +395,52 @@ function calculaValorTotalItem(tr) {
     var valorTotal = quantidade * valor;
     $(tr).find(".itemValorTotal").val(floatToMoney(valorTotal));
 }
-function carregaListaDeProdutos(value){
-    if (!value) {
+function carregaListaDeProdutos(TIPO_TRANSFERENCIA) {
+    if (!TIPO_TRANSFERENCIA) {
         return [];
     }
-    if (value == "Insumos") {
-        var ds = DatasetFactory.getDataset("BuscaProdutosRM", null, [
-            DatasetFactory.createConstraint("CODCOLIGADA", "1", "1", ConstraintType.MUST),
-            DatasetFactory.createConstraint("TipoProduto", "OC/OS", "OC/OS", ConstraintType.MUST)
-        ], null);
 
-        var Produtos = ds.values;
-        return Produtos;
-    }
-
-
-    var ds = DatasetFactory.getDataset("dsBuscaProdutosTransferenciasDeCusto", null,[
-        DatasetFactory.createConstraint("TIPO_TRANSFERENCIA", value, value, ConstraintType.MUST)
+    var ds = DatasetFactory.getDataset("dsBuscaProdutosTransferenciasDeCusto",null,[
+        DatasetFactory.createConstraint("TIPO_TRANSFERENCIA", TIPO_TRANSFERENCIA, TIPO_TRANSFERENCIA, ConstraintType.MUST)
     ],null);
 
     if (ds.values[0].STATUS != "SUCCESS") {
-        showMessage(ds.values[0].MENSAGEM,"","warning");
+        showMessage(ds.values[0].MENSAGEM, "", "warning");
         throw ds.values[0].MENSAGEM;
     }
 
-    var produtos = (ds.values[0].RESULT);
-    if (typeof produtos  == "string") {
+    var produtos = ds.values[0].RESULT;
+    if (typeof produtos == "string") {
         produtos = JSON.parse(ds.values[0].RESULT);
     }
-    console.log(produtos)
+
+    const blacklist = [
+        "Serviço Técnico s/ IRRF",
+        "Serviços de Terceiros - Mão de Obra Temporária - s/IRRF",
+        "Serviços de Terceiros - Mão de Obra Temporária (c/ IRRF 1,0%)",
+        "Serviços de terceiros - Apoio Adm/Engenharia - Simples Nacional",
+        "Serviços de Análises Técnicas",
+        "Serviço de Análise Técnica c/1,5% IRRF",
+        "Seguro Diversos",
+        "Despesas Diversas",
+        "Materiais Diretos - Diversos - 84798999",
+        "Imob. Materiais Diversos (Máq. e Eqtos.)",
+        "Despesas Diversas - Com Justificativa (RDO/FFCX)",
+    ];
+
+    if (TIPO_TRANSFERENCIA == "Insumos") {
+        // Filtra produtos do grupo 41 = Serviços
+        produtos = produtos.filter((e) => e.CODIGOPRD.substring(0, 2) != "41");
+        
+        // Filtra os produtos que não estão na blacklist
+        produtos = produtos.filter((e) => !blacklist.includes(e.NOMEFANTASIA));
+    }
+    if (TIPO_TRANSFERENCIA == "Prestação de Serviço") {
+        // Filtra os produtos que não estão na blacklist
+        produtos = produtos.filter((e) => !blacklist.includes(e.NOMEFANTASIA));
+    }
+
     return produtos;
-
-    $(target).find("select.itemProduto").each(function(){
-        var selectizeTarget = $(this)[0].selectize;
-        selectizeTarget.clearOptions();
-
-        for (const produto of produtos) {
-            selectizeTarget.addOption({
-                value: produto.VISUAL,
-                text: produto.VISUAL
-            });
-        }
-    });
 }
 
 function carregaTabelaTransferenciasMobile(){

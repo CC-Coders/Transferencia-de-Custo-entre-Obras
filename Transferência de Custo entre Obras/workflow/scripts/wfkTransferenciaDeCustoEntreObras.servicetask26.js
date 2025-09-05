@@ -1,15 +1,24 @@
 function servicetask26(attempt, message) {
     try {
-        updateDataCompetencia();
-        atualizaStatusTransferencia(STATUS_TRANSFENCIA.APROVADO);
+        // updateDataCompetencia();
 
         var CODCOLIGADA_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[0];
         var CODCCUSTO_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[1];
         var NOMECCUSTO_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[2];
+        var CODDEPTO_ORIGEM = hAPI.getCardValue("departamentoObraOrigem").split(" - ")[0];
+        if (CODDEPTO_ORIGEM == "") {
+            // Por padrão lança no Departamento Produção Obra
+            CODDEPTO_ORIGEM = "1.3.01";
+        }
 
         var CODCOLIGADA_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[0];
         var CODCCUSTO_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[1];
         var NOMECCUSTO_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[2];
+        var CODDEPTO_DESTINO = hAPI.getCardValue("departamentoObraDestino").split(" - ")[0];
+        if (CODDEPTO_DESTINO == "") {
+            // Por padrão lança no Departamento Produção Obra
+            CODDEPTO_DESTINO = "1.3.01";
+        }
 
         var PRODUTOS = getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO);
         var CUSTO_OU_RECEITA = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? "CUSTO":"RECEITA";
@@ -19,22 +28,27 @@ function servicetask26(attempt, message) {
         // Se for TRANSFERE_CUSTO, então a Obra Origem, recebe o PRODUTO AUMENTA_RESULTADO, pois está enviando o CUSTO
         // Porém, se for TRANSFERE_RECEITA, então a Obra Origem, recebe o PRODUTO DIMINUI_RESULTADO, pois está enviando a RECEITA
         var PRODUTO_ORIGEM = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO;
-        var idmov = geraMovimentos(CODCOLIGADA_ORIGEM, CODCCUSTO_ORIGEM, CODCOLIGADA_DESTINO, NOMECCUSTO_ORIGEM, PRODUTO_ORIGEM);
-        hAPI.setCardValue("IDMOV_ORIGEM", idmov);
+        var idmovOrigem = geraMovimentos(CODCOLIGADA_ORIGEM, CODCCUSTO_ORIGEM, CODCOLIGADA_DESTINO, NOMECCUSTO_ORIGEM, PRODUTO_ORIGEM, CODDEPTO_ORIGEM);
+        hAPI.setCardValue("IDMOV_ORIGEM", idmovOrigem);
 
 
         // Lanca ajuste para Obra Destino
         // Se for TRANSFERE_CUSTO, então a Obra Destino, recebe o PRODUTO DIMINUI_RESULTADO, pois está recebendo CUSTO
         // Porém, se for TRANSFERE_RECEITA, então a Obra Destino, recebe o PRODUTO AUMENTA_RESULTADO, pois está recebendo a RECEITA
         var PRODUTO_DESTINO = hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO;
-        var idmov = geraMovimentos(CODCOLIGADA_DESTINO, CODCCUSTO_DESTINO, CODCOLIGADA_ORIGEM, NOMECCUSTO_DESTINO, PRODUTO_DESTINO);
-        hAPI.setCardValue("IDMOV_DESTINO", idmov);
+        var idmovDestino = geraMovimentos(CODCOLIGADA_DESTINO, CODCCUSTO_DESTINO, CODCOLIGADA_ORIGEM, NOMECCUSTO_DESTINO, PRODUTO_DESTINO, CODDEPTO_DESTINO);
+        hAPI.setCardValue("IDMOV_DESTINO", idmovDestino);
 
+
+        atualizaStatusTransferencia(STATUS_TRANSFENCIA.APROVADO, idmovOrigem, idmovDestino);
 
     
         if (CODCOLIGADA_ORIGEM != CODCOLIGADA_DESTINO) {
-            // Se Coligada de Origem for Diferente de Destino, informa a Controladoria
-            EnviaEmail("contabilidade@castilho.com.br; control@castilho.com.br; informatica@castilho.com.br; padilha@castilho.com.br");
+            // Se Coligada de Origem for Diferente de Destino, informa a Controladoria            
+            var serverURL = getServerURL();
+            if (serverURL=="http://fluig.castilho.com.br:1010") {
+                EnviaEmailTransferenciaEntreColigadas("contabilidade@castilho.com.br; control@castilho.com.br; informatica@castilho.com.br; padilha@castilho.com.br");
+            }
         }
     } catch (error) {
         log.error(error);
@@ -126,7 +140,7 @@ function buscaLocalEstoquePorNome(CODCOLIGADA, CODFILIAL, NOME) {
     }
 }
 
-function geraMovimentos(CODCOLIGADA, CODCCUSTO, CODCOLIGADA_FORNECEDOR, NOMECCUSTO, PRODUTO) {
+function geraMovimentos(CODCOLIGADA, CODCCUSTO, CODCOLIGADA_FORNECEDOR, NOMECCUSTO, PRODUTO, CODDEPTO) {
     var CODLOC = buscaLocalEstoquePorNome(CODCOLIGADA, 1, NOMECCUSTO);
     log.info("CODLOC")
     log.info(CODLOC)
@@ -139,14 +153,14 @@ function geraMovimentos(CODCOLIGADA, CODCCUSTO, CODCOLIGADA_FORNECEDOR, NOMECCUS
     log.info("CODCFO")
     log.info(CODCFO)
 
-    var xml = montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO);
+    var xml = montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO, CODDEPTO);
 
     var idmov = ImportaMovimento(CODCOLIGADA, xml);
     log.info("Movimentos inseridos: " + idmov);
     return idmov;
 
 }
-function montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO) {
+function montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO, CODDEPTO) {
     var URLFluig = getServerURL() + "/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=" + getValue("WKNumProces");
 
     var xml = "";
@@ -218,7 +232,7 @@ function montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO) {
     xml += "    <IDMOV>-1</IDMOV>";
     xml += "    <NSEQITMMOV>1</NSEQITMMOV>";
     xml += "    <CODFILIAL>1</CODFILIAL>";
-    xml += "    <CODDEPARTAMENTO>1.3.01</CODDEPARTAMENTO>";
+    xml += "    <CODDEPARTAMENTO>" + CODDEPTO + "</CODDEPARTAMENTO>";
     xml += "    <PERCENTUAL>100</PERCENTUAL>";
     xml += "</TITMMOVRATDEP>";
 
@@ -280,7 +294,7 @@ function ImportaMovimento(CODCOLIGADA, xml) {
 }
 
 
-function EnviaEmail(emails) {
+function EnviaEmailTransferenciaEntreColigadas(emails) {
     var CorpoEmail = "";
     CorpoEmail += "Olá, <br>";
     CorpoEmail += "Segue abaixo as informações das Transferência de "+(hAPI.getCardValue("TRANSFERE_CUSTO") == "true" ? "CUSTO":"RECEITA")+" entre Coligadas<br>";
@@ -345,13 +359,24 @@ function EnviaEmail(emails) {
 
 
 
-function atualizaStatusTransferencia(STATUS) {
-    var id = hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO");
 
-    var query = "UPDATE TRANSFERENCIAS_DE_CUSTO SET STATUS = ? WHERE ID = ?";
+function atualizaStatusTransferencia(STATUS, IDMOV_ORIGEM, IDMOV_DESTINO) {
+    var id = hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO");
+    var date = getDateNow();
+
+    var query = 
+    "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
+    "   STATUS = ?, "+ //1
+    "   DATA_COMPETENCIA = ?, "+ //2
+    "   IDMOV_ORIGEM = ?, "+ //3
+    "   IDMOV_DESTINO = ? "+ //4
+    "WHERE ID = ?"; //5
     executeUpdateSemResult(query, [
-        { type: "int", value: STATUS },
-        { type: "int", value: id },
+        { type: "int", value: STATUS },//1
+        { type: "varchar", value: date },//2
+        { type: "int", value: IDMOV_ORIGEM },//3
+        { type: "int", value: IDMOV_DESTINO },//4
+        { type: "int", value: id },//5
     ]);
 }
 function updateDataCompetencia(){

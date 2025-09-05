@@ -53,7 +53,7 @@ function defineProximoAprovador(){
 
 
     // Caso o Aprovador também Aprova na Obra Origem, não defini ele como Aprovador na Destino para não ocorrer aprovações Duplicadas
-    if (!isAprovadoPeloEngenheiro && !mesmoEngenheiroOrigemDestino) {
+    if (!isAprovadoPeloEngenheiro && !mesmoEngenheiroOrigemDestino && hAPI.getCardValue("engenheiroObraDestino") != "") {
         hAPI.setCardValue("usuarioAprovadorDestino", hAPI.getCardValue("engenheiroObraDestino"));
         return;
     }
@@ -93,7 +93,7 @@ function verificaSeTotalmenteAprovado(){
     var isAprovadoCoordenador = hAPI.getCardValue("aprovadoCoordenadorObraDestino") == "true";
     var isAprovadoDiretor = hAPI.getCardValue("aprovadoDiretorObraDestino") == "true";
 
-    if ((isAprovadoEngenheiro || mesmoEngenheiroOrigemDestino) && (isAprovadoCoordenador || mesmoCoordenadorOrigemDestino) && (isAprovadoDiretor || mesmoDiretorOrigemDestino)) {
+    if ((isAprovadoEngenheiro || mesmoEngenheiroOrigemDestino || hAPI.getCardValue("engenheiroObraDestino") == "") && (isAprovadoCoordenador || mesmoCoordenadorOrigemDestino) && (isAprovadoDiretor || mesmoDiretorOrigemDestino)) {
         return true;
     }
 

@@ -31,13 +31,11 @@ function servicetask10(attempt, message) {
 }
 
 function defineProximoAprovador() {
-    var valorTotalTransferencia = hAPI.getCardValue("valorTotal");
-
     var aprovadoEngenheiroObraOrigem = hAPI.getCardValue("aprovadoEngenheiroObraOrigem");
     var aprovadoCoordenadorObraOrigem = hAPI.getCardValue("aprovadoCoordenadorObraOrigem");
     var aprovadoDiretorObraOrigem = hAPI.getCardValue("aprovadoDiretorObraOrigem");
 
-    if (aprovadoEngenheiroObraOrigem != "true") {
+    if (aprovadoEngenheiroObraOrigem != "true" && hAPI.getCardValue("engenheiroObraOrigem") != "") {
         var engenheiroObraOrigem = hAPI.getCardValue("engenheiroObraOrigem");
         hAPI.setCardValue("usuarioAprovadorOrigem", engenheiroObraOrigem);
     }
@@ -95,7 +93,7 @@ function verificaSeTotalmenteAprovado(){
     var aprovadoCoordenadorObraOrigem = hAPI.getCardValue("aprovadoCoordenadorObraOrigem");
     var aprovadoDiretorObraOrigem = hAPI.getCardValue("aprovadoDiretorObraOrigem");
 
-    if (aprovadoEngenheiroObraOrigem == "true" && aprovadoCoordenadorObraOrigem == "true" && aprovadoDiretorObraOrigem == "true") {        
+    if ((aprovadoEngenheiroObraOrigem == "true" || hAPI.getCardValue("engenheiroObraOrigem") == "") && aprovadoCoordenadorObraOrigem == "true" && aprovadoDiretorObraOrigem == "true") {        
         return true;
     }
 

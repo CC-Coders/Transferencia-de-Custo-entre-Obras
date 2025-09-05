@@ -1,7 +1,5 @@
 function servicetask26(attempt, message) {
     try {
-        // updateDataCompetencia();
-
         var CODCOLIGADA_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[0];
         var CODCCUSTO_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[1];
         var NOMECCUSTO_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[2];
@@ -142,17 +140,11 @@ function buscaLocalEstoquePorNome(CODCOLIGADA, CODFILIAL, NOME) {
 
 function geraMovimentos(CODCOLIGADA, CODCCUSTO, CODCOLIGADA_FORNECEDOR, NOMECCUSTO, PRODUTO, CODDEPTO) {
     var CODLOC = buscaLocalEstoquePorNome(CODCOLIGADA, 1, NOMECCUSTO);
-    log.info("CODLOC")
-    log.info(CODLOC)
     var CNPJColigadaFornecedor = buscaCNPJDaColigada(CODCOLIGADA_FORNECEDOR);
-    log.info("CNPJColigadaFornecedor")
-    log.info(CNPJColigadaFornecedor)
     var fornecedor = buscaCodigoFornecedor(CODCOLIGADA, CNPJColigadaFornecedor);
     var CODCOLCFO = fornecedor[0];
     var CODCFO = fornecedor[1];
-    log.info("CODCFO")
-    log.info(CODCFO)
-
+    
     var xml = montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO, CODDEPTO);
 
     var idmov = ImportaMovimento(CODCOLIGADA, xml);
@@ -245,7 +237,7 @@ function montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO, CO
     xml += "</MovMovimento> ";
 
     xml = xml.split("&").join("&amp;");
-    log.info("XML: " + xml);
+    log.info("Transferencia de custo XML: " + xml);
 
     return xml;
 }
@@ -377,20 +369,6 @@ function atualizaStatusTransferencia(STATUS, IDMOV_ORIGEM, IDMOV_DESTINO) {
         { type: "int", value: IDMOV_ORIGEM },//3
         { type: "int", value: IDMOV_DESTINO },//4
         { type: "int", value: id },//5
-    ]);
-}
-function updateDataCompetencia(){
-    var date = getDateNow();
-    var id = hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO");
-
-    var query =
-        "UPDATE TRANSFERENCIAS_DE_CUSTO " +
-        "   SET DATA_COMPETENCIA = ? " +
-        "   WHERE ID = ? ";
-
-    return executeUpdateSemResult(query, [
-        { type: "varchar", value: date },
-        { type: "int", value: id },
     ]);
 }
 

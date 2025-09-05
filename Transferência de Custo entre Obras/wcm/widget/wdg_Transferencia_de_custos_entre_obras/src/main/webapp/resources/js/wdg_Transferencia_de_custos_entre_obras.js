@@ -81,7 +81,6 @@ function init() {
     initDataTableTransferencias();
     consultaTransferencias();
     alimentaCharts();
-    // atualizaChartProdutos();
     promiseBuscaAprovacoesPendentesProUsuario(WCMAPI.userCode).then((e) => {
         if (e.length == 0) {
             $("#cardAprovacoesPendentes").hide();
@@ -106,7 +105,6 @@ function init() {
     $("#btnConsultaTransferencias").on("click", function () {
         consultaTransferencias();
         alimentaCharts();
-        // atualizaChartProdutos();
     });
 
     $("#filtroColigadaOrigem").on("change", function () {
@@ -118,13 +116,7 @@ function init() {
 
         $("#filtroCCUSTOOrigem")[0].selectize.addOption(options);
     });
-    // $("#filtroColigadaDestino").on("change", function () {
-    //     var CODCOLIGADA = $(this).val().split(" - ")[0];
-    //     var obras = obrasPermissaoGeral.filter((e) => e.CODCOLIGADA == CODCOLIGADA);
-    //     var html = obras.map((e) => `<option>${e.CODCCUSTO} - ${e.perfil}</option>`).join("");
 
-    //     $("#filtroCCUSTODestino").html("<option value=''>Todos</option>" + html);
-    // });
 
     var date = new Date();
     var mes = date.getMonth() + 1;
@@ -225,20 +217,10 @@ function consultaTransferencias() {
             constraints.push(DatasetFactory.createConstraint("CODCOLIGADA_ORIGEM", CODCOLIGADA_ORIGEM, CODCOLIGADA_ORIGEM, ConstraintType.MUST));
         }
 
-        // var CODCOLIGADA_DESTINO = $("#filtroColigadaDestino").val().split(" - ")[0];
-        // if (CODCOLIGADA_DESTINO) {
-        //     constraints.push(DatasetFactory.createConstraint("CODCOLIGADA_DESTINO", CODCOLIGADA_DESTINO, CODCOLIGADA_DESTINO, ConstraintType.MUST));
-        // }
-
         var CCUSTO_ORIGEM = $("#filtroCCUSTOOrigem").val().split(" - ")[0];
         if (CCUSTO_ORIGEM) {
             constraints.push(DatasetFactory.createConstraint("CCUSTO_ORIGEM", CCUSTO_ORIGEM, CCUSTO_ORIGEM, ConstraintType.MUST));
         }
-
-        // var CCUSTO_DESTINO = $("#filtroCCUSTODestino").val().split(" - ")[0];
-        // if (CCUSTO_DESTINO) {
-        //     constraints.push(DatasetFactory.createConstraint("CCUSTO_DESTINO", CCUSTO_DESTINO, CCUSTO_DESTINO, ConstraintType.MUST));
-        // }
 
         var TIPO = $("#filtroTipoTransferencia").val();
         if (TIPO) {
@@ -297,7 +279,6 @@ function initDataTableTransferencias() {
         pageLength: 10,
         responsive: true,
         fixedHeader: true,
-        // order: [[4, 'desc']],
         columns: [
             {
                 data: "ID_SOLICITACAO",
@@ -1339,7 +1320,6 @@ function PreencheCamposFiltros() {
     }
 
     $("#filtroColigadaOrigem")[0].selectize.addOption(geraOptionsSelectize(coligadasPermissaoUsuario));
-    // $("#filtroColigadaDestino").html(geraHtmlOptions(coligadas));
 
     obrasPermissaoGeral = todasObras;
     obrasPermissaoUsuario = obrasComPermissaoDoUsuario;

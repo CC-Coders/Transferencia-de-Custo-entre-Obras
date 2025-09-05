@@ -72,47 +72,11 @@ function bindings() {
     $("#btnAprovar").on("click", function () {
         $("#decisao").val("Aprovado");
         const atividadeAtual = $("#atividade").val();
-        // if (atividadeAtual == ATIVIDADES.APROVADOR_ORIGEM) {
-        //     aprovaObraOrigem();
-        // }
-        // else if (atividadeAtual == ATIVIDADES.APROVADOR_DESTINO) {
-        //     aprovaObraDestino();
-        // }
+
 
         parent.$("#send-process-button").click();
 
-        function aprovaObraOrigem() {
-            var aprovador = $("#usuarioAprovadorOrigem").val();
-            var engenheiroObraOrigem = $("#engenheiroObraOrigem").val();
-            var coordenadorObraOrigem = $("#coordenadorObraOrigem").val();
-            var diretorObraOrigem = $("#diretorObraOrigem").val();
 
-            if (aprovador == engenheiroObraOrigem) {
-                $("#aprovadoEngenheiroObraOrigem").val("true");
-            } 
-            else if (aprovador == coordenadorObraOrigem) {
-                $("#aprovadoCoordenadorObraOrigem").val("true");
-            }
-            else if (aprovador == diretorObraOrigem) {
-                $("#aprovadoDiretorObraOrigem").val("true");
-            }
-        }
-        function aprovaObraDestino() {
-            var aprovador = $("#usuarioAprovadorDestino").val();
-            var engenheiroObraDestino = $("#engenheiroObraDestino").val();
-            var coordenadorObrDestino = $("#coordenadorObraDestino").val();
-            var diretorObraOriDestino = $("#diretorObraDestino").val();
-
-            if (aprovador == engenheiroObraDestino) {
-                $("#aprovadoEngenheiroObraDestino").val("true");
-            } 
-            else if (aprovador == coordenadorObrDestino) {
-                $("#aprovadoCoordenadorObraDestino").val("true");
-            }
-            else if (aprovador == diretorObraOriDestino) {
-                $("#aprovadoDiretorObraDestino").val("true");
-            }
-        }
     });
     $("#btnReprovar").on("click", function () {
         $("#decisao").val("Reprovado");

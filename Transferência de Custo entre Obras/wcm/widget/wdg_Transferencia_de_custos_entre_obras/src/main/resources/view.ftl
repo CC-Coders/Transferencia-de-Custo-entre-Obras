@@ -1,13 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-
-<body> -->
 <div id="wdgTransfCusto_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide"
     data-params="wdgTransfCusto.instance()">
 
@@ -138,18 +128,6 @@
                             <option value="3">Cancelado</option>
                         </select>
                     </div>
-                    <!-- <div class="col-md-3">
-                        <label for="">Coligada Obra Destino</label>
-                        <select name="filtroColigadaDestino" id="filtroColigadaDestino" class="form-control"></select>
-                        <br>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="">C. Custo Obra Destino</label>
-                        <select name="filtroCCUSTODestino" id="filtroCCUSTODestino" class="form-control">
-                            <option value="">Todos</option>
-                        </select>
-                        <br>
-                    </div> -->
                 </div>
                 <div class="row">
                   
@@ -403,7 +381,3 @@
     <button class="btn btn-primary" id="btnDarkMode"><i class="flaticon flaticon-moon icon-sm"
             aria-hidden="true"></i></button>
 </div>
-
-<!-- </body>
-
-</html> -->

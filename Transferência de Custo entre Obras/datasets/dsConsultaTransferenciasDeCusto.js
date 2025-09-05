@@ -8,8 +8,10 @@ function createDataset(fields, constraints, sortFields) {
         query += "      ID_SOLICITACAO,  ";
         query += "      CODCOLIGADA_ORIGEM,  ";
         query += "      CCUSTO_ORIGEM,  ";
+        query += "      DEPARTAMENTO_ORIGEM,  ";
         query += "      CODCOLIGADA_DESTINO,  ";
         query += "      CCUSTO_DESTINO,  ";
+        query += "      DEPARTAMENTO_DESTINO,  ";
         query += "      SOLICITANTE,  ";
         query += "      TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA.VALOR,  ";
         query += "      OBSERVACAO,  ";
@@ -39,6 +41,11 @@ function createDataset(fields, constraints, sortFields) {
             query += "AND (CCUSTO_ORIGEM = ? OR CCUSTO_DESTINO = ?) ";
             queryConstraints.push({type:"varchar", value: constraints.CCUSTO_ORIGEM});
             queryConstraints.push({type:"varchar", value: constraints.CCUSTO_ORIGEM});
+        }
+        if (constraints.DEPTO) {
+            query += "AND (DEPARTAMENTO_ORIGEM = ? OR DEPARTAMENTO_DESTINO = ?) ";
+            queryConstraints.push({type:"varchar", value: constraints.DEPTO});
+            queryConstraints.push({type:"varchar", value: constraints.DEPTO});
         }
 
         if (constraints.TIPO) {

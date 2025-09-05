@@ -107,7 +107,14 @@
                         </select>
                         <br>
                     </div>
-                      <div class="col-md-3">
+                    <div class="col-md-3" style="display: none;">
+                        <label for="">Departamento</label>
+                        <select name="filtroDepartamentoOrigem" id="filtroDepartamentoOrigem">
+                            <option value="">Todos</option>
+                        </select>
+                        <br>
+                    </div>
+                    <div class="col-md-3">
                         <label for="">Tipo</label>
                         <select name="filtroTipoTransferencia" id="filtroTipoTransferencia" class="form-control">
                             <option value="">Todos</option>

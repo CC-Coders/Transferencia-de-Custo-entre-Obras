@@ -132,11 +132,13 @@ function alteraIconesECorDosValores(){
             $("#iconObraOrigem").removeClass("iconNotStonks").addClass("iconStonks");
             $("#valorObraOrigem").attr("style", "color: green !important");
             $("#valorObraDestino").attr("style", "color: red !important");
+            $("#titleTipoTransferencia").text("CUSTO");
     }else if(isTipoReceita){
          $("#iconObraOrigem").removeClass("iconStonks").addClass("iconNotStonks");
             $("#iconObraDestino").removeClass("iconNotStonks").addClass("iconStonks");
             $("#valorObraDestino").attr("style", "color: green !important");
             $("#valorObraOrigem").attr("style", "color: red !important");
+            $("#titleTipoTransferencia").text("RECEITA");
     }
 }
 function usuarioComPermissaoGeralNasObras(){
@@ -561,6 +563,33 @@ async function geraTabelaHistorico() {
 }
 
 
+// Aprovadores
+function aprovadoresMatriz(CODDEPTO){
+    const coordenadoresMatriz = [
+        {CODDEPTO:"1.2.01", NOME:"Presidência",              CODUSUARIO:"padilha"},
+        {CODDEPTO:"1.2.04", NOME:"Contabilidade",            CODUSUARIO:"cris"},
+        {CODDEPTO:"1.2.05", NOME:"Informática",              CODUSUARIO:"thiago.senne"},
+        {CODDEPTO:"1.2.06", NOME:"Financeiro",               CODUSUARIO:"fernando.jarvorski"},
+        {CODDEPTO:"1.2.07", NOME:"Recursos Humanos",         CODUSUARIO:"ellen.virginia"},
+        {CODDEPTO:"1.2.09", NOME:"Controladoria",            CODUSUARIO:"glaucio.moraes"},
+        {CODDEPTO:"1.2.13", NOME:"Técnica",                  CODUSUARIO:"germano"},
+        {CODDEPTO:"1.2.19", NOME:"Segurança / Qualidade",    CODUSUARIO:"alexandre.silva"},
+        {CODDEPTO:"1.2.21", NOME:"Compras",                  CODUSUARIO:"thalessa.tomm"},
+        {CODDEPTO:"1.2.30", NOME:"Diretoria Administrativa", CODUSUARIO:"padilha"},
+        {CODDEPTO:"1.2.31", NOME:"Diretoria Tecnica",        CODUSUARIO:"jerson"},
+        {CODDEPTO:"1.2.34", NOME:"Planejamento e Controle",  CODUSUARIO:""},
+        {CODDEPTO:"1.2.37", NOME:"Jurídico",                 CODUSUARIO:"rubia.oliveira"},
+        {CODDEPTO:"1.2.38", NOME:"Meio Ambiente",            CODUSUARIO:"eder"},
+        {CODDEPTO:"1.2.43", NOME:"Nova Serrinha",            CODUSUARIO:"rodrigo.ramos"},
+    ];
+
+    var depto = coordenadoresMatriz.find(e=> e.CODDEPTO == CODDEPTO);
+    if (depto) {
+        return depto.CODUSUARIO;
+    }
+}
+
+
 // Utils
 function atualizaValorTotal() {
     var valorTotal = 0;
@@ -582,7 +611,37 @@ function atualizaValorTotal() {
     $("#valorObraDestino").val(floatToMoney(valorTotal));
     $("#valorTotal").val(valorTotal);
 }
+function consultaDepartamentos(CODCOLIGADA){
+    var ds = DatasetFactory.getDataset("GDEPTO",["CODDEPARTAMENTO","NOME"],[
+        DatasetFactory.createConstraint("CODCOLIGADA",CODCOLIGADA,CODCOLIGADA,ConstraintType.MUST),
+        DatasetFactory.createConstraint("ATIVO","T","T",ConstraintType.MUST),
+        DatasetFactory.createConstraint("CODFILIAL","1","1",ConstraintType.MUST),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.01","1.2.01",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.04","1.2.04",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.05","1.2.05",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.06","1.2.06",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.07","1.2.07",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.09","1.2.09",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.13","1.2.13",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.19","1.2.19",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.21","1.2.21",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.30","1.2.30",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.31","1.2.31",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.34","1.2.34",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.37","1.2.37",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.38","1.2.38",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.43","1.2.43",ConstraintType.SHOULD),
+    ],null);
 
+    if (ds.values.length == 0) {
+        return [];
+    }
+
+    return ds.values;
+}
+function geraOptionsDepartamentos(ID, deptos){
+    $("#"+ID)[0].selectize.addOption(deptos.map(e=>{return {value:`${e.CODDEPARTAMENTO} - ${e.NOME}`, text:`${e.CODDEPARTAMENTO} - ${e.NOME}`}}));
+}
 
 function movimentaAtividadeParaReprovacao() {
     var processId = $("#numProces").val();

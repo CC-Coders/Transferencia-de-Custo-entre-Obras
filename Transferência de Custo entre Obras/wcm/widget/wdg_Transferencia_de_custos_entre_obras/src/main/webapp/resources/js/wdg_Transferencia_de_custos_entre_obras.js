@@ -61,8 +61,20 @@ function init() {
     }
 
     $('#filtroColigadaOrigem').selectize();
-    $('#filtroCCUSTOOrigem').selectize();
-
+    $('#filtroCCUSTOOrigem').selectize({
+        onChange: async function (value, isOnInitialize) {
+            if (value == "1.1.001 - Matriz Curitiba") {
+                var CODCOLIGADA = $("#filtroColigadaOrigem").val().split(" - ")[0];
+                var DEPTO = consultaDepartamentos(CODCOLIGADA);
+                geraOptionsDepartamentos("filtroDepartamentoOrigem", DEPTO);
+                $("#filtroDepartamentoOrigem").closest("div").show();
+            }else{
+                $("#filtroDepartamentoOrigem").closest("div").hide();
+            }
+        }
+    });
+    $("#filtroDepartamentoOrigem").selectize();
+    
 
     GCCUSTO = DatasetFactory.getDataset("GCCUSTO", null, null, null).values;
     PreencheCamposFiltros();
@@ -236,6 +248,11 @@ function consultaTransferencias() {
         var STATUS = $("#filtroStatus").val();
         if (STATUS) {
             constraints.push(DatasetFactory.createConstraint("STATUS", STATUS, STATUS, ConstraintType.MUST));
+        }
+
+        var DEPTO = $("#filtroDepartamentoOrigem").val();
+        if (DEPTO) {
+            constraints.push(DatasetFactory.createConstraint("DEPTO", DEPTO, DEPTO, ConstraintType.MUST));
         }
 
         return constraints;
@@ -429,7 +446,7 @@ function abreModalTransferencia(idSolicitacao) {
     var html = `<div class="row">
             <div class="col-md-6">
                 <h3><b>Obra Origem</b></h3>
-                <h3><b>${formulario.ccustoObraOrigem}</b></h3>
+                <h3><b>${formulario.ccustoObraOrigem} ${formulario.ccustoObraOrigem == "1 - 1.1.001 - Matriz Curitiba" ? formulario.departamentoObraOrigem:""}</b></h3>
                 <h4><b>Total:</b> ${formulario.valorObraOrigem}</h4>
                 <br>
 
@@ -439,7 +456,7 @@ function abreModalTransferencia(idSolicitacao) {
             </div>
             <div class="col-md-6">
                 <h3><b>Obra Destino</b></h3>
-                <h3><b>${formulario.ccustoObraDestino}</b></h3>
+                <h3><b>${formulario.ccustoObraDestino} ${formulario.ccustoObraDestino == "1 - 1.1.001 - Matriz Curitiba" ? formulario.departamentoObraDestino:""}</b></h3>
                 <h4><b>Total:</b> ${formulario.valorObraDestino}</h4>
                 <br>
 
@@ -1337,6 +1354,37 @@ function PreencheCamposFiltros() {
 
         return options;
     }
+}
+function consultaDepartamentos(CODCOLIGADA){
+    var ds = DatasetFactory.getDataset("GDEPTO",["CODDEPARTAMENTO","NOME"],[
+        DatasetFactory.createConstraint("CODCOLIGADA",CODCOLIGADA,CODCOLIGADA,ConstraintType.MUST),
+        DatasetFactory.createConstraint("ATIVO","T","T",ConstraintType.MUST),
+        DatasetFactory.createConstraint("CODFILIAL","1","1",ConstraintType.MUST),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.01","1.2.01",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.04","1.2.04",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.05","1.2.05",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.06","1.2.06",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.07","1.2.07",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.09","1.2.09",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.13","1.2.13",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.19","1.2.19",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.21","1.2.21",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.30","1.2.30",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.31","1.2.31",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.34","1.2.34",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.37","1.2.37",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.38","1.2.38",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.43","1.2.43",ConstraintType.SHOULD),
+    ],null);
+
+    if (ds.values.length == 0) {
+        return [];
+    }
+
+    return ds.values;
+}
+function geraOptionsDepartamentos(ID, deptos){
+    $("#"+ID)[0].selectize.addOption(deptos.map(e=>{return {value:`${e.CODDEPARTAMENTO}`, text:`${e.CODDEPARTAMENTO} - ${e.NOME}`}}));
 }
 
 // Aprova Solicitação

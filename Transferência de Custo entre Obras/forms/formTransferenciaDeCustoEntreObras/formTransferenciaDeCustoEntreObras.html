@@ -120,8 +120,8 @@
 					</div>
 
 				</div>
-				<div id="divObrasTransferencia" class="row">
-					<div class="col-md-6">
+				<div id="divObrasTransferencia" class="row flexRow">
+					<div class="col-md-5" >
 						<div class="panel panel-castilho-primary">
 							<div class="panel-heading">
 								<h3 class="panel-title" style="display: flex;justify-content: space-between;">
@@ -135,12 +135,12 @@
 							<div class="panel-body">
 								<div class="row">
 									<div class="col-md-8">
-										<label for="">Centro de Custo:</label>
+										<label for="ccustoObraOrigem">Centro de Custo:</label>
 										<select name="ccustoObraOrigem" id="ccustoObraOrigem"
 											autocomplete="off"></select>
 									</div>
 									<div class="col-md-4">
-										<label for="">Valor:</label>
+										<label for="valorObraOrigem">Valor:</label>
 										<input name="valorObraOrigem" id="valorObraOrigem" class="form-control"
 											style="color: green !important;" readonly inert />
 									</div>
@@ -163,10 +163,24 @@
 											class="form-control" readonly inert>
 									</div>
 								</div>
+								<br>
+								<div class="row" style="display: none;">
+									<div class="col-md-12">
+										<label for="departamentoObraOrigem">Departamento</label>
+										<select name="departamentoObraOrigem" id="departamentoObraOrigem"
+											autocomplete="off"></select>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
-					<div class="col-md-6">
+					<div class="col-md-2 column">
+						<div style="height: 100%;display: flex;align-items: center;justify-content: center;flex-direction: column;">
+							<h1 style="margin-bottom: 0px;margin-top: 0px;" id="titleTipoTransferencia"></h1>
+							<i class="fluigicon fluigicon-arrow-right icon-thumbnail-lg" aria-hidden="true"></i>
+						</div>
+					</div>
+					<div class="col-md-5">
 						<div class="panel panel-castilho-primary">
 							<div class="panel-heading">
 								<h3 class="panel-title" style="display: flex;justify-content: space-between;">
@@ -180,12 +194,12 @@
 							<div class="panel-body">
 								<div class="row">
 									<div class="col-md-8">
-										<label for="">Centro de Custo:</label>
+										<label for="ccustoObraDestino">Centro de Custo:</label>
 										<select name="ccustoObraDestino" id="ccustoObraDestino"
 											autocomplete="off"></select>
 									</div>
 									<div class="col-md-4">
-										<label for="">Valor:</label>
+										<label for="valorObraDestino">Valor:</label>
 										<input name="valorObraDestino" id="valorObraDestino" class="form-control"
 											style="color: red !important;" readonly inert />
 									</div>
@@ -193,19 +207,27 @@
 								<br>
 								<div class="row">
 									<div class="col-md-4">
-										<label for="">Engenheiro:</label>
+										<label for="engenheiroObraDestino">Engenheiro:</label>
 										<input type="text" name="engenheiroObraDestino" id="engenheiroObraDestino"
 											class="form-control" readonly inert>
 									</div>
 									<div class="col-md-4">
-										<label for="">Coordenador:</label>
+										<label for="coordenadorObraDestino">Coordenador:</label>
 										<input type="text" name="coordenadorObraDestino" id="coordenadorObraDestino"
 											class="form-control" readonly inert>
 									</div>
 									<div class="col-md-4">
-										<label for="">Diretor:</label>
+										<label for="diretorObraDestino">Diretor:</label>
 										<input type="text" name="diretorObraDestino" id="diretorObraDestino"
 											class="form-control" readonly inert>
+									</div>
+								</div>
+								<br>
+								<div class="row" style="display: none;">
+									<div class="col-md-12">
+										<label for="departamentoObraDestino">Departamento</label>
+										<select name="departamentoObraDestino" id="departamentoObraDestino"
+											autocomplete="off"></select>
 									</div>
 								</div>
 							</div>

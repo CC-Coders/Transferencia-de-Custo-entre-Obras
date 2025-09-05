@@ -138,28 +138,68 @@ function loadAtividadeInicio() {
         onChange: async function (value, isOnInitialize) {
             var CODCOLIGADA = value.split(" - ")[0];
             var perfil = value.split(" - ")[2];
-            var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra(CODCOLIGADA, perfil, "1.1.02", "9999999999999"));
-            $("#engenheiroObraOrigem").val(aprovadores.engenherio);
-            $("#coordenadorObraOrigem").val(aprovadores.coordenador);
-            $("#diretorObraOrigem").val(aprovadores.diretor);
+    
             $("#CODCOLIGADA").val(value.split(" - ")[0]);
             $("#motivoTransferencia").change();
+
+            if (perfil == "Matriz Curitiba") {
+                var deptos = consultaDepartamentos(CODCOLIGADA);
+                geraOptionsDepartamentos("departamentoObraOrigem", deptos);
+                $("#departamentoObraOrigem").closest(".row").show();
+                $("#engenheiroObraOrigem").closest("div").hide();
+            }else{
+                var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra(CODCOLIGADA, perfil, "1.1.02", "9999999999999"));
+                $("#engenheiroObraOrigem").val(aprovadores.engenherio);
+                $("#coordenadorObraOrigem").val(aprovadores.coordenador);
+                $("#diretorObraOrigem").val(aprovadores.diretor);
+                $("#departamentoObraOrigem").closest(".row").hide();
+                $("#engenheiroObraOrigem").closest("div").show();
+                $("#departamentoObraOrigem").val("1.3.01");
+            }
         }
     });
     $('#ccustoObraDestino').selectize({
         onChange: async function (value, isOnInitialize) {
             var CODCOLIGADA = value.split(" - ")[0];
             var perfil = value.split(" - ")[2];
-            var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra(CODCOLIGADA, perfil, "1.1.02", "9999999999999"));
-            $("#engenheiroObraDestino").val(aprovadores.engenherio);
-            $("#coordenadorObraDestino").val(aprovadores.coordenador);
-            $("#diretorObraDestino").val(aprovadores.diretor);
+
             $("#motivoTransferencia").change();
+
+            if (perfil == "Matriz Curitiba") {
+                var deptos = consultaDepartamentos(CODCOLIGADA);
+                geraOptionsDepartamentos("departamentoObraDestino", deptos);
+                $("#departamentoObraDestino").closest(".row").show();
+                $("#engenheiroObraDestino").closest("div").hide();
+            }else{
+                var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra(CODCOLIGADA, perfil, "1.1.02", "9999999999999"));
+                $("#engenheiroObraDestino").val(aprovadores.engenherio);
+                $("#coordenadorObraDestino").val(aprovadores.coordenador);
+                $("#diretorObraDestino").val(aprovadores.diretor);
+                $("#departamentoObraDestino").closest(".row").hide();
+                $("#engenheiroObraDestino").closest("div").show();
+                $("#departamentoObraDestino").val("1.3.01");
+            }
+        }
+    });
+
+    $("#departamentoObraOrigem").selectize({
+        onChange: async function (value, isOnInitialize) {
+            var CODDEPTO = value.split(" - ")[0];
+            var coordenador = aprovadoresMatriz(CODDEPTO);
+            $("#coordenadorObraOrigem").val(coordenador);
+            $("#diretorObraOrigem").val("padilha");
+        }
+    });
+    $("#departamentoObraDestino").selectize({
+        onChange: async function (value, isOnInitialize) {
+            var CODDEPTO = value.split(" - ")[0];
+            var coordenador = aprovadoresMatriz(CODDEPTO);
+            $("#coordenadorObraDestino").val(coordenador);
+            $("#diretorObraDestino").val("padilha");
         }
     });
 
     $("input[autocomplete]").attr("autocomplete", "off");
-
 }
 function loadAtividadeAjuste() {
     setTimeout(() => {
@@ -177,21 +217,19 @@ function loadAtividadeAjuste() {
     marcaEmVerdeAprovados();
     alteraIconesECorDosValores();
     preencheCamposDeObras();
-        updateCounterRowsTableItens();
-        carregaTabelaItensDasTransferencias();
+    updateCounterRowsTableItens();
+    carregaTabelaItensDasTransferencias();
 
-        $(".panelTransferencia:last>.panel-heading").click();
+    $(".panelTransferencia:last>.panel-heading").click();
 
-        $(".motivoTransferencia:not(:first)").each(function () {
-            var val = $(this).val() ? $(this).val() : $(this).text();
-            $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text(val);
-        });
-        $(".valorTotalTransferencia").each(function () {
-            var val = $(this).val() ? $(this).val() : $(this).text();
-            $(this).closest(".panelTransferencia").find(".spanValorTransferencia").text(val);
-        });
-
-
+    $(".motivoTransferencia:not(:first)").each(function () {
+        var val = $(this).val() ? $(this).val() : $(this).text();
+        $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text(val);
+    });
+    $(".valorTotalTransferencia").each(function () {
+        var val = $(this).val() ? $(this).val() : $(this).text();
+        $(this).closest(".panelTransferencia").find(".spanValorTransferencia").text(val);
+    });
 
     $('#ccustoObraOrigem').selectize({
         onChange: async function (value, isOnInitialize) {
@@ -248,6 +286,17 @@ function loadAtividadesAprovacao() {
 
     $("#ccustoObraOrigem, #ccustoObraDestino").addClass("form-control");
     $("#ccustoObraOrigem, #ccustoObraDestino").attr("readonly", "readonly");
+
+    if ($("#departamentoObraDestino").val() != "1.3.01" && $("#departamentoObraDestino").val() != "" && $("#departamentoObraDestino").val() != null) {
+        $("#departamentoObraDestino").closest(".row").show();
+        $("#departamentoObraDestino").addClass("form-control");
+        $("#departamentoObraDestino").attr("readonly","readonly");
+    }
+    if ($("#departamentoObraOrigem").val() != "1.3.01" && $("#departamentoObraOrigem").val() != "" && $("#departamentoObraOrigem").val() != null) {
+        $("#departamentoObraOrigem").closest(".row").show();
+        $("#departamentoObraOrigem").addClass("form-control");
+        $("#departamentoObraOrigem").attr("readonly","readonly");
+    }
 
     $("#dataCompetencia").attr("readonly", "readonly");
 

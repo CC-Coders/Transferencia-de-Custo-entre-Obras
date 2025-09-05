@@ -13,6 +13,7 @@ var STATUS_TRANSFENCIA = {
     "EM_APROVACAO": 1,
     "APROVADO": 2,
     "CANCELADO": 3,
+    "EXCLUIDO": 4,
 }
 
 function beforeTaskSave(colleagueId, nextSequenceId, userList) {
@@ -116,38 +117,49 @@ function insereNovoRegistro() {
     var numProces = getValue("WKNumProces");
     var CODCOLIGADA_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[0];
     var CCUSTO_ORIGEM = hAPI.getCardValue("ccustoObraOrigem").split(" - ")[1];
+    var CODDEPTO_ORIGEM = hAPI.getCardValue("departamentoObraOrigem").split(" - ")[0];
+    if (CODDEPTO_ORIGEM == "") {
+        CODDEPTO_ORIGEM = "1.3.01";
+    }
+
     var CODCOLIGADA_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[0];
     var CCUSTO_DESTINO = hAPI.getCardValue("ccustoObraDestino").split(" - ")[1];
-    var SOLICITANTE = hAPI.getCardValue("solicitante");
-
-    var VALOR = moneyToFloat(hAPI.getCardValue("valorObraDestino"));
-
+    var CODDEPTO_DESTINO = hAPI.getCardValue("departamentoObraDestino").split(" - ")[0];
+    if (CODDEPTO_DESTINO == "") {
+        CODDEPTO_DESTINO = "1.3.01";
+    }
     
+    var SOLICITANTE = hAPI.getCardValue("solicitante");
+    var VALOR = moneyToFloat(hAPI.getCardValue("valorObraDestino"));
 
     var query =
         "INSERT INTO TRANSFERENCIAS_DE_CUSTO (" +
-        "   ID_SOLICITACAO, " +
-        "   CODCOLIGADA_ORIGEM, " +
-        "   CCUSTO_ORIGEM, " +
-        "   CODCOLIGADA_DESTINO, " +
-        "   CCUSTO_DESTINO, " +
-        "   SOLICITANTE, " +
-        "   VALOR, " +
+        "   ID_SOLICITACAO, " +//1
+        "   CODCOLIGADA_ORIGEM, " +//2
+        "   CCUSTO_ORIGEM, " +//3
+        "   DEPARTAMENTO_ORIGEM, " +//4
+        "   CODCOLIGADA_DESTINO, " +//5
+        "   CCUSTO_DESTINO, " +//6
+        "   DEPARTAMENTO_DESTINO, " +//7
+        "   SOLICITANTE, " +//8
+        "   VALOR, " +//9
         "   DATA_SOLICITACAO, " +
-        "   STATUS)" +
+        "   STATUS)" +//10
         " OUTPUT Inserted.ID "+
         " VALUES " +
-        "(?,?,?,?,?,?,?,SYSDATETIME(),?)";
+        "(?,?,?,?,?,?,?,?,?,SYSDATETIME(),?)";
 
     return executeInsert(query, [
-        { type: "int", value: numProces },
-        { type: "int", value: CODCOLIGADA_ORIGEM },
-        { type: "varchar", value: CCUSTO_ORIGEM },
-        { type: "int", value: CODCOLIGADA_DESTINO },
-        { type: "varchar", value: CCUSTO_DESTINO },
-        { type: "varchar", value: SOLICITANTE },
-        { type: "float", value: VALOR },
-        { type: "int", value: STATUS_TRANSFENCIA.EM_APROVACAO },
+        { type: "int", value: numProces }, // 1
+        { type: "int", value: CODCOLIGADA_ORIGEM }, // 2
+        { type: "varchar", value: CCUSTO_ORIGEM }, // 3
+        { type: "varchar", value: CODDEPTO_ORIGEM }, // 4
+        { type: "int", value: CODCOLIGADA_DESTINO }, // 5
+        { type: "varchar", value: CCUSTO_DESTINO }, // 6
+        { type: "varchar", value: CODDEPTO_DESTINO }, // 7
+        { type: "varchar", value: SOLICITANTE }, // 8
+        { type: "float", value: VALOR }, // 9
+        { type: "int", value: STATUS_TRANSFENCIA.EM_APROVACAO }, // 10
     ]);
 }
 function atualizaTransferencia() {

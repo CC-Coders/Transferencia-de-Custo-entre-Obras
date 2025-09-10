@@ -1372,7 +1372,7 @@ function promiseBuscaAprovacoesPendentesProUsuario(userCode) {
     return new Promise((resolve, reject) => {
         $.ajax({
             type: "GET",
-            url: `/process-management/api/v2/tasks?assignee=${userCode}&status=NOT_COMPLETED&processId=Transferência%20de%20Custos%20entre%20Obras&page=1&pageSize=1000`,
+            url: `/process-management/api/v2/tasks?assignee=${userCode}&status=NOT_COMPLETED&processId=Transferência de Custo entre Obras&page=1&pageSize=1000`,
             success: (retorno) => {
                 resolve(retorno.items);
             },

@@ -58,7 +58,7 @@ function createDataset(fields, constraints, sortFields) {
         }
         if (constraints.TIPO_TRANSFERENCIA == "Receita") {
             var Produtos = [
-                {"VISUAL": "11.999.00001 - Receita de Obras"}            
+                {"VISUAL": "11.006.00109 - Recebimento"}            
             ];
             return returnDataset("SUCCESS","",JSON.stringify(Produtos));
         }

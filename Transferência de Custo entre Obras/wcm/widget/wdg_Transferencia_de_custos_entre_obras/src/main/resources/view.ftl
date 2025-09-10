@@ -327,27 +327,42 @@
                     <b>Solicitante: </b><span id="textAprovacaoSolicitante">gabriel.persike</span><br>
                     <b>Valor: </b> <span id="textAprovacaoValorTotal">R$ 250,00</span> <br>
                 </div>
-
+                <br>
                 <div class="row">
-                    <div class="col-md-6">
-                        <h2 style="margin-bottom: 5px;">ORIGEM <small style="color: white;" id="textAprovacaoTipoOrigem">(redução de custo)</small></h2>
-                        <hr style="margin-bottom: 10px; margin-top: 0px;">
-                        <b>Obra: </b> <span id="textAprovacaoObraOrigem">1.1.001 - Matriz Curitiba</span><br>
-                        <div>
-                            <b>Engenheiro: </b><span id="textAprovacaoEngenheiroOrigem">Felipe</span><br>
-                            <b>Coordenador: </b><span id="textAprovacaoCoordenadorOrigem">Eduardo</span><br>
-                            <b>Diretor: </b><span id="textAprovacaoDiretorOrigem">Augusto</span><br>
+                    <div class="col-md-5">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">ORIGEM <small style="color: white;" id="textAprovacaoTipoOrigem">(redução de custo)</small></h3>
+                            </div>
+                            <div class="panel-body" style="background-color: darkgray !important;">
+                                <b>Obra: </b> <span id="textAprovacaoObraOrigem">1.1.001 - Matriz Curitiba</span><br>
+                                <div>
+                                    <b>Engenheiro: </b><span id="textAprovacaoEngenheiroOrigem">Felipe</span><br>
+                                    <b>Coordenador: </b><span id="textAprovacaoCoordenadorOrigem">Eduardo</span><br>
+                                    <b>Diretor: </b><span id="textAprovacaoDiretorOrigem">Augusto</span><br>
+                                </div>
+                            </div>
                         </div>
-                        <br>
                     </div>
-                    <div class="col-md-6">
-                        <h2 style="margin-bottom: 5px;">DESTINO <small style="color: white;" id="textAprovacaoTipoDestino">(aumento de custo)</small></h2>
-                        <hr style="margin-bottom: 10px; margin-top: 0px;">
-                        <b>Obra: </b> <span id="textAprovacaoObraDestino">1.2.023 - Obra Toledo II</span><br>
-                        <div>
-                            <b>Engenheiro: </b><span id="textAprovacaoEngenheiroDestino">Claudio.pecanha</span><br>
-                            <b>Coordenador: </b><span id="textAprovacaoCoordenadorDestino">Eduardo</span><br>
-                            <b>Diretor: </b><span id="textAprovacaoDiretorDestino">Augusto</span><br>
+        			<div class="col-md-2">
+						<div style="height: 100%;display: flex;align-items: center;justify-content: center;flex-direction: column;">
+							<h1 style="margin-bottom: 0px;margin-top: 0px;" id="titleTipoTransferencia"></h1>
+							<i class="fluigicon fluigicon-arrow-right icon-thumbnail-lg" aria-hidden="true"></i>
+						</div>
+					</div>
+                    <div class="col-md-5">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">DESTINO <small style="color: white;" id="textAprovacaoTipoDestino">(aumento de custo)</h3>
+                            </div>
+                            <div class="panel-body" style="background-color: darkgray !important;">
+                                <b>Obra: </b> <span id="textAprovacaoObraDestino">1.2.023 - Obra Toledo II</span><br>
+                                <div>
+                                    <b>Engenheiro: </b><span id="textAprovacaoEngenheiroDestino">Claudio.pecanha</span><br>
+                                    <b>Coordenador: </b><span id="textAprovacaoCoordenadorDestino">Eduardo</span><br>
+                                    <b>Diretor: </b><span id="textAprovacaoDiretorDestino">Augusto</span><br>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -375,6 +390,11 @@
                     <button class="btn btn-danger" id="btnReprovar">Reprovar</button>
                 </div>
             </div>
+        </div>
+        <div id="divPaginacao" style="text-align: center;">
+            <i class="fluigicon fluigicon-pointer-left icon-xl" aria-hidden="true"></i>
+            <div>1 / 10</div>
+            <i class="fluigicon fluigicon-pointer-right icon-xl" aria-hidden="true"></i>
         </div>
     </div>
 

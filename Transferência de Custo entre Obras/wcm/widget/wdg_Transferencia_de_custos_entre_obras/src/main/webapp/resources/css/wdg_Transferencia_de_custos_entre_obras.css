@@ -145,3 +145,18 @@
     background-color: #fff !important;
     background-image: none !important;
 }
+
+
+/* Paginacao */
+#divPaginacao{
+    background: black;
+    display: flex;
+    position: fixed;
+    text-align: center;
+    z-index: 10;
+    width: 100%;
+    bottom: 0;
+    justify-content: center;
+    padding: 24px 20px;
+    align-items: center;
+}

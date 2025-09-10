@@ -251,15 +251,27 @@ function loadAtividadesAprovacao() {
     $("#ccustoObraOrigem, #ccustoObraDestino").addClass("form-control");
     $("#ccustoObraOrigem, #ccustoObraDestino").attr("readonly", "readonly");
 
-    if ($("#departamentoObraDestino").val() != "1.3.01" && $("#departamentoObraDestino").val() != "" && $("#departamentoObraDestino").val() != null) {
+
+    var DEPTO_DESTINO = $("#departamentoObraDestino").val() ? $("#departamentoObraDestino").val() : $("#departamentoObraDestino").text().split(" - ")[0].trim();
+    if (DEPTO_DESTINO != "1.3.01" && DEPTO_DESTINO != "" && DEPTO_DESTINO != null) {
         $("#departamentoObraDestino").closest(".row").show();
         $("#departamentoObraDestino").addClass("form-control");
         $("#departamentoObraDestino").attr("readonly","readonly");
+
+        if ($("#engenheiroObraDestino").val() == "") {
+            $("#engenheiroObraDestino").closest("div").hide();
+        }
     }
-    if ($("#departamentoObraOrigem").val() != "1.3.01" && $("#departamentoObraOrigem").val() != "" && $("#departamentoObraOrigem").val() != null) {
+
+    var DEPTO_ORIGEM = $("#departamentoObraOrigem").val() ? $("#departamentoObraOrigem").val() : $("#departamentoObraOrigem").text().split(" - ")[0].trim();
+    if (DEPTO_ORIGEM != "1.3.01" && DEPTO_ORIGEM != "" && DEPTO_ORIGEM != null) {
         $("#departamentoObraOrigem").closest(".row").show();
         $("#departamentoObraOrigem").addClass("form-control");
         $("#departamentoObraOrigem").attr("readonly","readonly");
+
+        if ($("#engenheiroObraOrigem").val() == "") {
+            $("#engenheiroObraOrigem").closest("div").hide();
+        }
     }
 
     $("#dataCompetencia").attr("readonly", "readonly");

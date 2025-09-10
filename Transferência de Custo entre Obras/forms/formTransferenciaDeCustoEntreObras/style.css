@@ -91,3 +91,7 @@ footer{
     padding: 10px;
     border-radius: 0px 0px 20px 20px;
 }
+
+#ccustoObraOrigem:read-only, #ccustoObraDestino:read-only{
+    color: black !important;
+}

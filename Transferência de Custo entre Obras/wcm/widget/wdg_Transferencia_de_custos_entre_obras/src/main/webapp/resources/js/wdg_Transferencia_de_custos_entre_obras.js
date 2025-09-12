@@ -305,21 +305,26 @@ function initDataTableTransferencias() {
         pageLength: 10,
         responsive: true,
         fixedHeader: true,
+          columnDefs: [
+        {
+            className: 'dt-left', // Applies to all cells in the specified target(s)
+            targets: '_all' // Applies to all columns
+        }],
         columns: [
             {
                 data: "ID_SOLICITACAO",
-                className: "alignCenter",
+                className: "dt-left",
                 render: function (data) {
                     return `<a style="color: skyblue;text-decoration: underline;" href="/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=${data}" target="_blank">${data}</a>`;
                 },
             },
             {
                 data: "TIPO",
-                className: "alignCenter",
+                className: "dt-left",
             },
             {
                 data: "CCUSTO_ORIGEM",
-                className: "alignCenter",
+                className: "dt-left",
                 render: function (data, type, row) {
                     return row.CODCOLIGADA_ORIGEM + " - " + row.CCUSTO_ORIGEM + " - " + row.DESC_CCUSTO_ORIGEM;
                 },
@@ -328,7 +333,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: "CCUSTO_DESTINO",
-                className: "alignCenter",
+                className: "dt-left",
                 render: function (data, type, row) {
                     return row.CODCOLIGADA_DESTINO + " - " + row.CCUSTO_DESTINO + " - " + row.DESC_CCUSTO_DESTINO;
                 },
@@ -337,12 +342,11 @@ function initDataTableTransferencias() {
             },
             {
                 data: "SOLICITANTE",
-                className: "alignCenter",
+                className: "dt-left",
             },
             {
                 data: "VALOR",
                 type: "num",
-                className: "alignCenter",
                 className: "dt-left",
                 render: function (data, type) {
                     if (type === "sort") {
@@ -354,7 +358,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: "DATA_SOLICITACAO",
-                className: "alignCenter",
+                className: "dt-left",
                 render: function (data, type) {
                     if (type === "sort") {
                         return moment(data, "YYYY-MM-DD").valueOf();
@@ -365,7 +369,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: "DATA_COMPETENCIA",
-                className: "alignCenter",
+                className: "dt-left",
                 render: function (data, type) {
                     if (type === "sort") {
                         return moment(data, "YYYY-MM-DD").valueOf();
@@ -380,7 +384,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: "STATUS",
-                className: "alignCenter",
+                className: "dt-left",
                 render: function (data) {
                     if (data == 1) {
                         return "Em andamento";
@@ -388,7 +392,11 @@ function initDataTableTransferencias() {
                         return "Finalizado";
                     } else if (data == 3) {
                         return "Cancelado";
-                    } else {
+                    } 
+                    else if (data == 4) {
+                        return "Excluído";
+                    } 
+                    else {
                         return data;
                     }
                 },
@@ -409,6 +417,21 @@ function initDataTableTransferencias() {
             bottomStart: null,
             bottom: "paging",
             bottomEnd: null,
+            topStart: {
+                buttons: [
+                    {
+                        text: "Red",
+                        className: "btn btn-info",
+                        extend: "excel",
+                        text: "Excel",
+                        exportOptions: {
+                            modifier: {
+                                page: "current",
+                            },
+                        },
+                    },
+                ],
+            },
         },
     });
 
@@ -577,14 +600,16 @@ function excluirTransferencia(NUMPROCES){
         labelYes: 'Sim',
         labelNo: 'Não'
     }, function(result, el, ev) {
-        var ds = DatasetFactory.getDataset("dsExcluirTransferenciaDeCusto", null,[
-            DatasetFactory.createConstraint("NUMPROCES", NUMPROCES,NUMPROCES,ConstraintType.MUST)
-        ],null);
-        if (ds.values[0].STATUS == "ERROR") {
-            showMessage("Erro ao cancelar Transferência: ", ds.values[0].MENSAGEM,"warning");
-        }
-        else{
-            showMessage("Transferência cancelada com sucesso!", "","success");
+        if (result) {
+            var ds = DatasetFactory.getDataset("dsExcluirTransferenciaDeCusto", null,[
+                DatasetFactory.createConstraint("NUMPROCES", NUMPROCES,NUMPROCES,ConstraintType.MUST)
+            ],null);
+            if (ds.values[0].STATUS != "SUCCESS") {
+                showMessage("Erro ao cancelar Transferência: ", ds.values[0].MENSAGEM,"warning");
+            }
+            else{
+                showMessage("Transferência cancelada com sucesso!", "","success");
+            }
         }
     });
 }
@@ -1380,6 +1405,7 @@ function PreencheCamposFiltros() {
     obrasPermissaoUsuario = obrasComPermissaoDoUsuario;
 
     var date = moment();
+    date.add(1,"day")
     $("#filtroDataFim").val(date.format("DD/MM/YYYY"));
     FLUIGC.calendar('#filtroDataFim');
   

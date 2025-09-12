@@ -225,3 +225,51 @@ function getDate() {
     var today = ano + "-" + mes + "-" + dia;
     return today;
 }
+function executeUpdateSemResult(query, constraints) {
+    var dataSource = "/jdbc/CastilhoCustom";
+    var ic = new javax.naming.InitialContext();
+    var ds = ic.lookup(dataSource);
+
+    log.info("wfkTransferenciaDeCustoEntreObras.beforeTaskSave: executandoQuery");
+    log.info(query);
+    try {
+        var conn = ds.getConnection();
+        var stmt = conn.prepareStatement(query, Packages.java.sql.Statement.RETURN_GENERATED_KEYS);
+
+        var counter = 1;
+        for (var i = 0; i < constraints.length; i++) {
+            var val = constraints[i];
+            if (val.type == "int") {
+                stmt.setInt(counter, val.value);
+            }
+            else if (val.type == "float") {
+                stmt.setFloat(counter, val.value);
+            }
+            else if (val.type == "date") {
+                stmt.setString(counter, val.value);
+            }
+            else if (val.type == "datetime") {
+                stmt.setString(counter, val.value);
+            } else {
+                stmt.setString(counter, val.value);
+            }
+            counter++;
+        }
+
+        log.info("wfkTransferenciaDeCustoEntreObras.beforeTaskSave: executandoQuery"+constraints.length)
+
+       stmt.execute();
+
+
+    } catch (e) {
+        log.error("ERRO==============> " + e.message);
+        throw e;
+    } finally {
+        if (stmt != null) {
+            stmt.close();
+        }
+        if (conn != null) {
+            conn.close();
+        }
+    }
+}

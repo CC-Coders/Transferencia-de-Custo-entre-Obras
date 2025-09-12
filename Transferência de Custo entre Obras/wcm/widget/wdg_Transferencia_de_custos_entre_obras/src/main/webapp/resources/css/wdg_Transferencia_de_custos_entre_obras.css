@@ -184,15 +184,21 @@
 
 
 /* Modal */
+.modal{
+    border-radius: 20px;
+}
 .modal-header{
-    background-color: gray;
+    background-color: dimgray;
     color: white;
     border-radius: 20px 20px 0px 0px;
 }
 .modal-footer{
-    background-color: gray;
+    background-color: dimgray;
     border-radius: 0px 0px 20px 20px;
 }
 .modal-content{
-    border-radius: 20px !important;
+    border-radius: 30px !important;
+}
+.modal-body .message{
+    padding: 30px;
 }

@@ -19,6 +19,16 @@
     <link rel="stylesheet" href="//cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css" />
     <script src="//cdn.datatables.net/2.3.1/js/dataTables.min.js"></script>
 
+    
+
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.print.min.js"></script>
+
 
     <!-- Castilho Dev Guide -->
     <script
@@ -140,12 +150,13 @@
                         </select>
                         <br>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <label for="">STATUS</label>
                         <div>
                             <label style="margin-right: 20px;" for="filtroStatusAprovacao"><input type="checkbox" name="filtroStatusAprovacao" class="filtroStatus" id="filtroStatusAprovacao" value="1">Em Aprovação</label>
                             <label style="margin-right: 20px;" for="filtroStatusAprovado"><input type="checkbox" name="filtroStatusAprovado" class="filtroStatus" id="filtroStatusAprovado" value="2" checked>Finalizado</label>
                             <label style="margin-right: 20px;" for="filtroStatusCancelado"><input type="checkbox" name="filtroStatusCancelado" class="filtroStatus" id="filtroStatusCancelado" value="3">Cancelado</label>
+                            <label style="margin-right: 20px;" for="filtroStatusExcluido"><input type="checkbox" name="filtroStatusExcluido" class="filtroStatus" id="filtroStatusExcluido" value="4">Excluído</label>
                         </div>
                     </div>
                 </div>

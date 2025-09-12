@@ -353,23 +353,41 @@ function EnviaEmailTransferenciaEntreColigadas(emails) {
 
 
 function atualizaStatusTransferencia(STATUS, IDMOV_ORIGEM, IDMOV_DESTINO) {
-    var id = hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO");
-    var date = getDateNow();
+    try {
+        var id = hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO");
 
-    var query = 
-    "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
-    "   STATUS = ?, "+ //1
-    "   DATA_COMPETENCIA = ?, "+ //2
-    "   IDMOV_ORIGEM = ?, "+ //3
-    "   IDMOV_DESTINO = ? "+ //4
-    "WHERE ID = ?"; //5
-    executeUpdateSemResult(query, [
-        { type: "int", value: STATUS },//1
-        { type: "varchar", value: date },//2
-        { type: "int", value: IDMOV_ORIGEM },//3
-        { type: "int", value: IDMOV_DESTINO },//4
-        { type: "int", value: id },//5
-    ]);
+        if (STATUS == STATUS_TRANSFENCIA.APROVADO) {
+            var date = getDateNow();
+
+            var query =
+                "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
+                "   STATUS = ?, " + //1
+                "   DATA_COMPETENCIA = ?, " + //2
+                "   IDMOV_ORIGEM = ?, " + //3
+                "   IDMOV_DESTINO = ? " + //4
+                "WHERE ID = ?"; //5
+
+            executeUpdateSemResult(query, [
+                { type: "int", value: STATUS }, //1
+                { type: "varchar", value: date }, //2
+                { type: "int", value: IDMOV_ORIGEM }, //3
+                { type: "int", value: IDMOV_DESTINO }, //4
+                { type: "int", value: id }, //5
+            ]);
+        }else{
+             var query =
+                "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
+                "   STATUS = ? " + //1
+                "WHERE ID = ?"; //2
+
+            executeUpdateSemResult(query, [
+                { type: "int", value: STATUS }, //1
+                { type: "int", value: id }, //5
+            ]);
+        }
+    } catch (error) {
+        throw error;
+    }
 }
 
 

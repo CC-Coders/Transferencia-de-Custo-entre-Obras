@@ -28,37 +28,53 @@ function createDataset(fields, constraints, sortFields) {
 
         var queryConstraints = [];
 
-        // if (constraints.CODCOLIGADA_DESTINO) {
-        //     query += "AND CODCOLIGADA_DESTINO = ? ";
-        //     queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_DESTINO});
-        // }
+        // Filtro Coligada
         if (constraints.CODCOLIGADA_ORIGEM) {
-            query += "AND (CODCOLIGADA_ORIGEM = ? OR  CODCOLIGADA_DESTINO = ?) ";
-            queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_ORIGEM});
-            queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_ORIGEM});
+            if (constraints.CODCOLIGADA_DESTINO) {
+                query += "AND ((CODCOLIGADA_ORIGEM = ? AND CODCOLIGADA_DESTINO = ?) OR (CODCOLIGADA_DESTINO = ? AND CODCOLIGADA_ORIGEM = ?)) ";
+                queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_ORIGEM});
+                queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_DESTINO});
+                queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_ORIGEM});
+                queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_DESTINO});
+            }else{
+                query += "AND (CODCOLIGADA_ORIGEM = ? OR  CODCOLIGADA_DESTINO = ?) ";
+                queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_ORIGEM});
+                queryConstraints.push({type:"int", value: constraints.CODCOLIGADA_ORIGEM});
+            }
         }
+
+        // Filtro CCUSTO
         if (constraints.CCUSTO_ORIGEM) {
             query += "AND (CCUSTO_ORIGEM = ? OR CCUSTO_DESTINO = ?) ";
             queryConstraints.push({type:"varchar", value: constraints.CCUSTO_ORIGEM});
             queryConstraints.push({type:"varchar", value: constraints.CCUSTO_ORIGEM});
         }
+
+        // Filtro Departamento
         if (constraints.DEPTO) {
             query += "AND (DEPARTAMENTO_ORIGEM = ? OR DEPARTAMENTO_DESTINO = ?) ";
             queryConstraints.push({type:"varchar", value: constraints.DEPTO});
             queryConstraints.push({type:"varchar", value: constraints.DEPTO});
         }
 
+        // Filtro TIPO
         if (constraints.TIPO) {
             query += "AND (TRANSFERENCIAS_DE_CUSTO_TRANSFERENCIA.TIPO = ?) ";
             queryConstraints.push({type:"varchar", value: constraints.TIPO});
         }
-        // if (constraints.CCUSTO_DESTINO) {
-        //     query += "AND CCUSTO_DESTINO = ? ";
-        //     queryConstraints.push({type:"varchar", value: constraints.CCUSTO_DESTINO});
-        // }
+
+        // Filtro Periodo
+        if (constraints.DATAINICIO && constraints.DATAFIM) {
+            query += "AND ((TRANSFERENCIAS_DE_CUSTO.DATA_COMPETENCIA IS NULL AND TRANSFERENCIAS_DE_CUSTO.DATA_SOLICITACAO BETWEEN ? AND ?) OR ( TRANSFERENCIAS_DE_CUSTO.DATA_COMPETENCIA IS NOT NULL AND TRANSFERENCIAS_DE_CUSTO.DATA_COMPETENCIA BETWEEN ? AND ?))";
+            queryConstraints.push({type:"varchar", value: constraints.DATAINICIO});
+            queryConstraints.push({type:"varchar", value: constraints.DATAFIM});
+            queryConstraints.push({type:"varchar", value: constraints.DATAINICIO});
+            queryConstraints.push({type:"varchar", value: constraints.DATAFIM});
+        }
+
+        // Filtro STATUS
         if (constraints.STATUS) {
-            query += "AND STATUS  =  ?";
-            queryConstraints.push({type:"int", value: constraints.STATUS});
+            query += "AND STATUS in  ("+constraints.STATUS+")";
         }
 
         var retorno = executaQuery(query, queryConstraints);

@@ -50,10 +50,6 @@
 }
 
 
-.flexRow .panel{
-    height: 100% !important;
-}
-
 .nowrap{
     white-space: nowrap;
 }
@@ -61,6 +57,12 @@
 .panel.panel-primary{
     border-radius: 20px !important;
     overflow: visible;
+}
+.panel.panel-primary>.panel-heading{
+    border-radius: 20px 20px 0px 0px !important;
+}
+.panel.panel-primary>.panel-body{
+    border-radius: 0px 0px 20px 20px !important;
 }
 
 .panel.panel-primary .panel-heading{
@@ -151,7 +153,7 @@
 #divPaginacao{
     background: black;
     display: flex;
-    position: fixed;
+    position: sticky;
     text-align: center;
     z-index: 10;
     width: 100%;
@@ -159,4 +161,38 @@
     justify-content: center;
     padding: 24px 20px;
     align-items: center;
+}
+#controlPaginacaoBackward, #controlPaginacaoForward{
+    cursor: pointer;
+}
+
+.fluig-style-guide .loading-img {
+    padding: 30px !important;
+}
+
+
+.card-castilho-success{
+    background: linear-gradient(135deg, #008000 0%, #38b000 50%) !important;
+}
+.card-castilho-error{
+    background: linear-gradient(135deg, #800e13 0%, #ad2831 50%) !important;
+}
+
+.datepicker td, .datepicker th{
+    color: black !important;
+}
+
+
+/* Modal */
+.modal-header{
+    background-color: gray;
+    color: white;
+    border-radius: 20px 20px 0px 0px;
+}
+.modal-footer{
+    background-color: gray;
+    border-radius: 0px 0px 20px 20px;
+}
+.modal-content{
+    border-radius: 20px !important;
 }

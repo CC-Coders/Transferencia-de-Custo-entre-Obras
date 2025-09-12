@@ -73,6 +73,7 @@ function init() {
             }
         }
     });
+    $("#filtroColigadaDestino").selectize();
     $("#filtroDepartamentoOrigem").selectize();
     
 
@@ -94,10 +95,11 @@ function init() {
         $("#arrowFiltro").toggleClass("flaticon-chevron-up");
         $("#arrowFiltro").toggleClass("flaticon-chevron-down");
     });
-    $("#cardAprovacoesPendentes").on("click", () => {
+    $("#cardAprovacoesPendentes").on("click", async () => {
         $("#dashboard").hide();
         $("#painelAprovacoes").show();
-        asyncBuscaSolicitacoesPendentes(WCMAPI.userCode);
+        await asyncBuscaSolicitacoesPendentes(WCMAPI.userCode);
+        changePaginacao("start");
     });
 
     $("#btnDarkMode").on("click", toggleDarkMode);
@@ -117,6 +119,17 @@ function init() {
         $("#filtroCCUSTOOrigem")[0].selectize.addOption(options);
     });
 
+    $("#controlPaginacaoForward").on("click", function(){
+        changePaginacao("forward");
+    })
+    $("#controlPaginacaoBackward").on("click", function(){
+        changePaginacao("backward");
+    })
+
+    $("#btnVoltar").on("click", function(){
+        $("#painelAprovacoes").hide();
+        $("#dashboard").show();
+    });
 
     var date = new Date();
     var mes = date.getMonth() + 1;
@@ -215,6 +228,11 @@ function consultaTransferencias() {
         var CODCOLIGADA_ORIGEM = $("#filtroColigadaOrigem").val().split(" - ")[0];
         if (CODCOLIGADA_ORIGEM) {
             constraints.push(DatasetFactory.createConstraint("CODCOLIGADA_ORIGEM", CODCOLIGADA_ORIGEM, CODCOLIGADA_ORIGEM, ConstraintType.MUST));
+
+            var CODCOLIGADA_DESTINO = $("#filtroColigadaDestino").val().split(" - ")[0];
+            if (CODCOLIGADA_DESTINO) {
+                constraints.push(DatasetFactory.createConstraint("CODCOLIGADA_DESTINO", CODCOLIGADA_DESTINO, CODCOLIGADA_DESTINO, ConstraintType.MUST));
+            }
         }
 
         var CCUSTO_ORIGEM = $("#filtroCCUSTOOrigem").val().split(" - ")[0];
@@ -227,10 +245,18 @@ function consultaTransferencias() {
             constraints.push(DatasetFactory.createConstraint("TIPO", TIPO, TIPO, ConstraintType.MUST));
         }
 
-        var STATUS = $("#filtroStatus").val();
-        if (STATUS) {
-            constraints.push(DatasetFactory.createConstraint("STATUS", STATUS, STATUS, ConstraintType.MUST));
-        }
+        var listStatus = [];
+        $(".filtroStatus:checked").each(function(){
+            listStatus.push($(this).val());
+        });
+
+        var DataInicio = $("#filtroDataInicio").val().split("/").reverse().join("-");
+        var DataFim = $("#filtroDataFim").val().split("/").reverse().join("-");
+        constraints.push(DatasetFactory.createConstraint("DATAINICIO", DataInicio, DataInicio, ConstraintType.MUST));
+        constraints.push(DatasetFactory.createConstraint("DATAFIM", DataFim, DataFim, ConstraintType.MUST));
+
+        
+        constraints.push(DatasetFactory.createConstraint("STATUS", listStatus.join(","), listStatus.join(","), ConstraintType.MUST));
 
         var DEPTO = $("#filtroDepartamentoOrigem").val();
         if (DEPTO) {
@@ -446,33 +472,42 @@ function abreModalTransferencia(idSolicitacao) {
                 ${formulario.diretorObraDestino ? `<b>Diretor: </b><span>${formulario.diretorObraDestino}</span>` : ""}
             </div>
         </div>
+        <br>
         <div>
             ${geraLinhasTransferencias(dsItens.values)}
         </div>`;
 
     var TRANSFERE_CUSTO = formulario.TRANSFERE_CUSTO;
-    var TRANSFERE_RECEITA = formulario.TRANSFERE_RECEITA;
-
     var title = `Transferência de ${TRANSFERE_CUSTO == "true" ? "Custo" : "Receita"} #${idSolicitacao}`;
 
-    var myModal = FLUIGC.modal(
+    var actions = [];
+    if (usuarioComPermissaoGeral(true)) {
+        actions.push({
+            label: "Excluir",
+            classType: "btn-danger",
+            bind: "data-excluir-transferencia",
+        });
+    }
+    actions.push({
+        label: "Fechar",
+        autoClose: true,
+        classType: "btn-primary",
+    });
+
+    FLUIGC.modal(
         {
             title: title,
             content: html,
             id: "fluig-modal",
             size: "full",
-            actions: [
-                {
-                    label: "Fechar",
-                    autoClose: true,
-                },
-            ],
+            actions: actions,
         },
         function (err, data) {
             if (err) {
-                // do error handling
+                console.log(err);
             } else {
-                // do something with data
+                console.log(data);
+                $("[data-excluir-transferencia]").on("click", ()=>excluirTransferencia(idSolicitacao));
             }
         }
     );
@@ -535,6 +570,23 @@ function abreModalTransferencia(idSolicitacao) {
 
         return html;
     }
+}
+function excluirTransferencia(NUMPROCES){
+    FLUIGC.message.confirm({
+        message: 'Deseja excluir a Transferência?',
+        labelYes: 'Sim',
+        labelNo: 'Não'
+    }, function(result, el, ev) {
+        var ds = DatasetFactory.getDataset("dsExcluirTransferenciaDeCusto", null,[
+            DatasetFactory.createConstraint("NUMPROCES", NUMPROCES,NUMPROCES,ConstraintType.MUST)
+        ],null);
+        if (ds.values[0].STATUS == "ERROR") {
+            showMessage("Erro ao cancelar Transferência: ", ds.values[0].MENSAGEM,"warning");
+        }
+        else{
+            showMessage("Transferência cancelada com sucesso!", "","success");
+        }
+    });
 }
 
 // Charts
@@ -1157,8 +1209,9 @@ function loadMultiLineChart(id, datasets, colorList) {
             .attr("r", 6)
             .attr("fill", color(serie.name))
             .on("mouseover", function (event, d) {
-                tooltip.style("display", "block").html(`<strong>${serie.name}</strong><br>${d3.timeFormat("%b/%Y")(d.date)}<br>Valor: ${floatToMoney(d.value)}`);
+                tooltip.style("display", "block").html(`<strong>${serie.name}</strong><br>${ptBrMonthFormat(d.date)}<br>Valor: ${floatToMoney(d.value)}`);
                 d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2);
+                
             })
             .on("mousemove", function (event) {
                 var pointer = d3.pointer(event);
@@ -1174,12 +1227,6 @@ function loadMultiLineChart(id, datasets, colorList) {
     const uniqueMonths = Array.from(new Set(allValues.map((d) => d3.timeMonth(d.date).getTime()))).map((t) => new Date(t));
 
     // 2. Set the ticks to these months, with pt-BR month abbreviations
-    const ptBrMonths = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-    function ptBrMonthFormat(date) {
-        const m = date.getMonth();
-        const y = date.getFullYear().toString().slice(-2);
-        return ptBrMonths[m] + "/" + y;
-    }
     svg.append("g")
         .attr("transform", `translate(0,${height - margin.bottom})`)
         .call(d3.axisBottom(x).tickValues(uniqueMonths).tickFormat(ptBrMonthFormat));
@@ -1201,6 +1248,13 @@ function loadMultiLineChart(id, datasets, colorList) {
         legendRow.append("rect").attr("width", 15).attr("height", 15).attr("fill", color(serie.name));
         legendRow.append("text").attr("x", 20).attr("y", 12).attr("fill", "#fff").text(serie.name);
     });
+
+    function ptBrMonthFormat(date) {
+        const ptBrMonths = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+        const m = date.getMonth();
+        const y = date.getFullYear().toString().slice(-2);
+        return ptBrMonths[m] + "/" + y;
+    }
 }
 function loadGroupedBarChart(id, data, groupKeys, colors) {
     // Example data if not provided
@@ -1320,9 +1374,18 @@ function PreencheCamposFiltros() {
     }
 
     $("#filtroColigadaOrigem")[0].selectize.addOption(geraOptionsSelectize(coligadasPermissaoUsuario));
+    $("#filtroColigadaDestino")[0].selectize.addOption(geraOptionsSelectize(coligadasPermissaoUsuario));
 
     obrasPermissaoGeral = todasObras;
     obrasPermissaoUsuario = obrasComPermissaoDoUsuario;
+
+    var date = moment();
+    $("#filtroDataFim").val(date.format("DD/MM/YYYY"));
+    FLUIGC.calendar('#filtroDataFim');
+  
+    date.add(-1,"year")
+    $("#filtroDataInicio").val(date.format("DD/MM/YYYY"));
+    FLUIGC.calendar('#filtroDataInicio');
 
     function geraOptionsSelectize(coligadas) {
         var options = []
@@ -1364,6 +1427,7 @@ function consultaDepartamentos(CODCOLIGADA){
     return ds.values;
 }
 function geraOptionsDepartamentos(ID, deptos){
+    $("#"+ID)[0].selectize.addOption(deptos.map(e=>{return {value:``, text:`Todos`}}));
     $("#"+ID)[0].selectize.addOption(deptos.map(e=>{return {value:`${e.CODDEPARTAMENTO}`, text:`${e.CODDEPARTAMENTO} - ${e.NOME}`}}));
 }
 
@@ -1374,7 +1438,9 @@ function promiseBuscaAprovacoesPendentesProUsuario(userCode) {
             type: "GET",
             url: `/process-management/api/v2/tasks?assignee=${userCode}&status=NOT_COMPLETED&processId=Transferência de Custo entre Obras&page=1&pageSize=1000`,
             success: (retorno) => {
-                resolve(retorno.items);
+                var itens = retorno.items;
+                itens = itens.filter(e=>e.state.sequence == 5 || e.state.sequence == 8);
+                resolve(itens);
             },
             error: (e) => {
                 reject(e);
@@ -1382,9 +1448,47 @@ function promiseBuscaAprovacoesPendentesProUsuario(userCode) {
         });
     });
 }
+
+var counterPaginacaoAprovacao = 1;
+var lengthPaginacaoAprovacao;
 async function asyncBuscaSolicitacoesPendentes(user) {
+    var myLoading2 = FLUIGC.loading(window, {
+        textMessage:  'Carregando...', 
+        title: null,
+        css: {
+            padding:        0,
+            margin:         0,
+            width:          '30%',
+            top:            '40%',
+            left:           '35%',
+            textAlign:      'center',
+            color:          '#000',
+            border:         '3px solid #aaa',
+            backgroundColor:'#fff',
+            cursor:         'wait'
+        },
+        overlayCSS:  { 
+            backgroundColor: '#000', 
+            opacity:         0.6, 
+            cursor:          'wait'
+        }, 
+        cursorReset: 'default',
+        baseZ: 0,
+        centerX: true,
+        centerY: true,
+        bindEvents: true,
+        fadeIn:  200,
+        fadeOut:  400,
+        timeout: 0,
+        showOverlay: true, 
+        onBlock: null,
+        onUnblock: null,
+        ignoreIfBlocked: false
+    });    
+    myLoading2.show();
     var solicitacoes = await promiseBuscaAprovacoesPendentesProUsuario(user);
-    var data = await promiseBuscaDadosDaSolicitacao(solicitacoes[0].processInstanceId);
+    var data = await promiseBuscaDadosDaSolicitacao(solicitacoes[counterPaginacaoAprovacao-1].processInstanceId);
+    lengthPaginacaoAprovacao=solicitacoes.length;
 
     var movementSequence = solicitacoes[0].movementSequence;
     var atividade = solicitacoes[0].state.sequence;
@@ -1426,12 +1530,21 @@ async function asyncBuscaSolicitacoesPendentes(user) {
         });
 
     preencheFormulario(data);
+    myLoading2.hide();
 
     async function preencheFormulario(data) {
         // Solicitação
         $("#textAprovacaoNumProcess").text(data.numProces);
         $("#textAprovacaoSolicitante").text(data.solicitante);
         $("#textAprovacaoValorTotal").text(floatToMoney(data.valorTotal));
+
+        if (data.TRANSFERE_CUSTO == "true") {
+            $("#titleTipoTransferencia").text("CUSTO");
+        }else{
+            $("#titleTipoTransferencia").text("RECEITA");
+        }
+        $("#titleValorTransferencia").text(floatToMoney(data.valorTotal));
+
 
         // Obra Origem
         $("#textAprovacaoTipoOrigem").text(data.TRANSFERE_CUSTO == "true" ? "(redução de custo)" : "(redução de receita)");
@@ -1552,6 +1665,7 @@ async function asyncBuscaSolicitacoesPendentes(user) {
         }
         async function geraTabelaHistorico(rows) {
             rows = rows.reverse();
+            $("#divLinhasHistorico").html("");
             for (const row of rows) {
                 var html = await gerahtml(row.usuario, row.dataMovimento, row.observacao, row.movimentacao);
                 $("#divLinhasHistorico").append(html);
@@ -1757,15 +1871,36 @@ function MovimentarProcesso(NUMPROCES, decisao, atividade, movementSequence, use
     }
 }
 
+function changePaginacao(action){
+    if (action=="forward") {
+        if (counterPaginacaoAprovacao<lengthPaginacaoAprovacao) {
+            counterPaginacaoAprovacao++;
+            asyncBuscaSolicitacoesPendentes(WCMAPI.userCode);
+        }
+    }
+    if (action=="backward") {
+         if (counterPaginacaoAprovacao-1>0) {
+            counterPaginacaoAprovacao--;
+            asyncBuscaSolicitacoesPendentes(WCMAPI.userCode);
+        }
+    }
 
-function usuarioComPermissaoGeral(){
-    var ds = DatasetFactory.getDataset("colleagueGroup",null,[
+    $("#textPaginacao").text(counterPaginacaoAprovacao+"/"+lengthPaginacaoAprovacao);
+}
+
+
+function usuarioComPermissaoGeral(permissaoParaExcluir = false){
+    var constraints = [
         DatasetFactory.createConstraint("colleagueId", WCMAPI.userCode, WCMAPI.userCode, ConstraintType.MUST),
         DatasetFactory.createConstraint("groupId", "Controladoria", "Controladoria", ConstraintType.SHOULD),
         DatasetFactory.createConstraint("groupId", "Administradores TI", "Administradores TI", ConstraintType.SHOULD),
-        DatasetFactory.createConstraint("groupId", "Matriz", "Matriz", ConstraintType.SHOULD),
-        DatasetFactory.createConstraint("groupId", "Diretoria", "Diretoria", ConstraintType.SHOULD),
-    ],null);
+    ];
+    if (!permissaoParaExcluir) {
+        constraints.push(DatasetFactory.createConstraint("groupId", "Matriz", "Matriz", ConstraintType.SHOULD));
+        constraints.push(DatasetFactory.createConstraint("groupId", "Diretoria", "Diretoria", ConstraintType.SHOULD));
+    }
+
+    var ds = DatasetFactory.getDataset("colleagueGroup",null,constraints,null);
 
     if (ds.values.length==0) {
         return false;

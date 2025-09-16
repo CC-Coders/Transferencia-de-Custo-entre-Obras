@@ -426,7 +426,7 @@ function initDataTableTransferencias() {
                         text: "Excel",
                         exportOptions: {
                             modifier: {
-                                page: "current",
+                                page: "all",
                             },
                         },
                     },
@@ -472,9 +472,10 @@ function abreModalTransferencia(idSolicitacao) {
         ],
         null
     );
+    var TRANSFERE_CUSTO = formulario.TRANSFERE_CUSTO;
 
-    var html = `<div class="row">
-            <div class="col-md-6">
+    var html = `<br><div class="row flexRow">
+            <div class="col-md-5" style="border: solid 1px black;border-radius: 20px;padding: 10px 20px; margin-bottom: 10px;">
                 <h3><b>Obra Origem</b></h3>
                 <h3><b>${formulario.ccustoObraOrigem} ${formulario.ccustoObraOrigem == "1 - 1.1.001 - Matriz Curitiba" ? formulario.departamentoObraOrigem:""}</b></h3>
                 <h4><b>Total:</b> ${formulario.valorObraOrigem}</h4>
@@ -484,7 +485,14 @@ function abreModalTransferencia(idSolicitacao) {
                 <b>Coordenador: </b><span>${formulario.coordenadorObraOrigem}</span><br>
                 ${formulario.diretorObraOrigem ? `<b>Diretor: </b><span>${formulario.diretorObraOrigem}</span>` : ""}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-2">
+				<div style="height: 100%;display: flex;align-items: center;justify-content: center;flex-direction: column;">
+					<h1 style="margin-bottom: 0px;margin-top: 0px;">${TRANSFERE_CUSTO == "true" ? "CUSTO" : "RECEITA"}</h1>
+					<h1 style="margin-bottom: 0px;margin-top: 0px;">${formulario.valorObraOrigem}</h1>
+					<i class="fluigicon fluigicon-arrow-right icon-thumbnail-lg" aria-hidden="true"></i>
+				</div>
+            </div>
+            <div class="col-md-5" style="border: solid 1px black;border-radius: 20px;padding: 10px 20px; margin-bottom: 10px;" >
                 <h3><b>Obra Destino</b></h3>
                 <h3><b>${formulario.ccustoObraDestino} ${formulario.ccustoObraDestino == "1 - 1.1.001 - Matriz Curitiba" ? formulario.departamentoObraDestino:""}</b></h3>
                 <h4><b>Total:</b> ${formulario.valorObraDestino}</h4>
@@ -500,7 +508,6 @@ function abreModalTransferencia(idSolicitacao) {
             ${geraLinhasTransferencias(dsItens.values)}
         </div>`;
 
-    var TRANSFERE_CUSTO = formulario.TRANSFERE_CUSTO;
     var title = `Transferência de ${TRANSFERE_CUSTO == "true" ? "Custo" : "Receita"} #${idSolicitacao}`;
 
     var actions = [];

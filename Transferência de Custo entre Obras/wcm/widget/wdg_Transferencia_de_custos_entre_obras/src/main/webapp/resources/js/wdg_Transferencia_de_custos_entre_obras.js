@@ -475,15 +475,17 @@ function abreModalTransferencia(idSolicitacao) {
     var TRANSFERE_CUSTO = formulario.TRANSFERE_CUSTO;
 
     var html = `<br><div class="row flexRow">
-            <div class="col-md-5" style="border: solid 1px black;border-radius: 20px;padding: 10px 20px; margin-bottom: 10px;">
-                <h3><b>Obra Origem</b></h3>
-                <h3><b>${formulario.ccustoObraOrigem} ${formulario.ccustoObraOrigem == "1 - 1.1.001 - Matriz Curitiba" ? formulario.departamentoObraOrigem:""}</b></h3>
-                <h4><b>Total:</b> ${formulario.valorObraOrigem}</h4>
-                <br>
+            <div class="col-md-5">
+                <div style="border: solid 1px black;border-radius: 20px;padding: 10px 20px; margin-bottom: 10px;">
+                    <h3><b>Obra Origem</b></h3>
+                    <h3><b>${formulario.ccustoObraOrigem} ${formulario.ccustoObraOrigem == "1 - 1.1.001 - Matriz Curitiba" ? formulario.departamentoObraOrigem:""}</b></h3>
+                    <h4><b>Total:</b> ${formulario.valorObraOrigem}</h4>
+                    <br>
 
-                <b>Engenheiro: </b><span>${formulario.engenheiroObraOrigem}</span><br>
-                <b>Coordenador: </b><span>${formulario.coordenadorObraOrigem}</span><br>
-                ${formulario.diretorObraOrigem ? `<b>Diretor: </b><span>${formulario.diretorObraOrigem}</span>` : ""}
+                    <b>Engenheiro: </b><span>${formulario.engenheiroObraOrigem}</span><br>
+                    <b>Coordenador: </b><span>${formulario.coordenadorObraOrigem}</span><br>
+                    ${formulario.diretorObraOrigem ? `<b>Diretor: </b><span>${formulario.diretorObraOrigem}</span>` : ""}
+                </div>
             </div>
             <div class="col-md-2">
 				<div style="height: 100%;display: flex;align-items: center;justify-content: center;flex-direction: column;">
@@ -492,15 +494,17 @@ function abreModalTransferencia(idSolicitacao) {
 					<i class="fluigicon fluigicon-arrow-right icon-thumbnail-lg" aria-hidden="true"></i>
 				</div>
             </div>
-            <div class="col-md-5" style="border: solid 1px black;border-radius: 20px;padding: 10px 20px; margin-bottom: 10px;" >
-                <h3><b>Obra Destino</b></h3>
-                <h3><b>${formulario.ccustoObraDestino} ${formulario.ccustoObraDestino == "1 - 1.1.001 - Matriz Curitiba" ? formulario.departamentoObraDestino:""}</b></h3>
-                <h4><b>Total:</b> ${formulario.valorObraDestino}</h4>
-                <br>
+            <div class="col-md-5">
+                <div style="border: solid 1px black;border-radius: 20px;padding: 10px 20px; margin-bottom: 10px;">
+                    <h3><b>Obra Destino</b></h3>
+                    <h3><b>${formulario.ccustoObraDestino} ${formulario.ccustoObraDestino == "1 - 1.1.001 - Matriz Curitiba" ? formulario.departamentoObraDestino:""}</b></h3>
+                    <h4><b>Total:</b> ${formulario.valorObraDestino}</h4>
+                    <br>
 
-                <b>Engenheiro: </b><span>${formulario.engenheiroObraDestino}</span><br>
-                <b>Coordenador: </b><span>${formulario.coordenadorObraDestino}</span><br>
-                ${formulario.diretorObraDestino ? `<b>Diretor: </b><span>${formulario.diretorObraDestino}</span>` : ""}
+                    <b>Engenheiro: </b><span>${formulario.engenheiroObraDestino}</span><br>
+                    <b>Coordenador: </b><span>${formulario.coordenadorObraDestino}</span><br>
+                    ${formulario.diretorObraDestino ? `<b>Diretor: </b><span>${formulario.diretorObraDestino}</span>` : ""}
+                </div>
             </div>
         </div>
         <br>

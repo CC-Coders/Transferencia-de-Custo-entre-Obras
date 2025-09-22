@@ -1,13 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-
-<body> -->
 <div id="wdgTransfCusto_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide"
     data-params="wdgTransfCusto.instance()">
 
@@ -28,6 +18,16 @@
     <!-- Datatables -->
     <link rel="stylesheet" href="//cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css" />
     <script src="//cdn.datatables.net/2.3.1/js/dataTables.min.js"></script>
+
+    
+
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.print.min.js"></script>
 
 
     <!-- Castilho Dev Guide -->
@@ -107,7 +107,7 @@
                         </select>
                         <br>
                     </div>
-                      <div class="col-md-3">
+                    <div class="col-md-3">
                         <label for="">Tipo</label>
                         <select name="filtroTipoTransferencia" id="filtroTipoTransferencia" class="form-control">
                             <option value="">Todos</option>
@@ -123,31 +123,43 @@
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label for="">STATUS</label>
-                        <select name="filtroStatus" id="filtroStatus" class="form-control">
-                            <option value="">Todos</option>
-                            <option value="1">Em Aprovação</option>
-                            <option value="2" selected>Aprovado</option>
-                            <option value="3">Cancelado</option>
-                        </select>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="">Data Início</label>
+                                <input type="text" name="filtroDataInicio" id="filtroDataInicio" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="">Data Fim</label>
+                                <input type="text" name="filtroDataFim" id="filtroDataFim" class="form-control">
+                            </div>
+                        </div>
                     </div>
-                    <!-- <div class="col-md-3">
-                        <label for="">Coligada Obra Destino</label>
-                        <select name="filtroColigadaDestino" id="filtroColigadaDestino" class="form-control"></select>
+                </div>
+                <div class="row">
+                    <div class="col-md-3" style="display: none;">
+                        <label for="">Departamento</label>
+                        <select name="filtroDepartamentoOrigem" id="filtroDepartamentoOrigem">
+                            <option value="">Todos</option>
+                        </select>
                         <br>
                     </div>
                     <div class="col-md-3">
-                        <label for="">C. Custo Obra Destino</label>
-                        <select name="filtroCCUSTODestino" id="filtroCCUSTODestino" class="form-control">
-                            <option value="">Todos</option>
+                        <label for="filtroColigadaDestino">Coligada Destino</label>
+                        <select name="filtroColigadaDestino" id="filtroColigadaDestino">
+                            <option value="">Todas</option>
                         </select>
                         <br>
-                    </div> -->
+                    </div>
+                    <div class="col-md-6">
+                        <label for="">STATUS</label>
+                        <div>
+                            <label style="margin-right: 20px;" for="filtroStatusAprovacao"><input type="checkbox" name="filtroStatusAprovacao" class="filtroStatus" id="filtroStatusAprovacao" value="1">Em Aprovação</label>
+                            <label style="margin-right: 20px;" for="filtroStatusAprovado"><input type="checkbox" name="filtroStatusAprovado" class="filtroStatus" id="filtroStatusAprovado" value="2" checked>Finalizado</label>
+                            <label style="margin-right: 20px;" for="filtroStatusCancelado"><input type="checkbox" name="filtroStatusCancelado" class="filtroStatus" id="filtroStatusCancelado" value="3">Cancelado</label>
+                            <label style="margin-right: 20px;" for="filtroStatusExcluido"><input type="checkbox" name="filtroStatusExcluido" class="filtroStatus" id="filtroStatusExcluido" value="4">Excluído</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="row">
-                  
-                </div>
-                <br>
                 <div class="row">
                     <div class="col-md-5"></div>
                     <div class="col-md-2" style="text-align: center;">
@@ -164,7 +176,7 @@
                     </div>
                     <div class="row" style="padding: 0px 20px;">
                         <div class="col-md-6">
-                            <div class="card card-castilho">
+                            <div class="card card-castilho card-castilho-success">
                                 <div class="card-body">
                                     <h3 class="card-title">
                                         <h3 class="card-title">
@@ -177,7 +189,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="card card-castilho">
+                            <div class="card card-castilho card-castilho-error">
                                 <div class="card-body">
                                     <h3 class="card-title">
                                         <h3 class="card-title">
@@ -235,7 +247,7 @@
                     </div>
                     <div class="row" style="padding: 0px 20px;">
                         <div class="col-md-6">
-                            <div class="card card-castilho">
+                            <div class="card card-castilho card-castilho-success">
                                 <div class="card-body">
                                     <h3 class="card-title">
                                         Receita Recebida
@@ -246,7 +258,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="card card-castilho">
+                            <div class="card card-castilho card-castilho-error">
                                 <div class="card-body">
                                     <h3 class="card-title">
                                         <h3 class="card-title">
@@ -330,39 +342,58 @@
                 <h1 style="font-weight: bolder;">Transferência de Custos entre Obras</h1>
             </div>
         </div>
+        <button class="btn btn-primary" id="btnDarkMode"><i class="flaticon flaticon-moon icon-sm"
+        aria-hidden="true"></i></button>
     </div>
 
     <div id="painelAprovacoes">
-        <div class="panel panel-primary">
+        <button class="btn btn-primary" id="btnVoltar">Voltar</button>
+        <div class="panel panel-primary" style="margin-bottom: 0px;">
             <div class="panel-body">
                 <div>
                     <h2 style="margin-bottom: 5px;">SOLICITAÇÃO</h2>
                     <hr style="margin-bottom: 10px; margin-top: 0px;">
-                    <b>Número: </b><span id="textAprovacaoNumProcess">123456</span><br>
-                    <b>Solicitante: </b><span id="textAprovacaoSolicitante">gabriel.persike</span><br>
-                    <b>Valor: </b> <span id="textAprovacaoValorTotal">R$ 250,00</span> <br>
+                    <b>Número: </b><span id="textAprovacaoNumProcess"></span><br>
+                    <b>Solicitante: </b><span id="textAprovacaoSolicitante"></span><br>
+                    <b>Valor: </b> <span id="textAprovacaoValorTotal"></span> <br>
                 </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <h2 style="margin-bottom: 5px;">ORIGEM <small style="color: white;" id="textAprovacaoTipoOrigem">(redução de custo)</small></h2>
-                        <hr style="margin-bottom: 10px; margin-top: 0px;">
-                        <b>Obra: </b> <span id="textAprovacaoObraOrigem">1.1.001 - Matriz Curitiba</span><br>
-                        <div>
-                            <b>Engenheiro: </b><span id="textAprovacaoEngenheiroOrigem">Felipe</span><br>
-                            <b>Coordenador: </b><span id="textAprovacaoCoordenadorOrigem">Eduardo</span><br>
-                            <b>Diretor: </b><span id="textAprovacaoDiretorOrigem">Augusto</span><br>
+                <br>
+                <div class="row flexRow">
+                    <div class="col-md-5">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">ORIGEM <small style="color: white;" id="textAprovacaoTipoOrigem">(redução de custo)</small></h3>
+                            </div>
+                            <div class="panel-body" style="background-color: darkgray !important;">
+                                <h2 id="textAprovacaoObraOrigem" style="margin-top: 0px;"></h2><br>
+                                <div>
+                                    <b>Engenheiro: </b><span id="textAprovacaoEngenheiroOrigem"></span><br>
+                                    <b>Coordenador: </b><span id="textAprovacaoCoordenadorOrigem"></span><br>
+                                    <b>Diretor: </b><span id="textAprovacaoDiretorOrigem"></span><br>
+                                </div>
+                            </div>
                         </div>
-                        <br>
                     </div>
-                    <div class="col-md-6">
-                        <h2 style="margin-bottom: 5px;">DESTINO <small style="color: white;" id="textAprovacaoTipoDestino">(aumento de custo)</small></h2>
-                        <hr style="margin-bottom: 10px; margin-top: 0px;">
-                        <b>Obra: </b> <span id="textAprovacaoObraDestino">1.2.023 - Obra Toledo II</span><br>
-                        <div>
-                            <b>Engenheiro: </b><span id="textAprovacaoEngenheiroDestino">Claudio.pecanha</span><br>
-                            <b>Coordenador: </b><span id="textAprovacaoCoordenadorDestino">Eduardo</span><br>
-                            <b>Diretor: </b><span id="textAprovacaoDiretorDestino">Augusto</span><br>
+        			<div class="col-md-2">
+						<div style="height: 100%;display: flex;align-items: center;justify-content: center;flex-direction: column;">
+							<h1 style="margin-bottom: 0px;margin-top: 0px;" id="titleTipoTransferencia"></h1>
+							<h1 style="margin-bottom: 0px;margin-top: 0px;" id="titleValorTransferencia"></h1>
+							<i class="fluigicon fluigicon-arrow-right icon-thumbnail-lg" aria-hidden="true"></i>
+						</div>
+					</div>
+                    <div class="col-md-5">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">DESTINO <small style="color: white;" id="textAprovacaoTipoDestino">(aumento de custo)</small></h3>
+                            </div>
+                            <div class="panel-body" style="background-color: darkgray !important;">
+                               <h2 id="textAprovacaoObraDestino" style="margin-top: 0px;"></h2><br>
+                                <div>
+                                    <b>Engenheiro: </b><span id="textAprovacaoEngenheiroDestino"></span><br>
+                                    <b>Coordenador: </b><span id="textAprovacaoCoordenadorDestino"></span><br>
+                                    <b>Diretor: </b><span id="textAprovacaoDiretorDestino"></span><br>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -391,12 +422,12 @@
                 </div>
             </div>
         </div>
+        <div id="divPaginacao" style="text-align: center;">
+            <i class="fluigicon fluigicon-pointer-left icon-xl" aria-hidden="true" id="controlPaginacaoBackward"></i>
+            <div id="textPaginacao">1 / 10</div>
+            <i class="fluigicon fluigicon-pointer-right icon-xl" aria-hidden="true" id="controlPaginacaoForward"></i>
+        </div>
     </div>
 
-    <button class="btn btn-primary" id="btnDarkMode"><i class="flaticon flaticon-moon icon-sm"
-            aria-hidden="true"></i></button>
+
 </div>
-
-<!-- </body>
-
-</html> -->

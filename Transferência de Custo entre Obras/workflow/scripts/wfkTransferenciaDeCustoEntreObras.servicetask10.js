@@ -31,13 +31,11 @@ function servicetask10(attempt, message) {
 }
 
 function defineProximoAprovador() {
-    var valorTotalTransferencia = hAPI.getCardValue("valorTotal");
-
     var aprovadoEngenheiroObraOrigem = hAPI.getCardValue("aprovadoEngenheiroObraOrigem");
     var aprovadoCoordenadorObraOrigem = hAPI.getCardValue("aprovadoCoordenadorObraOrigem");
     var aprovadoDiretorObraOrigem = hAPI.getCardValue("aprovadoDiretorObraOrigem");
 
-    if (aprovadoEngenheiroObraOrigem != "true") {
+    if (aprovadoEngenheiroObraOrigem != "true" && hAPI.getCardValue("engenheiroObraOrigem") != "") {
         var engenheiroObraOrigem = hAPI.getCardValue("engenheiroObraOrigem");
         hAPI.setCardValue("usuarioAprovadorOrigem", engenheiroObraOrigem);
     }
@@ -45,7 +43,7 @@ function defineProximoAprovador() {
         var coordenadorObraOrigem = hAPI.getCardValue("coordenadorObraOrigem");
         hAPI.setCardValue("usuarioAprovadorOrigem", coordenadorObraOrigem);
     }
-    else if (valorTotalTransferencia > 250000 && aprovadoDiretorObraOrigem != "true") {
+    else if (aprovadoDiretorObraOrigem != "true") {
         var diretorObraOrigem = hAPI.getCardValue("diretorObraOrigem");
         hAPI.setCardValue("usuarioAprovadorOrigem", diretorObraOrigem);
     } 
@@ -91,16 +89,12 @@ function verificaSeAprovadorTambemAprovaPelaDestino() {
     }
 }
 function verificaSeTotalmenteAprovado(){
-    var valorTotalTransferencia = parseFloat(hAPI.getCardValue("valorTotal"));
-
     var aprovadoEngenheiroObraOrigem = hAPI.getCardValue("aprovadoEngenheiroObraOrigem");
     var aprovadoCoordenadorObraOrigem = hAPI.getCardValue("aprovadoCoordenadorObraOrigem");
     var aprovadoDiretorObraOrigem = hAPI.getCardValue("aprovadoDiretorObraOrigem");
 
-    if (aprovadoEngenheiroObraOrigem == "true" && aprovadoCoordenadorObraOrigem == "true") {
-        if (aprovadoDiretorObraOrigem == "true" || valorTotalTransferencia < 250000) {
-            return true;
-        }
+    if ((aprovadoEngenheiroObraOrigem == "true" || hAPI.getCardValue("engenheiroObraOrigem") == "") && aprovadoCoordenadorObraOrigem == "true" && aprovadoDiretorObraOrigem == "true") {        
+        return true;
     }
 
     return false;

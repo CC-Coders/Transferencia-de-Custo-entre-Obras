@@ -61,15 +61,27 @@ function init() {
     }
 
     $('#filtroColigadaOrigem').selectize();
-    $('#filtroCCUSTOOrigem').selectize();
-
+    $('#filtroCCUSTOOrigem').selectize({
+        onChange: async function (value, isOnInitialize) {
+            if (value == "1.1.001 - Matriz Curitiba") {
+                var CODCOLIGADA = $("#filtroColigadaOrigem").val().split(" - ")[0];
+                var DEPTO = consultaDepartamentos(CODCOLIGADA);
+                geraOptionsDepartamentos("filtroDepartamentoOrigem", DEPTO);
+                $("#filtroDepartamentoOrigem").closest("div").show();
+            }else{
+                $("#filtroDepartamentoOrigem").closest("div").hide();
+            }
+        }
+    });
+    $("#filtroColigadaDestino").selectize();
+    $("#filtroDepartamentoOrigem").selectize();
+    
 
     GCCUSTO = DatasetFactory.getDataset("GCCUSTO", null, null, null).values;
     PreencheCamposFiltros();
     initDataTableTransferencias();
     consultaTransferencias();
     alimentaCharts();
-    // atualizaChartProdutos();
     promiseBuscaAprovacoesPendentesProUsuario(WCMAPI.userCode).then((e) => {
         if (e.length == 0) {
             $("#cardAprovacoesPendentes").hide();
@@ -83,10 +95,11 @@ function init() {
         $("#arrowFiltro").toggleClass("flaticon-chevron-up");
         $("#arrowFiltro").toggleClass("flaticon-chevron-down");
     });
-    $("#cardAprovacoesPendentes").on("click", () => {
+    $("#cardAprovacoesPendentes").on("click", async () => {
         $("#dashboard").hide();
         $("#painelAprovacoes").show();
-        asyncBuscaSolicitacoesPendentes(WCMAPI.userCode);
+        await asyncBuscaSolicitacoesPendentes(WCMAPI.userCode);
+        changePaginacao("start");
     });
 
     $("#btnDarkMode").on("click", toggleDarkMode);
@@ -94,7 +107,6 @@ function init() {
     $("#btnConsultaTransferencias").on("click", function () {
         consultaTransferencias();
         alimentaCharts();
-        // atualizaChartProdutos();
     });
 
     $("#filtroColigadaOrigem").on("change", function () {
@@ -106,13 +118,18 @@ function init() {
 
         $("#filtroCCUSTOOrigem")[0].selectize.addOption(options);
     });
-    // $("#filtroColigadaDestino").on("change", function () {
-    //     var CODCOLIGADA = $(this).val().split(" - ")[0];
-    //     var obras = obrasPermissaoGeral.filter((e) => e.CODCOLIGADA == CODCOLIGADA);
-    //     var html = obras.map((e) => `<option>${e.CODCCUSTO} - ${e.perfil}</option>`).join("");
 
-    //     $("#filtroCCUSTODestino").html("<option value=''>Todos</option>" + html);
-    // });
+    $("#controlPaginacaoForward").on("click", function(){
+        changePaginacao("forward");
+    })
+    $("#controlPaginacaoBackward").on("click", function(){
+        changePaginacao("backward");
+    })
+
+    $("#btnVoltar").on("click", function(){
+        $("#painelAprovacoes").hide();
+        $("#dashboard").show();
+    });
 
     var date = new Date();
     var mes = date.getMonth() + 1;
@@ -211,31 +228,39 @@ function consultaTransferencias() {
         var CODCOLIGADA_ORIGEM = $("#filtroColigadaOrigem").val().split(" - ")[0];
         if (CODCOLIGADA_ORIGEM) {
             constraints.push(DatasetFactory.createConstraint("CODCOLIGADA_ORIGEM", CODCOLIGADA_ORIGEM, CODCOLIGADA_ORIGEM, ConstraintType.MUST));
-        }
 
-        // var CODCOLIGADA_DESTINO = $("#filtroColigadaDestino").val().split(" - ")[0];
-        // if (CODCOLIGADA_DESTINO) {
-        //     constraints.push(DatasetFactory.createConstraint("CODCOLIGADA_DESTINO", CODCOLIGADA_DESTINO, CODCOLIGADA_DESTINO, ConstraintType.MUST));
-        // }
+            var CODCOLIGADA_DESTINO = $("#filtroColigadaDestino").val().split(" - ")[0];
+            if (CODCOLIGADA_DESTINO) {
+                constraints.push(DatasetFactory.createConstraint("CODCOLIGADA_DESTINO", CODCOLIGADA_DESTINO, CODCOLIGADA_DESTINO, ConstraintType.MUST));
+            }
+        }
 
         var CCUSTO_ORIGEM = $("#filtroCCUSTOOrigem").val().split(" - ")[0];
         if (CCUSTO_ORIGEM) {
             constraints.push(DatasetFactory.createConstraint("CCUSTO_ORIGEM", CCUSTO_ORIGEM, CCUSTO_ORIGEM, ConstraintType.MUST));
         }
 
-        // var CCUSTO_DESTINO = $("#filtroCCUSTODestino").val().split(" - ")[0];
-        // if (CCUSTO_DESTINO) {
-        //     constraints.push(DatasetFactory.createConstraint("CCUSTO_DESTINO", CCUSTO_DESTINO, CCUSTO_DESTINO, ConstraintType.MUST));
-        // }
-
         var TIPO = $("#filtroTipoTransferencia").val();
         if (TIPO) {
             constraints.push(DatasetFactory.createConstraint("TIPO", TIPO, TIPO, ConstraintType.MUST));
         }
 
-        var STATUS = $("#filtroStatus").val();
-        if (STATUS) {
-            constraints.push(DatasetFactory.createConstraint("STATUS", STATUS, STATUS, ConstraintType.MUST));
+        var listStatus = [];
+        $(".filtroStatus:checked").each(function(){
+            listStatus.push($(this).val());
+        });
+
+        var DataInicio = $("#filtroDataInicio").val().split("/").reverse().join("-");
+        var DataFim = $("#filtroDataFim").val().split("/").reverse().join("-");
+        constraints.push(DatasetFactory.createConstraint("DATAINICIO", DataInicio, DataInicio, ConstraintType.MUST));
+        constraints.push(DatasetFactory.createConstraint("DATAFIM", DataFim, DataFim, ConstraintType.MUST));
+
+        
+        constraints.push(DatasetFactory.createConstraint("STATUS", listStatus.join(","), listStatus.join(","), ConstraintType.MUST));
+
+        var DEPTO = $("#filtroDepartamentoOrigem").val();
+        if (DEPTO) {
+            constraints.push(DatasetFactory.createConstraint("DEPTO", DEPTO, DEPTO, ConstraintType.MUST));
         }
 
         return constraints;
@@ -280,22 +305,26 @@ function initDataTableTransferencias() {
         pageLength: 10,
         responsive: true,
         fixedHeader: true,
-        // order: [[4, 'desc']],
+          columnDefs: [
+        {
+            className: 'dt-left', // Applies to all cells in the specified target(s)
+            targets: '_all' // Applies to all columns
+        }],
         columns: [
             {
                 data: "ID_SOLICITACAO",
-                className: "alignCenter",
+                className: "dt-left",
                 render: function (data) {
                     return `<a style="color: skyblue;text-decoration: underline;" href="/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=${data}" target="_blank">${data}</a>`;
                 },
             },
             {
                 data: "TIPO",
-                className: "alignCenter",
+                className: "dt-left",
             },
             {
                 data: "CCUSTO_ORIGEM",
-                className: "alignCenter",
+                className: "dt-left",
                 render: function (data, type, row) {
                     return row.CODCOLIGADA_ORIGEM + " - " + row.CCUSTO_ORIGEM + " - " + row.DESC_CCUSTO_ORIGEM;
                 },
@@ -304,7 +333,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: "CCUSTO_DESTINO",
-                className: "alignCenter",
+                className: "dt-left",
                 render: function (data, type, row) {
                     return row.CODCOLIGADA_DESTINO + " - " + row.CCUSTO_DESTINO + " - " + row.DESC_CCUSTO_DESTINO;
                 },
@@ -313,12 +342,11 @@ function initDataTableTransferencias() {
             },
             {
                 data: "SOLICITANTE",
-                className: "alignCenter",
+                className: "dt-left",
             },
             {
                 data: "VALOR",
                 type: "num",
-                className: "alignCenter",
                 className: "dt-left",
                 render: function (data, type) {
                     if (type === "sort") {
@@ -330,7 +358,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: "DATA_SOLICITACAO",
-                className: "alignCenter",
+                className: "dt-left",
                 render: function (data, type) {
                     if (type === "sort") {
                         return moment(data, "YYYY-MM-DD").valueOf();
@@ -341,7 +369,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: "DATA_COMPETENCIA",
-                className: "alignCenter",
+                className: "dt-left",
                 render: function (data, type) {
                     if (type === "sort") {
                         return moment(data, "YYYY-MM-DD").valueOf();
@@ -356,7 +384,7 @@ function initDataTableTransferencias() {
             },
             {
                 data: "STATUS",
-                className: "alignCenter",
+                className: "dt-left",
                 render: function (data) {
                     if (data == 1) {
                         return "Em andamento";
@@ -364,7 +392,11 @@ function initDataTableTransferencias() {
                         return "Finalizado";
                     } else if (data == 3) {
                         return "Cancelado";
-                    } else {
+                    } 
+                    else if (data == 4) {
+                        return "Excluído";
+                    } 
+                    else {
                         return data;
                     }
                 },
@@ -385,6 +417,21 @@ function initDataTableTransferencias() {
             bottomStart: null,
             bottom: "paging",
             bottomEnd: null,
+            topStart: {
+                buttons: [
+                    {
+                        text: "Red",
+                        className: "btn btn-info",
+                        extend: "excel",
+                        text: "Excel",
+                        exportOptions: {
+                            modifier: {
+                                page: "all",
+                            },
+                        },
+                    },
+                ],
+            },
         },
     });
 
@@ -425,56 +472,76 @@ function abreModalTransferencia(idSolicitacao) {
         ],
         null
     );
+    var TRANSFERE_CUSTO = formulario.TRANSFERE_CUSTO;
 
-    var html = `<div class="row">
-            <div class="col-md-6">
-                <h3><b>Obra Origem</b></h3>
-                <h3><b>${formulario.ccustoObraOrigem}</b></h3>
-                <h4><b>Total:</b> ${formulario.valorObraOrigem}</h4>
-                <br>
+    var html = `<br><div class="row flexRow">
+            <div class="col-md-5">
+                <div style="border: solid 1px black;border-radius: 20px;padding: 10px 20px; margin-bottom: 10px;">
+                    <h3><b>Obra Origem</b></h3>
+                    <h3><b>${formulario.ccustoObraOrigem} ${formulario.ccustoObraOrigem == "1 - 1.1.001 - Matriz Curitiba" ? formulario.departamentoObraOrigem:""}</b></h3>
+                    <h4><b>Total:</b> ${formulario.valorObraOrigem}</h4>
+                    <br>
 
-                <b>Engenheiro: </b><span>${formulario.engenheiroObraOrigem}</span><br>
-                <b>Coordenador: </b><span>${formulario.coordenadorObraOrigem}</span><br>
-                ${formulario.diretorObraOrigem ? `<b>Diretor: </b><span>${formulario.diretorObraOrigem}</span>` : ""}
+                    <b>Engenheiro: </b><span>${formulario.engenheiroObraOrigem}</span><br>
+                    <b>Coordenador: </b><span>${formulario.coordenadorObraOrigem}</span><br>
+                    ${formulario.diretorObraOrigem ? `<b>Diretor: </b><span>${formulario.diretorObraOrigem}</span>` : ""}
+                </div>
             </div>
-            <div class="col-md-6">
-                <h3><b>Obra Destino</b></h3>
-                <h3><b>${formulario.ccustoObraDestino}</b></h3>
-                <h4><b>Total:</b> ${formulario.valorObraDestino}</h4>
-                <br>
+            <div class="col-md-2">
+				<div style="height: 100%;display: flex;align-items: center;justify-content: center;flex-direction: column;">
+					<h1 style="margin-bottom: 0px;margin-top: 0px;">${TRANSFERE_CUSTO == "true" ? "CUSTO" : "RECEITA"}</h1>
+					<h1 style="margin-bottom: 0px;margin-top: 0px;">${formulario.valorObraOrigem}</h1>
+					<i class="fluigicon fluigicon-arrow-right icon-thumbnail-lg" aria-hidden="true"></i>
+				</div>
+            </div>
+            <div class="col-md-5">
+                <div style="border: solid 1px black;border-radius: 20px;padding: 10px 20px; margin-bottom: 10px;">
+                    <h3><b>Obra Destino</b></h3>
+                    <h3><b>${formulario.ccustoObraDestino} ${formulario.ccustoObraDestino == "1 - 1.1.001 - Matriz Curitiba" ? formulario.departamentoObraDestino:""}</b></h3>
+                    <h4><b>Total:</b> ${formulario.valorObraDestino}</h4>
+                    <br>
 
-                <b>Engenheiro: </b><span>${formulario.engenheiroObraDestino}</span><br>
-                <b>Coordenador: </b><span>${formulario.coordenadorObraDestino}</span><br>
-                ${formulario.diretorObraDestino ? `<b>Diretor: </b><span>${formulario.diretorObraDestino}</span>` : ""}
+                    <b>Engenheiro: </b><span>${formulario.engenheiroObraDestino}</span><br>
+                    <b>Coordenador: </b><span>${formulario.coordenadorObraDestino}</span><br>
+                    ${formulario.diretorObraDestino ? `<b>Diretor: </b><span>${formulario.diretorObraDestino}</span>` : ""}
+                </div>
             </div>
         </div>
+        <br>
         <div>
             ${geraLinhasTransferencias(dsItens.values)}
         </div>`;
 
-    var TRANSFERE_CUSTO = formulario.TRANSFERE_CUSTO;
-    var TRANSFERE_RECEITA = formulario.TRANSFERE_RECEITA;
-
     var title = `Transferência de ${TRANSFERE_CUSTO == "true" ? "Custo" : "Receita"} #${idSolicitacao}`;
 
-    var myModal = FLUIGC.modal(
+    var actions = [];
+    if (usuarioComPermissaoGeral(true)) {
+        actions.push({
+            label: "Excluir",
+            classType: "btn-danger",
+            bind: "data-excluir-transferencia",
+        });
+    }
+    actions.push({
+        label: "Fechar",
+        autoClose: true,
+        classType: "btn-primary",
+    });
+
+    FLUIGC.modal(
         {
             title: title,
             content: html,
             id: "fluig-modal",
             size: "full",
-            actions: [
-                {
-                    label: "Fechar",
-                    autoClose: true,
-                },
-            ],
+            actions: actions,
         },
         function (err, data) {
             if (err) {
-                // do error handling
+                console.log(err);
             } else {
-                // do something with data
+                console.log(data);
+                $("[data-excluir-transferencia]").on("click", ()=>excluirTransferencia(idSolicitacao));
             }
         }
     );
@@ -537,6 +604,25 @@ function abreModalTransferencia(idSolicitacao) {
 
         return html;
     }
+}
+function excluirTransferencia(NUMPROCES){
+    FLUIGC.message.confirm({
+        message: 'Deseja excluir a Transferência?',
+        labelYes: 'Sim',
+        labelNo: 'Não'
+    }, function(result, el, ev) {
+        if (result) {
+            var ds = DatasetFactory.getDataset("dsExcluirTransferenciaDeCusto", null,[
+                DatasetFactory.createConstraint("NUMPROCES", NUMPROCES,NUMPROCES,ConstraintType.MUST)
+            ],null);
+            if (ds.values[0].STATUS != "SUCCESS") {
+                showMessage("Erro ao cancelar Transferência: ", ds.values[0].MENSAGEM,"warning");
+            }
+            else{
+                showMessage("Transferência cancelada com sucesso!", "","success");
+            }
+        }
+    });
 }
 
 // Charts
@@ -1159,8 +1245,9 @@ function loadMultiLineChart(id, datasets, colorList) {
             .attr("r", 6)
             .attr("fill", color(serie.name))
             .on("mouseover", function (event, d) {
-                tooltip.style("display", "block").html(`<strong>${serie.name}</strong><br>${d3.timeFormat("%b/%Y")(d.date)}<br>Valor: ${floatToMoney(d.value)}`);
+                tooltip.style("display", "block").html(`<strong>${serie.name}</strong><br>${ptBrMonthFormat(d.date)}<br>Valor: ${floatToMoney(d.value)}`);
                 d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2);
+                
             })
             .on("mousemove", function (event) {
                 var pointer = d3.pointer(event);
@@ -1176,12 +1263,6 @@ function loadMultiLineChart(id, datasets, colorList) {
     const uniqueMonths = Array.from(new Set(allValues.map((d) => d3.timeMonth(d.date).getTime()))).map((t) => new Date(t));
 
     // 2. Set the ticks to these months, with pt-BR month abbreviations
-    const ptBrMonths = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-    function ptBrMonthFormat(date) {
-        const m = date.getMonth();
-        const y = date.getFullYear().toString().slice(-2);
-        return ptBrMonths[m] + "/" + y;
-    }
     svg.append("g")
         .attr("transform", `translate(0,${height - margin.bottom})`)
         .call(d3.axisBottom(x).tickValues(uniqueMonths).tickFormat(ptBrMonthFormat));
@@ -1203,6 +1284,13 @@ function loadMultiLineChart(id, datasets, colorList) {
         legendRow.append("rect").attr("width", 15).attr("height", 15).attr("fill", color(serie.name));
         legendRow.append("text").attr("x", 20).attr("y", 12).attr("fill", "#fff").text(serie.name);
     });
+
+    function ptBrMonthFormat(date) {
+        const ptBrMonths = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+        const m = date.getMonth();
+        const y = date.getFullYear().toString().slice(-2);
+        return ptBrMonths[m] + "/" + y;
+    }
 }
 function loadGroupedBarChart(id, data, groupKeys, colors) {
     // Example data if not provided
@@ -1322,10 +1410,19 @@ function PreencheCamposFiltros() {
     }
 
     $("#filtroColigadaOrigem")[0].selectize.addOption(geraOptionsSelectize(coligadasPermissaoUsuario));
-    // $("#filtroColigadaDestino").html(geraHtmlOptions(coligadas));
+    $("#filtroColigadaDestino")[0].selectize.addOption(geraOptionsSelectize(coligadasPermissaoUsuario));
 
     obrasPermissaoGeral = todasObras;
     obrasPermissaoUsuario = obrasComPermissaoDoUsuario;
+
+    var date = moment();
+    date.add(1,"day")
+    $("#filtroDataFim").val(date.format("DD/MM/YYYY"));
+    FLUIGC.calendar('#filtroDataFim');
+  
+    date.add(-1,"year")
+    $("#filtroDataInicio").val(date.format("DD/MM/YYYY"));
+    FLUIGC.calendar('#filtroDataInicio');
 
     function geraOptionsSelectize(coligadas) {
         var options = []
@@ -1338,15 +1435,49 @@ function PreencheCamposFiltros() {
         return options;
     }
 }
+function consultaDepartamentos(CODCOLIGADA){
+    var ds = DatasetFactory.getDataset("GDEPTO",["CODDEPARTAMENTO","NOME"],[
+        DatasetFactory.createConstraint("CODCOLIGADA",CODCOLIGADA,CODCOLIGADA,ConstraintType.MUST),
+        DatasetFactory.createConstraint("ATIVO","T","T",ConstraintType.MUST),
+        DatasetFactory.createConstraint("CODFILIAL","1","1",ConstraintType.MUST),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.01","1.2.01",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.04","1.2.04",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.05","1.2.05",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.06","1.2.06",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.07","1.2.07",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.09","1.2.09",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.13","1.2.13",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.19","1.2.19",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.21","1.2.21",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.30","1.2.30",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.31","1.2.31",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.34","1.2.34",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.37","1.2.37",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.38","1.2.38",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.43","1.2.43",ConstraintType.SHOULD),
+    ],null);
+
+    if (ds.values.length == 0) {
+        return [];
+    }
+
+    return ds.values;
+}
+function geraOptionsDepartamentos(ID, deptos){
+    $("#"+ID)[0].selectize.addOption(deptos.map(e=>{return {value:``, text:`Todos`}}));
+    $("#"+ID)[0].selectize.addOption(deptos.map(e=>{return {value:`${e.CODDEPARTAMENTO}`, text:`${e.CODDEPARTAMENTO} - ${e.NOME}`}}));
+}
 
 // Aprova Solicitação
 function promiseBuscaAprovacoesPendentesProUsuario(userCode) {
     return new Promise((resolve, reject) => {
         $.ajax({
             type: "GET",
-            url: `/process-management/api/v2/tasks?assignee=${userCode}&status=NOT_COMPLETED&processId=Transferência%20de%20Custos%20entre%20Obras&page=1&pageSize=1000`,
+            url: `/process-management/api/v2/tasks?assignee=${userCode}&status=NOT_COMPLETED&processId=Transferência de Custo entre Obras&page=1&pageSize=1000`,
             success: (retorno) => {
-                resolve(retorno.items);
+                var itens = retorno.items;
+                itens = itens.filter(e=>e.state.sequence == 5 || e.state.sequence == 8);
+                resolve(itens);
             },
             error: (e) => {
                 reject(e);
@@ -1354,9 +1485,47 @@ function promiseBuscaAprovacoesPendentesProUsuario(userCode) {
         });
     });
 }
+
+var counterPaginacaoAprovacao = 1;
+var lengthPaginacaoAprovacao;
 async function asyncBuscaSolicitacoesPendentes(user) {
+    var myLoading2 = FLUIGC.loading(window, {
+        textMessage:  'Carregando...', 
+        title: null,
+        css: {
+            padding:        0,
+            margin:         0,
+            width:          '30%',
+            top:            '40%',
+            left:           '35%',
+            textAlign:      'center',
+            color:          '#000',
+            border:         '3px solid #aaa',
+            backgroundColor:'#fff',
+            cursor:         'wait'
+        },
+        overlayCSS:  { 
+            backgroundColor: '#000', 
+            opacity:         0.6, 
+            cursor:          'wait'
+        }, 
+        cursorReset: 'default',
+        baseZ: 0,
+        centerX: true,
+        centerY: true,
+        bindEvents: true,
+        fadeIn:  200,
+        fadeOut:  400,
+        timeout: 0,
+        showOverlay: true, 
+        onBlock: null,
+        onUnblock: null,
+        ignoreIfBlocked: false
+    });    
+    myLoading2.show();
     var solicitacoes = await promiseBuscaAprovacoesPendentesProUsuario(user);
-    var data = await promiseBuscaDadosDaSolicitacao(solicitacoes[0].processInstanceId);
+    var data = await promiseBuscaDadosDaSolicitacao(solicitacoes[counterPaginacaoAprovacao-1].processInstanceId);
+    lengthPaginacaoAprovacao=solicitacoes.length;
 
     var movementSequence = solicitacoes[0].movementSequence;
     var atividade = solicitacoes[0].state.sequence;
@@ -1398,12 +1567,21 @@ async function asyncBuscaSolicitacoesPendentes(user) {
         });
 
     preencheFormulario(data);
+    myLoading2.hide();
 
     async function preencheFormulario(data) {
         // Solicitação
         $("#textAprovacaoNumProcess").text(data.numProces);
         $("#textAprovacaoSolicitante").text(data.solicitante);
         $("#textAprovacaoValorTotal").text(floatToMoney(data.valorTotal));
+
+        if (data.TRANSFERE_CUSTO == "true") {
+            $("#titleTipoTransferencia").text("CUSTO");
+        }else{
+            $("#titleTipoTransferencia").text("RECEITA");
+        }
+        $("#titleValorTransferencia").text(floatToMoney(data.valorTotal));
+
 
         // Obra Origem
         $("#textAprovacaoTipoOrigem").text(data.TRANSFERE_CUSTO == "true" ? "(redução de custo)" : "(redução de receita)");
@@ -1524,6 +1702,7 @@ async function asyncBuscaSolicitacoesPendentes(user) {
         }
         async function geraTabelaHistorico(rows) {
             rows = rows.reverse();
+            $("#divLinhasHistorico").html("");
             for (const row of rows) {
                 var html = await gerahtml(row.usuario, row.dataMovimento, row.observacao, row.movimentacao);
                 $("#divLinhasHistorico").append(html);
@@ -1729,15 +1908,36 @@ function MovimentarProcesso(NUMPROCES, decisao, atividade, movementSequence, use
     }
 }
 
+function changePaginacao(action){
+    if (action=="forward") {
+        if (counterPaginacaoAprovacao<lengthPaginacaoAprovacao) {
+            counterPaginacaoAprovacao++;
+            asyncBuscaSolicitacoesPendentes(WCMAPI.userCode);
+        }
+    }
+    if (action=="backward") {
+         if (counterPaginacaoAprovacao-1>0) {
+            counterPaginacaoAprovacao--;
+            asyncBuscaSolicitacoesPendentes(WCMAPI.userCode);
+        }
+    }
 
-function usuarioComPermissaoGeral(){
-    var ds = DatasetFactory.getDataset("colleagueGroup",null,[
+    $("#textPaginacao").text(counterPaginacaoAprovacao+"/"+lengthPaginacaoAprovacao);
+}
+
+
+function usuarioComPermissaoGeral(permissaoParaExcluir = false){
+    var constraints = [
         DatasetFactory.createConstraint("colleagueId", WCMAPI.userCode, WCMAPI.userCode, ConstraintType.MUST),
         DatasetFactory.createConstraint("groupId", "Controladoria", "Controladoria", ConstraintType.SHOULD),
         DatasetFactory.createConstraint("groupId", "Administradores TI", "Administradores TI", ConstraintType.SHOULD),
-        DatasetFactory.createConstraint("groupId", "Matriz", "Matriz", ConstraintType.SHOULD),
-        DatasetFactory.createConstraint("groupId", "Diretoria", "Diretoria", ConstraintType.SHOULD),
-    ],null);
+    ];
+    if (!permissaoParaExcluir) {
+        constraints.push(DatasetFactory.createConstraint("groupId", "Matriz", "Matriz", ConstraintType.SHOULD));
+        constraints.push(DatasetFactory.createConstraint("groupId", "Diretoria", "Diretoria", ConstraintType.SHOULD));
+    }
+
+    var ds = DatasetFactory.getDataset("colleagueGroup",null,constraints,null);
 
     if (ds.values.length==0) {
         return false;

@@ -35,6 +35,15 @@
 }
 
 
+/* Column height wraper */
+.flexRow{
+    display: flex !important;
+    align-items: stretch !important;
+    margin-bottom: 20px;
+}
+.column {
+    flex: 1 !important;
+}
 
 
 
@@ -81,4 +90,8 @@ footer{
     text-align: center; 
     padding: 10px;
     border-radius: 0px 0px 20px 20px;
+}
+
+#ccustoObraOrigem:read-only, #ccustoObraDestino:read-only{
+    color: black !important;
 }

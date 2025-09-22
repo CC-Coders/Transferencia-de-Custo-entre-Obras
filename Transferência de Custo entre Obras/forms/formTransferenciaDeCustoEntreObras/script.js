@@ -72,47 +72,11 @@ function bindings() {
     $("#btnAprovar").on("click", function () {
         $("#decisao").val("Aprovado");
         const atividadeAtual = $("#atividade").val();
-        // if (atividadeAtual == ATIVIDADES.APROVADOR_ORIGEM) {
-        //     aprovaObraOrigem();
-        // }
-        // else if (atividadeAtual == ATIVIDADES.APROVADOR_DESTINO) {
-        //     aprovaObraDestino();
-        // }
+
 
         parent.$("#send-process-button").click();
 
-        function aprovaObraOrigem() {
-            var aprovador = $("#usuarioAprovadorOrigem").val();
-            var engenheiroObraOrigem = $("#engenheiroObraOrigem").val();
-            var coordenadorObraOrigem = $("#coordenadorObraOrigem").val();
-            var diretorObraOrigem = $("#diretorObraOrigem").val();
 
-            if (aprovador == engenheiroObraOrigem) {
-                $("#aprovadoEngenheiroObraOrigem").val("true");
-            } 
-            else if (aprovador == coordenadorObraOrigem) {
-                $("#aprovadoCoordenadorObraOrigem").val("true");
-            }
-            else if (aprovador == diretorObraOrigem) {
-                $("#aprovadoDiretorObraOrigem").val("true");
-            }
-        }
-        function aprovaObraDestino() {
-            var aprovador = $("#usuarioAprovadorDestino").val();
-            var engenheiroObraDestino = $("#engenheiroObraDestino").val();
-            var coordenadorObrDestino = $("#coordenadorObraDestino").val();
-            var diretorObraOriDestino = $("#diretorObraDestino").val();
-
-            if (aprovador == engenheiroObraDestino) {
-                $("#aprovadoEngenheiroObraDestino").val("true");
-            } 
-            else if (aprovador == coordenadorObrDestino) {
-                $("#aprovadoCoordenadorObraDestino").val("true");
-            }
-            else if (aprovador == diretorObraOriDestino) {
-                $("#aprovadoDiretorObraDestino").val("true");
-            }
-        }
     });
     $("#btnReprovar").on("click", function () {
         $("#decisao").val("Reprovado");
@@ -137,29 +101,83 @@ function loadAtividadeInicio() {
     $('#ccustoObraOrigem').selectize({
         onChange: async function (value, isOnInitialize) {
             var CODCOLIGADA = value.split(" - ")[0];
+            var CODCCUSTO = value.split(" - ")[1];
             var perfil = value.split(" - ")[2];
-            var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra(CODCOLIGADA, perfil, "1.1.02", "9999999999999"));
-            $("#engenheiroObraOrigem").val(aprovadores.engenherio);
-            $("#coordenadorObraOrigem").val(aprovadores.coordenador);
-            $("#diretorObraOrigem").val(aprovadores.diretor);
+    
             $("#CODCOLIGADA").val(value.split(" - ")[0]);
             $("#motivoTransferencia").change();
+
+            if (perfil == "Matriz Curitiba") {
+                var deptos = consultaDepartamentos(CODCOLIGADA);
+                geraOptionsDepartamentos("departamentoObraOrigem", deptos);
+                $("#departamentoObraOrigem").closest(".row").show();
+                $("#engenheiroObraOrigem").closest("div").hide();
+            }else{
+                var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra(CODCOLIGADA, perfil, "1.1.02", "9999999999999"));
+                $("#engenheiroObraOrigem").val(aprovadores.engenherio);
+                $("#coordenadorObraOrigem").val(aprovadores.coordenador);
+                $("#diretorObraOrigem").val(aprovadores.diretor);
+                $("#departamentoObraOrigem").closest(".row").hide();
+                $("#engenheiroObraOrigem").closest("div").show();
+                $("#departamentoObraOrigem").val("1.3.01");
+
+                if (CODCOLIGADA != 1 || CODCCUSTO.substring(0,3) != "1.2") {
+                    $("#engenheiroObraOrigem").val("fernando.ribeiro");
+                    $("#coordenadorObraOrigem").val("fernando.ribeiro");
+                    $("#diretorObraOrigem").val("fernando.ribeiro");
+                }
+            }
         }
     });
     $('#ccustoObraDestino').selectize({
         onChange: async function (value, isOnInitialize) {
             var CODCOLIGADA = value.split(" - ")[0];
+            var CODCCUSTO = value.split(" - ")[1];
             var perfil = value.split(" - ")[2];
-            var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra(CODCOLIGADA, perfil, "1.1.02", "9999999999999"));
-            $("#engenheiroObraDestino").val(aprovadores.engenherio);
-            $("#coordenadorObraDestino").val(aprovadores.coordenador);
-            $("#diretorObraDestino").val(aprovadores.diretor);
+
             $("#motivoTransferencia").change();
+
+            if (perfil == "Matriz Curitiba") {
+                var deptos = consultaDepartamentos(CODCOLIGADA);
+                geraOptionsDepartamentos("departamentoObraDestino", deptos);
+                $("#departamentoObraDestino").closest(".row").show();
+                $("#engenheiroObraDestino").closest("div").hide();
+            }else{
+                var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra(CODCOLIGADA, perfil, "1.1.02", "9999999999999"));
+                $("#engenheiroObraDestino").val(aprovadores.engenherio);
+                $("#coordenadorObraDestino").val(aprovadores.coordenador);
+                $("#diretorObraDestino").val(aprovadores.diretor);
+                $("#departamentoObraDestino").closest(".row").hide();
+                $("#engenheiroObraDestino").closest("div").show();
+                $("#departamentoObraDestino").val("1.3.01");
+
+                if (CODCOLIGADA != 1 || CODCCUSTO.substring(0,3) != "1.2") {
+                    $("#engenheiroObraDestino").val("gabriel.persike");
+                    $("#coordenadorObraDestino").val("gabriel.persike");
+                    $("#diretorObraDestino").val("gabriel.persike");
+                }
+            }
+        }
+    });
+
+    $("#departamentoObraOrigem").selectize({
+        onChange: async function (value, isOnInitialize) {
+            var CODDEPTO = value.split(" - ")[0];
+            var coordenador = aprovadoresMatriz(CODDEPTO);
+            $("#coordenadorObraOrigem").val(coordenador);
+            $("#diretorObraOrigem").val("padilha");
+        }
+    });
+    $("#departamentoObraDestino").selectize({
+        onChange: async function (value, isOnInitialize) {
+            var CODDEPTO = value.split(" - ")[0];
+            var coordenador = aprovadoresMatriz(CODDEPTO);
+            $("#coordenadorObraDestino").val(coordenador);
+            $("#diretorObraDestino").val("padilha");
         }
     });
 
     $("input[autocomplete]").attr("autocomplete", "off");
-
 }
 function loadAtividadeAjuste() {
     setTimeout(() => {
@@ -177,21 +195,19 @@ function loadAtividadeAjuste() {
     marcaEmVerdeAprovados();
     alteraIconesECorDosValores();
     preencheCamposDeObras();
-        updateCounterRowsTableItens();
-        carregaTabelaItensDasTransferencias();
+    updateCounterRowsTableItens();
+    carregaTabelaItensDasTransferencias();
 
-        $(".panelTransferencia:last>.panel-heading").click();
+    $(".panelTransferencia:last>.panel-heading").click();
 
-        $(".motivoTransferencia:not(:first)").each(function () {
-            var val = $(this).val() ? $(this).val() : $(this).text();
-            $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text(val);
-        });
-        $(".valorTotalTransferencia").each(function () {
-            var val = $(this).val() ? $(this).val() : $(this).text();
-            $(this).closest(".panelTransferencia").find(".spanValorTransferencia").text(val);
-        });
-
-
+    $(".motivoTransferencia:not(:first)").each(function () {
+        var val = $(this).val() ? $(this).val() : $(this).text();
+        $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text(val);
+    });
+    $(".valorTotalTransferencia").each(function () {
+        var val = $(this).val() ? $(this).val() : $(this).text();
+        $(this).closest(".panelTransferencia").find(".spanValorTransferencia").text(val);
+    });
 
     $('#ccustoObraOrigem').selectize({
         onChange: async function (value, isOnInitialize) {
@@ -249,6 +265,29 @@ function loadAtividadesAprovacao() {
     $("#ccustoObraOrigem, #ccustoObraDestino").addClass("form-control");
     $("#ccustoObraOrigem, #ccustoObraDestino").attr("readonly", "readonly");
 
+
+    var DEPTO_DESTINO = $("#departamentoObraDestino").val() ? $("#departamentoObraDestino").val() : $("#departamentoObraDestino").text().split(" - ")[0].trim();
+    if (DEPTO_DESTINO != "1.3.01" && DEPTO_DESTINO != "" && DEPTO_DESTINO != null) {
+        $("#departamentoObraDestino").closest(".row").show();
+        $("#departamentoObraDestino").addClass("form-control");
+        $("#departamentoObraDestino").attr("readonly","readonly");
+
+        if ($("#engenheiroObraDestino").val() == "") {
+            $("#engenheiroObraDestino").closest("div").hide();
+        }
+    }
+
+    var DEPTO_ORIGEM = $("#departamentoObraOrigem").val() ? $("#departamentoObraOrigem").val() : $("#departamentoObraOrigem").text().split(" - ")[0].trim();
+    if (DEPTO_ORIGEM != "1.3.01" && DEPTO_ORIGEM != "" && DEPTO_ORIGEM != null) {
+        $("#departamentoObraOrigem").closest(".row").show();
+        $("#departamentoObraOrigem").addClass("form-control");
+        $("#departamentoObraOrigem").attr("readonly","readonly");
+
+        if ($("#engenheiroObraOrigem").val() == "") {
+            $("#engenheiroObraOrigem").closest("div").hide();
+        }
+    }
+
     $("#dataCompetencia").attr("readonly", "readonly");
 
     updateCounterRowsTableItens();
@@ -270,7 +309,6 @@ function loadAtividadesAprovacao() {
     $(".textMotivoTransferencia, .motivoTransferencia").attr("readonly", "readonly");
     $("#btnAdicionarTransferencia").hide();
 
-    escondeDiretoresSeValorNoLimiteDoCoordenador();
     geraTabelaHistorico();
     marcaEmVerdeAprovados();
     
@@ -287,12 +325,6 @@ var beforeSendValidate = function () {
     const atividadeAtual = $("#atividade").val();
     if (atividadeAtual == ATIVIDADES.INICIO || atividadeAtual == ATIVIDADES.INICIO_0) {
         valida = validaPreenchimentoForm();
-        if (valida) {
-            var valorTotal = parseFloat($("#valorTotal").val());
-            if (valorTotal < 200000) {
-                $("#diretorObraOrigem, #diretorObraDestino").val("");
-            }
-        }
     }
 
     if (atividadeAtual == ATIVIDADES.APROVADOR_DESTINO || atividadeAtual == ATIVIDADES.APROVADOR_ORIGEM) {
@@ -327,7 +359,7 @@ function validaPreenchimentoForm() {
         retorno.push("Informar a Obra de Destino.");
     }
 
-    if ($("#ccustoObraOrigem").val() == $("#ccustoObraDestino").val()) {
+    if ($("#ccustoObraOrigem").val() == $("#ccustoObraDestino").val() && $("#ccustoObraDestino").val() != "1.1.001") {
         retorno.push("Não é possível fazer Transferência entre o Mesmo Centro de Custo");
     }
 

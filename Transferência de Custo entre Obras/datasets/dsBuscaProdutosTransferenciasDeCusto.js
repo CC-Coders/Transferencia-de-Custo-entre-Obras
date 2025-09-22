@@ -30,7 +30,7 @@ function createDataset(fields, constraints, sortFields) {
             return returnDataset("SUCCESS","",JSON.stringify(retorno));
         }
         if (constraints.TIPO_TRANSFERENCIA == "Prestação de Serviço") {
-            var query = "SELECT CODIGOPRD + ' - ' + NOMEFANTASIA AS VISUAL  ";
+            var query = "SELECT CODIGOPRD + ' - ' + NOMEFANTASIA AS VISUAL, CODIGOPRD, NOMEFANTASIA   ";
             query += " FROM TPRODUTO "
             query += "WHERE  ";
             query += "(NOMEFANTASIA like 'Serviço%' OR CODIGOPRD = '21.001.00002' )";
@@ -54,11 +54,11 @@ function createDataset(fields, constraints, sortFields) {
             ], null);
 
             var Produtos = ds;
-            return Produtos;
+            return returnDataset("SUCCESS","",JSONUtil.toJSON(Produtos.map));
         }
         if (constraints.TIPO_TRANSFERENCIA == "Receita") {
             var Produtos = [
-                {"VISUAL": "11.999.00001 - Receita de Obras"}            
+                {"VISUAL": "11.006.00109 - Recebimento"}            
             ];
             return returnDataset("SUCCESS","",JSON.stringify(Produtos));
         }

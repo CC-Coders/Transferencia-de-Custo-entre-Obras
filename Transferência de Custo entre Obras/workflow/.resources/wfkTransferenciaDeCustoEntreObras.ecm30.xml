@@ -29,7 +29,7 @@
     <processDefinitionVersionPK>
       <companyId>1</companyId>
       <processId>Transferência de Custos entre Obras</processId>
-      <version>31</version>
+      <version>32</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
     <formId>1782503</formId>
@@ -1203,7 +1203,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>31</version>
+        <version>32</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1215,7 +1215,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>31</version>
+        <version>32</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1227,7 +1227,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>3</expressionOrder>
-        <version>31</version>
+        <version>32</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1239,7 +1239,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>31</version>
+        <version>32</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1251,7 +1251,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>31</version>
+        <version>32</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1263,7 +1263,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>3</expressionOrder>
-        <version>31</version>
+        <version>32</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1275,7 +1275,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>31</version>
+        <version>32</version>
         <sequence>44</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1289,7 +1289,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>31</version>
+        <version>32</version>
         <sequence>44</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1798,485 +1798,538 @@
         <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
       </workflowProcessEventPK>
-      <eventDescription>function servicetask26(attempt, message) {
-    try {
-        updateDataCompetencia();
-        atualizaStatusTransferencia(STATUS_TRANSFENCIA.APROVADO);
-
-        var CODCOLIGADA_ORIGEM = hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[0];
-        var CODCCUSTO_ORIGEM = hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[1];
-        var NOMECCUSTO_ORIGEM = hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[2];
-
-        var CODCOLIGADA_DESTINO = hAPI.getCardValue(&quot;ccustoObraDestino&quot;).split(&quot; - &quot;)[0];
-        var CODCCUSTO_DESTINO = hAPI.getCardValue(&quot;ccustoObraDestino&quot;).split(&quot; - &quot;)[1];
-        var NOMECCUSTO_DESTINO = hAPI.getCardValue(&quot;ccustoObraDestino&quot;).split(&quot; - &quot;)[2];
-
-        var PRODUTOS = getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO);
-        var CUSTO_OU_RECEITA = hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? &quot;CUSTO&quot;:&quot;RECEITA&quot;;
-
-
-        // Lanca ajuste para Obra Origem
-        // Se for TRANSFERE_CUSTO, então a Obra Origem, recebe o PRODUTO AUMENTA_RESULTADO, pois está enviando o CUSTO
-        // Porém, se for TRANSFERE_RECEITA, então a Obra Origem, recebe o PRODUTO DIMINUI_RESULTADO, pois está enviando a RECEITA
-        var PRODUTO_ORIGEM = hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO;
-        var idmov = geraMovimentos(CODCOLIGADA_ORIGEM, CODCCUSTO_ORIGEM, CODCOLIGADA_DESTINO, NOMECCUSTO_ORIGEM, PRODUTO_ORIGEM);
-        hAPI.setCardValue(&quot;IDMOV_ORIGEM&quot;, idmov);
-
-
-        // Lanca ajuste para Obra Destino
-        // Se for TRANSFERE_CUSTO, então a Obra Destino, recebe o PRODUTO DIMINUI_RESULTADO, pois está recebendo CUSTO
-        // Porém, se for TRANSFERE_RECEITA, então a Obra Destino, recebe o PRODUTO AUMENTA_RESULTADO, pois está recebendo a RECEITA
-        var PRODUTO_DESTINO = hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO;
-        var idmov = geraMovimentos(CODCOLIGADA_DESTINO, CODCCUSTO_DESTINO, CODCOLIGADA_ORIGEM, NOMECCUSTO_DESTINO, PRODUTO_DESTINO);
-        hAPI.setCardValue(&quot;IDMOV_DESTINO&quot;, idmov);
-
-
-    
-        if (CODCOLIGADA_ORIGEM != CODCOLIGADA_DESTINO) {
-            // Se Coligada de Origem for Diferente de Destino, informa a Controladoria
-            EnviaEmail(&quot;contabilidade@castilho.com.br; control@castilho.com.br; informatica@castilho.com.br; padilha@castilho.com.br&quot;);
-        }
-    } catch (error) {
-        log.error(error);
-        throw error;
-    }
-}
-
-// Gera 1.1.93
-function getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO) {
-    if (CODCOLIGADA_ORIGEM == CODCOLIGADA_DESTINO) {
-        // Se transferencia entre Centro de Custo
-        var PRODUTOS = {
-            CUSTO:{
-                AUMENTA_RESULTADO: {
-                    CODIGOPRD_COLIGADA1: &quot;11.006.00110&quot;,
-                    CODIGOPRD: &quot;11.006.00110&quot;,
-                    DESCPRD: &quot;Ajustes gerenciais (+)&quot;,
-                },
-                DIMINUI_RESULTADO: {
-                    CODIGOPRD_COLIGADA1: &quot;11.006.00111&quot;,
-                    CODIGOPRD: &quot;11.006.00111&quot;,
-                    DESCPRD: &quot;Ajustes gerenciais (-)&quot;,
-                }
-            }, 
-            RECEITA:{
-                AUMENTA_RESULTADO: {
-                    CODIGOPRD_COLIGADA1: &quot;11.999.00001&quot;,
-                    CODIGOPRD: &quot;11.999.00001&quot;,
-                    DESCPRD: &quot;Receita de Obras (+)&quot;,
-                },
-                DIMINUI_RESULTADO: {
-                    CODIGOPRD_COLIGADA1: &quot;11.999.00000&quot;,
-                    CODIGOPRD: &quot;11.999.00000&quot;,
-                    DESCPRD: &quot;Receita de Obras (-)&quot;,
-                }
-            }
-        }
-        return PRODUTOS;
-    } else {
-        // Se Transferencia entre Coligadas
-        var PRODUTOS = {
-            CUSTO:{
-                AUMENTA_RESULTADO: {
-                    CODIGOPRD_COLIGADA1: &quot;11.006.00160&quot;,
-                    CODIGOPRD: &quot;11.006.00158&quot;,
-                    DESCPRD: &quot;Ajuste entre coligadas (+)&quot;,
-                },
-                DIMINUI_RESULTADO: {
-                    CODIGOPRD_COLIGADA1: &quot;11.006.00161&quot;,
-                    CODIGOPRD: &quot;11.006.00159&quot;,
-                    DESCPRD: &quot;Ajuste entre coligadas (-)&quot;,
-                }
-            },
-            RECEITA:{
-                AUMENTA_RESULTADO: {
-                    CODIGOPRD_COLIGADA1: &quot;11.999.00001&quot;,
-                    CODIGOPRD: &quot;11.999.00001&quot;,
-                    DESCPRD: &quot;Receita de Obras (+)&quot;,
-                },
-                DIMINUI_RESULTADO: {
-                    CODIGOPRD_COLIGADA1: &quot;11.999.00000&quot;,
-                    CODIGOPRD: &quot;11.999.00000&quot;,
-                    DESCPRD: &quot;Receita de Obras (-)&quot;,
-                }
-            }
-        }
-        return PRODUTOS;
-    }
-}
-function buscaIdDoProduto(CODCOLIGADA, CODIGOPRD) {
-    var query = &quot;SELECT IDPRD, CODIGOPRD, NOMEFANTASIA FROM TPRODUTO WHERE CODCOLPRD = ? AND CODIGOPRD = ?&quot;;
-
-    return executaQuery(query, [
-        { type: &quot;int&quot;, value: CODCOLIGADA },
-        { type: &quot;varchar&quot;, value: CODIGOPRD },
-    ], &quot;/jdbc/FluigRM&quot;);
-}
-function buscaLocalEstoquePorNome(CODCOLIGADA, CODFILIAL, NOME) {
-    var ds = DatasetFactory.getDataset(&quot;LocalRM&quot;, null, [
-        DatasetFactory.createConstraint(&quot;clg&quot;, CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST),
-        DatasetFactory.createConstraint(&quot;cdFl&quot;, CODFILIAL, CODFILIAL, ConstraintType.MUST),
-    ], null);
-
-    for (var i = 0; i &lt; ds.values.length; i++) {
-        var nomeLocalEstoque = ds.getValue(i, &quot;nome&quot;);
-        if (NOME == nomeLocalEstoque || (NOME == &quot;Obra VLI Manutenção&quot; &amp;&amp; nomeLocalEstoque == &quot;Obra VLI Paulista&quot;)) {
-            return ds.getValue(i, &quot;codloc&quot;);
-        }
-    }
-}
-
-function geraMovimentos(CODCOLIGADA, CODCCUSTO, CODCOLIGADA_FORNECEDOR, NOMECCUSTO, PRODUTO) {
-    var CODLOC = buscaLocalEstoquePorNome(CODCOLIGADA, 1, NOMECCUSTO);
-    log.info(&quot;CODLOC&quot;)
-    log.info(CODLOC)
-    var CNPJColigadaFornecedor = buscaCNPJDaColigada(CODCOLIGADA_FORNECEDOR);
-    log.info(&quot;CNPJColigadaFornecedor&quot;)
-    log.info(CNPJColigadaFornecedor)
-    var fornecedor = buscaCodigoFornecedor(CODCOLIGADA, CNPJColigadaFornecedor);
-    var CODCOLCFO = fornecedor[0];
-    var CODCFO = fornecedor[1];
-    log.info(&quot;CODCFO&quot;)
-    log.info(CODCFO)
-
-    var xml = montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO);
-
-    var idmov = ImportaMovimento(CODCOLIGADA, xml);
-    log.info(&quot;Movimentos inseridos: &quot; + idmov);
-    return idmov;
-
-}
-function montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO) {
-    var URLFluig = getServerURL() + &quot;/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=&quot; + getValue(&quot;WKNumProces&quot;);
-
-    var xml = &quot;&quot;;
-    xml += &quot;&lt;MovMovimento&gt;&quot;;
-    xml += &quot;    &lt;TMOV&gt;&quot;;
-    xml += &quot;        &lt;CODCOLIGADA&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA&gt;&quot;;
-    xml += &quot;        &lt;IDMOV&gt;-1&lt;/IDMOV&gt;&quot;;
-    xml += &quot;        &lt;NUMEROMOV&gt;-1&lt;/NUMEROMOV&gt; &quot;;
-    xml += &quot;        &lt;CODFILIAL&gt;1&lt;/CODFILIAL&gt;&quot;;
-    xml += &quot;        &lt;CODLOC&gt;&quot; + CODLOC + &quot;&lt;/CODLOC&gt;&quot;;
-    xml += &quot;        &lt;CODTMV&gt;1.1.93&lt;/CODTMV&gt;&quot;;
-    xml += &quot;        &lt;TIPO&gt;A&lt;/TIPO&gt;&quot;;
-    xml += &quot;        &lt;STATUS&gt;A&lt;/STATUS&gt;&quot;;
-    xml += &quot;        &lt;DATAEMISSAO&gt;&quot; + getDateNow() + &quot;&lt;/DATAEMISSAO&gt;&quot;;
-    xml += &quot;        &lt;DATASAIDA&gt;&quot; + getDateNow() + &quot;&lt;/DATASAIDA&gt;&quot;;
-    xml += &quot;        &lt;CODMOEVALORLIQUIDO&gt;R$&lt;/CODMOEVALORLIQUIDO&gt;&quot;;
-    xml += &quot;        &lt;INTEGRAAPLICACAO&gt;T&lt;/INTEGRAAPLICACAO&gt;&quot;;
-    xml += &quot;        &lt;CODCOLIGADA1&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA1&gt;&quot;;
-    xml += &quot;        &lt;CODCFO&gt;&quot; + CODCFO + &quot;&lt;/CODCFO&gt;&quot;;
-    xml += &quot;        &lt;CODCFOAUX&gt;&quot; + CODCFO + &quot;&lt;/CODCFOAUX&gt;&quot;;
-    xml += &quot;        &lt;CODCOLCFO&gt;&quot; + CODCOLCFO + &quot;&lt;/CODCOLCFO&gt;&quot;;
-    xml += &quot;        &lt;CODCPG&gt;001&lt;/CODCPG&gt;&quot;;
-    xml += &quot;    &lt;/TMOV&gt;&quot;;
-
-
-
-    var CODIGOPRD = CODCOLIGADA == 1 ?  PRODUTO.CODIGOPRD_COLIGADA1: PRODUTO.CODIGOPRD;
-    var DESCPRODUTO = PRODUTO.DESCPRD;
-    var IDPRD = buscaIdDoProduto(CODCOLIGADA, CODIGOPRD)[0].IDPRD;
-
-    // var DESCITEM = item.DescricaoItem;
-    var QUANTIDADE = 1;
-    var VALORUNIT = moneyToFloat(hAPI.getCardValue(&quot;valorObraDestino&quot;)).toString().replace(&quot;.&quot;, &quot;,&quot;);
-    var CODUND = &quot;UN&quot;;
-
-    xml += &quot;&lt;TITMMOV&gt;&quot;;
-    xml += &quot;    &lt;CODCOLIGADA&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA&gt;&quot;;
-    xml += &quot;    &lt;IDMOV&gt;-1&lt;/IDMOV&gt;&quot;;
-    xml += &quot;    &lt;CODLOC&gt;&quot; + CODLOC + &quot;&lt;/CODLOC&gt;&quot;;
-    xml += &quot;    &lt;NSEQITMMOV&gt;1&lt;/NSEQITMMOV&gt;&quot;;
-    xml += &quot;    &lt;NUMEROSEQUENCIAL&gt;1&lt;/NUMEROSEQUENCIAL&gt;&quot;;
-    xml += &quot;    &lt;IDPRD&gt;&quot; + IDPRD + &quot;&lt;/IDPRD&gt;&quot;;
-    xml += &quot;    &lt;CODIGOPRD&gt;&quot; + CODIGOPRD + &quot;&lt;/CODIGOPRD&gt;&quot;;
-    xml += &quot;    &lt;NOMEFANTASIA&gt;&quot; + DESCPRODUTO + &quot;&lt;/NOMEFANTASIA&gt;&quot;;
-    xml += &quot;    &lt;QUANTIDADE&gt;&quot; + QUANTIDADE + &quot;&lt;/QUANTIDADE&gt;&quot;;
-    xml += &quot;    &lt;PRECOUNITARIO&gt;&quot; + VALORUNIT + &quot;&lt;/PRECOUNITARIO&gt;&quot;;
-    xml += &quot;    &lt;CODUND&gt;&quot; + CODUND + &quot;&lt;/CODUND&gt;&quot;;
-    xml += &quot;    &lt;VALORUNITARIO&gt;&quot; + VALORUNIT + &quot;&lt;/VALORUNITARIO&gt;&quot;;
-    // xml += &quot;    &lt;HISTORICOCURTO&gt;&quot; + DESCITEM + &quot;&lt;/HISTORICOCURTO&gt;&quot;;
-    xml += &quot;    &lt;INTEGRAAPLICACAO&gt;T&lt;/INTEGRAAPLICACAO&gt;&quot;;
-    xml += &quot;    &lt;IDMOVHST&gt;-1&lt;/IDMOVHST&gt;&quot;;
-    xml += &quot;    &lt;CODCOLIGADA1&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA1&gt;&quot;;
-    xml += &quot;    &lt;NSEQITMMOV1&gt;1&lt;/NSEQITMMOV1&gt;&quot;;
-    xml += &quot;&lt;/TITMMOV&gt;&quot;
-
-
-    xml += &quot;&lt;TITMMOVRATCCU&gt;&quot;;
-    xml += &quot;    &lt;CODCOLIGADA&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA&gt;&quot;;
-    xml += &quot;    &lt;IDMOV&gt;-1&lt;/IDMOV&gt;&quot;;
-    xml += &quot;    &lt;NSEQITMMOV&gt;1&lt;/NSEQITMMOV&gt;&quot;;
-    xml += &quot;    &lt;CODCCUSTO&gt;&quot; + CODCCUSTO + &quot;&lt;/CODCCUSTO&gt;&quot;;
-    xml += &quot;    &lt;PERCENTUAL&gt;100&lt;/PERCENTUAL&gt;&quot;;
-    xml += &quot;    &lt;IDMOVRATCCU&gt;-1&lt;/IDMOVRATCCU&gt;&quot;;
-    xml += &quot;&lt;/TITMMOVRATCCU&gt;&quot;;
-
-
-    xml += &quot;&lt;TITMMOVRATDEP&gt;&quot;;
-    xml += &quot;    &lt;CODCOLIGADA&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA&gt;&quot;;
-    xml += &quot;    &lt;IDMOV&gt;-1&lt;/IDMOV&gt;&quot;;
-    xml += &quot;    &lt;NSEQITMMOV&gt;1&lt;/NSEQITMMOV&gt;&quot;;
-    xml += &quot;    &lt;CODFILIAL&gt;1&lt;/CODFILIAL&gt;&quot;;
-    xml += &quot;    &lt;CODDEPARTAMENTO&gt;1.3.01&lt;/CODDEPARTAMENTO&gt;&quot;;
-    xml += &quot;    &lt;PERCENTUAL&gt;100&lt;/PERCENTUAL&gt;&quot;;
-    xml += &quot;&lt;/TITMMOVRATDEP&gt;&quot;;
-
-
-    xml += &quot;&lt;TMOVCOMPL&gt;&quot;;
-    xml += &quot;    &lt;CODCOLIGADA&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA&gt; &quot;;
-    xml += &quot;    &lt;IDMOV&gt;-1&lt;/IDMOV&gt;&quot;;
-    xml += &quot;    &lt;FLUIG&gt;&quot; + URLFluig + &quot;&lt;/FLUIG&gt;&quot;;
-    xml += &quot;&lt;/TMOVCOMPL&gt;&quot;;
-    xml += &quot;&lt;/MovMovimento&gt; &quot;;
-
-    xml = xml.split(&quot;&amp;&quot;).join(&quot;&amp;amp;&quot;);
-    log.info(&quot;XML: &quot; + xml);
-
-    return xml;
-}
-
-function buscaCodigoFornecedor(CODCOLIGADA, CGCCFO) {
-    var FCFO = DatasetFactory.getDataset(&quot;FCFO&quot;, null, [
-        DatasetFactory.createConstraint(&quot;CODCOLIGADA&quot;, CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST),
-        DatasetFactory.createConstraint(&quot;CGCCFO&quot;, CGCCFO, CGCCFO, ConstraintType.MUST),
-    ], null);
-    if (FCFO.values.length &gt; 0) {
-        return [CODCOLIGADA, FCFO.getValue(0, &quot;CODCFO&quot;)];
-    }
-
-    var FCFO = DatasetFactory.getDataset(&quot;FCFO&quot;, null, [
-        DatasetFactory.createConstraint(&quot;CODCOLIGADA&quot;, 0, 0, ConstraintType.MUST),
-        DatasetFactory.createConstraint(&quot;CGCCFO&quot;, CGCCFO, CGCCFO, ConstraintType.MUST),
-    ], null);
-    if (FCFO.values.length &gt; 0) {
-        return [0, FCFO.getValue(0, &quot;CODCFO&quot;)];
-    }
-}
-function buscaCNPJDaColigada(CODCOLIGADA) {
-    var ds = DatasetFactory.getDataset(&quot;Coligadas&quot;, null, [
-        DatasetFactory.createConstraint(&quot;CODCOLIGADA&quot;, CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST)
-    ], null);
-    return ds.getValue(0, &quot;CGC&quot;);
-}
-
-function ImportaMovimento(CODCOLIGADA, xml) {
-    var ds = DatasetFactory.getDataset(&quot;ImportaMovRM&quot;, null, [
-        DatasetFactory.createConstraint(&quot;xmlMov&quot;, xml, xml, ConstraintType.MUST),
-        DatasetFactory.createConstraint(&quot;codColigada&quot;, CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST)
-    ], null);
-
-    if (!ds || ds == &quot;&quot; || ds == null) {
-        return [false, &quot;Houve um erro na comunicação com o webservice. Tente novamente!&quot;];
-    }
-    else {
-        if (ds.values[0][0] == &quot;false&quot;) {
-            throw &quot;Erro ao gerar movimento. Favor entrar em contato com o administrador do sistema. Mensagem: &quot; + ds.values[0][1];
-        }
-        else if (ds.values[0][0] == &quot;true&quot;) {
-            return ds.values[0][2];
-        }
-    }
-}
-
-
-function EnviaEmail(emails) {
-    var CorpoEmail = &quot;&quot;;
-    CorpoEmail += &quot;Olá, &lt;br&gt;&quot;;
-    CorpoEmail += &quot;Segue abaixo as informações das Transferência de &quot;+(hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? &quot;CUSTO&quot;:&quot;RECEITA&quot;)+&quot; entre Coligadas&lt;br&gt;&quot;;
-    CorpoEmail += &quot;&lt;br&gt;&quot;;
-    CorpoEmail += &quot;&lt;h4&gt;OBRA ORIGEM&lt;/h4&gt;&quot;;
-    CorpoEmail += &quot;&lt;b&gt;Coligada: &lt;/b&gt;&lt;span&gt;&quot; + hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[0] + &quot;&lt;/span&gt;&lt;br&gt;&quot;;
-    CorpoEmail += &quot;&lt;b&gt;Centro de Custo: &lt;/b&gt;&lt;span&gt;&quot; + hAPI.getCardValue(&quot;ccustoObraOrigem&quot;) + &quot;&lt;/span&gt;&lt;br&gt;&quot;;
-    CorpoEmail += &quot;&lt;br&gt;&quot;;
-    CorpoEmail += &quot;&lt;h4&gt;OBRA DESTINO&lt;/h4&gt;&quot;;
-    CorpoEmail += &quot;&lt;b&gt;Coligada: &lt;/b&gt;&lt;span&gt;&quot; + hAPI.getCardValue(&quot;ccustoObraDestino&quot;).split(&quot; - &quot;)[0] + &quot;&lt;/span&gt;&lt;br&gt;&quot;;
-    CorpoEmail += &quot;&lt;b&gt;Centro de Custo: &lt;/b&gt;&lt;span&gt;&quot; + hAPI.getCardValue(&quot;ccustoObraDestino&quot;) + &quot;&lt;/span&gt;&lt;br&gt;&quot;;
-    CorpoEmail += &quot;&lt;br&gt;&quot;;
-    CorpoEmail += &quot;&lt;b&gt;Valor: &lt;/b&gt;&lt;span&gt;&quot; + FormataValorParaMoeda(parseFloat(hAPI.getCardValue(&quot;valorTotal&quot;))) + &quot;&lt;/span&gt;&lt;br&gt;&quot;;
-    CorpoEmail += &quot;&lt;b&gt;Data Competência: &lt;/b&gt;&lt;span&gt;&quot; + getDateNow().split(&quot;-&quot;).reverse().join(&quot;/&quot;) + &quot;&lt;/span&gt;&lt;br&gt;&quot;;
-    CorpoEmail += &quot;&lt;br&gt;&quot;;
-    CorpoEmail += &quot;Para mais informações, &lt;a href=&apos;http://fluig.castilho.com.br:1010/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=&quot; + getValue(&quot;WKNumProces&quot;) + &quot;&apos;&gt;clique aqui&lt;/a&gt;.&quot;;
-
-    var url = &apos;http://fluig.castilho.com.br:1010&apos;;//Prod
-    // var url = &apos;http://homologacao.castilho.com.br:2020&apos;;//Homolog
-
-    var data = {
-        &quot;to&quot;: emails,
-        from: &quot;fluig@construtoracastilho.com.br&quot;, //Prod
-        &quot;subject&quot;: &quot;Transferência de &quot;+(hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? &quot;CUSTO&quot;:&quot;RECEITA&quot;)+&quot; entre Coligadas - #&quot; + getValue(&quot;WKNumProces&quot;), //   subject
-        &quot;templateId&quot;: &quot;TPL_PADRAO_CASTILHO&quot;, // Email template Id previously registered
-        &quot;dialectId&quot;: &quot;pt_BR&quot;, //Email dialect , if not informed receives pt_BR , email dialect (&quot;pt_BR&quot;, &quot;en_US&quot;, &quot;es&quot;)
-        &quot;param&quot;: {
-            &quot;CORPO_EMAIL&quot;: CorpoEmail,
-            &quot;SERVER_URL&quot;: url,
-            &quot;TENANT_ID&quot;: &quot;1&quot;
-        }
-    };
-
-
-    var clientService = fluigAPI.getAuthorizeClientService();
-    var data = {
-        companyId: getValue(&quot;WKCompany&quot;) + &apos;&apos;,
-        serviceCode: &apos;ServicoFluig&apos;,
-        endpoint: &apos;/api/public/alert/customEmailSender&apos;,
-        method: &apos;post&apos;,
-        params: data,
-        options: {
-            encoding: &apos;UTF-8&apos;,
-            mediaType: &apos;application/json&apos;,
-            useSSL: true
-        },
-        headers: {
-            &quot;Content-Type&quot;: &apos;application/json;charset=UTF-8&apos;
-        }
-    };
-
-
-    var vo = clientService.invoke(JSON.stringify(data));
-
-    if (vo.getResult() == null || vo.getResult().isEmpty()) {
-        throw new Exception(&quot;Retorno está vazio&quot;);
-    } else {
-        return vo.getResult();
-    }
-}
-
-
-
-
-function atualizaStatusTransferencia(STATUS) {
-    var id = hAPI.getCardValue(&quot;ID_TRANSFERENCIAS_DE_CUSTO&quot;);
-
-    var query = &quot;UPDATE TRANSFERENCIAS_DE_CUSTO SET STATUS = ? WHERE ID = ?&quot;;
-    executeUpdateSemResult(query, [
-        { type: &quot;int&quot;, value: STATUS },
-        { type: &quot;int&quot;, value: id },
-    ]);
-}
-function updateDataCompetencia(){
-    var date = getDateNow();
-    var id = hAPI.getCardValue(&quot;ID_TRANSFERENCIAS_DE_CUSTO&quot;);
-
-    var query =
-        &quot;UPDATE TRANSFERENCIAS_DE_CUSTO &quot; +
-        &quot;   SET DATA_COMPETENCIA = ? &quot; +
-        &quot;   WHERE ID = ? &quot;;
-
-    return executeUpdateSemResult(query, [
-        { type: &quot;varchar&quot;, value: date },
-        { type: &quot;int&quot;, value: id },
-    ]);
-}
-
-
-// Utils
-function getServerURL() {
-    var ds = DatasetFactory.getDataset(&quot;dsGetServerURL&quot;, null, null, null);
-    return ds.getValue(0, &quot;URL&quot;);
-}
-function executaQuery(query, constraints, dataSorce) {
-    try {
-        var dataSource = dataSorce;
-        var ic = new javax.naming.InitialContext();
-        var ds = ic.lookup(dataSource);
-
-        var conn = ds.getConnection();
-        var stmt = conn.prepareStatement(query);
-
-        var counter = 1;
-        for (var i = 0; i &lt; constraints.length; i++) {
-            var val = constraints[i];
-            if (val.type == &quot;int&quot;) {
-                stmt.setInt(counter, val.value);
-            }
-            else if (val.type == &quot;float&quot;) {
-                stmt.setFloat(counter, val.value);
-            }
-            else if (val.type == &quot;date&quot;) {
-                stmt.setString(counter, val.value);
-            }
-            else if (val.type == &quot;datetime&quot;) {
-                stmt.setString(counter, val.value);
-            } else {
-                stmt.setString(counter, val.value);
-            }
-            counter++;
-        }
-
-        var rs = stmt.executeQuery();
-        var columnCount = rs.getMetaData().getColumnCount();
-        var retorno = [];
-
-        while (rs.next()) {
-            var linha = {};
-            for (var j = 1; j &lt; columnCount + 1; j++) {
-                linha[rs.getMetaData().getColumnName(j)] = rs.getObject(rs.getMetaData().getColumnName(j)).toString() + &quot;&quot;;
-            }
-            retorno.push(linha);
-        }
-
-        return retorno;
-
-    } catch (e) {
-        log.error(&quot;ERRO==============&gt; &quot; + e.message);
-        throw e;
-    } finally {
-        if (stmt != null) {
-            stmt.close();
-        }
-        if (conn != null) {
-            conn.close();
-        }
-    }
-}
-function executeUpdateSemResult(query, constraints) {
-    var dataSource = &quot;/jdbc/CastilhoCustom&quot;;
-    var ic = new javax.naming.InitialContext();
-    var ds = ic.lookup(dataSource);
-
-    log.info(&quot;wfkTransferenciaDeCustoEntreObras.beforeTaskSave: executandoQuery&quot;);
-    log.info(query);
-    try {
-        var conn = ds.getConnection();
-        var stmt = conn.prepareStatement(query, Packages.java.sql.Statement.RETURN_GENERATED_KEYS);
-
-        var counter = 1;
-        for (var i = 0; i &lt; constraints.length; i++) {
-            var val = constraints[i];
-            if (val.type == &quot;int&quot;) {
-                stmt.setInt(counter, val.value);
-            }
-            else if (val.type == &quot;float&quot;) {
-                stmt.setFloat(counter, val.value);
-            }
-            else if (val.type == &quot;date&quot;) {
-                stmt.setString(counter, val.value);
-            }
-            else if (val.type == &quot;datetime&quot;) {
-                stmt.setString(counter, val.value);
-            } else {
-                stmt.setString(counter, val.value);
-            }
-            counter++;
-        }
-
-        log.info(&quot;wfkTransferenciaDeCustoEntreObras.beforeTaskSave: executandoQuery&quot;+constraints.length)
-
-       stmt.execute();
-
-
-    } catch (e) {
-        log.error(&quot;ERRO==============&gt; &quot; + e.message);
-        throw e;
-    } finally {
-        if (stmt != null) {
-            stmt.close();
-        }
-        if (conn != null) {
-            conn.close();
-        }
-    }
+      <eventDescription>function servicetask26(attempt, message) {&#xd;
+    try {&#xd;
+        var CODCOLIGADA_ORIGEM = hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[0];&#xd;
+        var CODCCUSTO_ORIGEM = hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[1];&#xd;
+        var NOMECCUSTO_ORIGEM = hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[2];&#xd;
+        var CODDEPTO_ORIGEM = hAPI.getCardValue(&quot;departamentoObraOrigem&quot;).split(&quot; - &quot;)[0];&#xd;
+        if (CODDEPTO_ORIGEM == &quot;&quot;) {&#xd;
+            // Por padrão lança no Departamento Produção Obra&#xd;
+            CODDEPTO_ORIGEM = &quot;1.3.01&quot;;&#xd;
+        }&#xd;
+&#xd;
+        var CODCOLIGADA_DESTINO = hAPI.getCardValue(&quot;ccustoObraDestino&quot;).split(&quot; - &quot;)[0];&#xd;
+        var CODCCUSTO_DESTINO = hAPI.getCardValue(&quot;ccustoObraDestino&quot;).split(&quot; - &quot;)[1];&#xd;
+        var NOMECCUSTO_DESTINO = hAPI.getCardValue(&quot;ccustoObraDestino&quot;).split(&quot; - &quot;)[2];&#xd;
+        var CODDEPTO_DESTINO = hAPI.getCardValue(&quot;departamentoObraDestino&quot;).split(&quot; - &quot;)[0];&#xd;
+        if (CODDEPTO_DESTINO == &quot;&quot;) {&#xd;
+            // Por padrão lança no Departamento Produção Obra&#xd;
+            CODDEPTO_DESTINO = &quot;1.3.01&quot;;&#xd;
+        }&#xd;
+&#xd;
+        var PRODUTOS = getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO);&#xd;
+        var CUSTO_OU_RECEITA = hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? &quot;CUSTO&quot;:&quot;RECEITA&quot;;&#xd;
+&#xd;
+&#xd;
+        // Lanca ajuste para Obra Origem&#xd;
+        // Se for TRANSFERE_CUSTO, então a Obra Origem, recebe o PRODUTO AUMENTA_RESULTADO, pois está enviando o CUSTO&#xd;
+        // Porém, se for TRANSFERE_RECEITA, então a Obra Origem, recebe o PRODUTO DIMINUI_RESULTADO, pois está enviando a RECEITA&#xd;
+        var PRODUTO_ORIGEM = hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO;&#xd;
+        var idmovOrigem = geraMovimentos(CODCOLIGADA_ORIGEM, CODCCUSTO_ORIGEM, CODCOLIGADA_DESTINO, NOMECCUSTO_ORIGEM, PRODUTO_ORIGEM, CODDEPTO_ORIGEM);&#xd;
+        hAPI.setCardValue(&quot;IDMOV_ORIGEM&quot;, idmovOrigem);&#xd;
+&#xd;
+&#xd;
+        // Lanca ajuste para Obra Destino&#xd;
+        // Se for TRANSFERE_CUSTO, então a Obra Destino, recebe o PRODUTO DIMINUI_RESULTADO, pois está recebendo CUSTO&#xd;
+        // Porém, se for TRANSFERE_RECEITA, então a Obra Destino, recebe o PRODUTO AUMENTA_RESULTADO, pois está recebendo a RECEITA&#xd;
+        var PRODUTO_DESTINO = hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? PRODUTOS[CUSTO_OU_RECEITA].DIMINUI_RESULTADO : PRODUTOS[CUSTO_OU_RECEITA].AUMENTA_RESULTADO;&#xd;
+        var idmovDestino = geraMovimentos(CODCOLIGADA_DESTINO, CODCCUSTO_DESTINO, CODCOLIGADA_ORIGEM, NOMECCUSTO_DESTINO, PRODUTO_DESTINO, CODDEPTO_DESTINO);&#xd;
+        hAPI.setCardValue(&quot;IDMOV_DESTINO&quot;, idmovDestino);&#xd;
+&#xd;
+&#xd;
+        atualizaStatusTransferencia(STATUS_TRANSFENCIA.APROVADO, idmovOrigem, idmovDestino);&#xd;
+&#xd;
+    &#xd;
+        if (CODCOLIGADA_ORIGEM != CODCOLIGADA_DESTINO) {&#xd;
+            // Se Coligada de Origem for Diferente de Destino, informa a Controladoria            &#xd;
+            var serverURL = getServerURL();&#xd;
+            if (serverURL==&quot;http://fluig.castilho.com.br:1010&quot;) {&#xd;
+                EnviaEmailTransferenciaEntreColigadas(&quot;contabilidade@castilho.com.br; control@castilho.com.br; informatica@castilho.com.br; padilha@castilho.com.br&quot;);&#xd;
+            }&#xd;
+        }&#xd;
+&#xd;
+        notificaConclusaoPorWhatsApp();&#xd;
+    } catch (error) {&#xd;
+        log.error(error);&#xd;
+        throw error;&#xd;
+    }&#xd;
+}&#xd;
+&#xd;
+// Gera 1.1.93&#xd;
+function getProdutos(CODCOLIGADA_ORIGEM, CODCOLIGADA_DESTINO) {&#xd;
+    if (CODCOLIGADA_ORIGEM == CODCOLIGADA_DESTINO) {&#xd;
+        // Se transferencia entre Centro de Custo&#xd;
+        var PRODUTOS = {&#xd;
+            CUSTO:{&#xd;
+                AUMENTA_RESULTADO: {&#xd;
+                    CODIGOPRD_COLIGADA1: &quot;11.006.00110&quot;,&#xd;
+                    CODIGOPRD: &quot;11.006.00110&quot;,&#xd;
+                    DESCPRD: &quot;Ajustes gerenciais (+)&quot;,&#xd;
+                },&#xd;
+                DIMINUI_RESULTADO: {&#xd;
+                    CODIGOPRD_COLIGADA1: &quot;11.006.00111&quot;,&#xd;
+                    CODIGOPRD: &quot;11.006.00111&quot;,&#xd;
+                    DESCPRD: &quot;Ajustes gerenciais (-)&quot;,&#xd;
+                }&#xd;
+            }, &#xd;
+            RECEITA:{&#xd;
+                AUMENTA_RESULTADO: {&#xd;
+                    CODIGOPRD_COLIGADA1: &quot;11.006.00108&quot;,&#xd;
+                    CODIGOPRD: &quot;11.006.00108&quot;,&#xd;
+                    DESCPRD: &quot;Recebimentos (+)&quot;,&#xd;
+                },&#xd;
+                DIMINUI_RESULTADO: {&#xd;
+                    CODIGOPRD_COLIGADA1: &quot;11.006.00109&quot;,&#xd;
+                    CODIGOPRD: &quot;11.006.00109&quot;,&#xd;
+                    DESCPRD: &quot;Recebimentos (-)&quot;,&#xd;
+                }&#xd;
+            }&#xd;
+        }&#xd;
+        return PRODUTOS;&#xd;
+    } else {&#xd;
+        // Se Transferencia entre Coligadas&#xd;
+        var PRODUTOS = {&#xd;
+            CUSTO:{&#xd;
+                AUMENTA_RESULTADO: {&#xd;
+                    CODIGOPRD_COLIGADA1: &quot;11.006.00160&quot;,&#xd;
+                    CODIGOPRD: &quot;11.006.00158&quot;,&#xd;
+                    DESCPRD: &quot;Ajuste entre coligadas (+)&quot;,&#xd;
+                },&#xd;
+                DIMINUI_RESULTADO: {&#xd;
+                    CODIGOPRD_COLIGADA1: &quot;11.006.00161&quot;,&#xd;
+                    CODIGOPRD: &quot;11.006.00159&quot;,&#xd;
+                    DESCPRD: &quot;Ajuste entre coligadas (-)&quot;,&#xd;
+                }&#xd;
+            },&#xd;
+            RECEITA:{&#xd;
+                AUMENTA_RESULTADO: {&#xd;
+                    CODIGOPRD_COLIGADA1: &quot;11.006.00108&quot;,&#xd;
+                    CODIGOPRD: &quot;11.006.00108&quot;,&#xd;
+                    DESCPRD: &quot;Recebimentos (+)&quot;,&#xd;
+                },&#xd;
+                  DIMINUI_RESULTADO: {&#xd;
+                    CODIGOPRD_COLIGADA1: &quot;11.006.00109&quot;,&#xd;
+                    CODIGOPRD: &quot;11.006.00109&quot;,&#xd;
+                    DESCPRD: &quot;Recebimentos (-)&quot;,&#xd;
+                }&#xd;
+            }&#xd;
+        }&#xd;
+        return PRODUTOS;&#xd;
+    }&#xd;
+}&#xd;
+function buscaIdDoProduto(CODCOLIGADA, CODIGOPRD) {&#xd;
+    var query = &quot;SELECT IDPRD, CODIGOPRD, NOMEFANTASIA FROM TPRODUTO WHERE CODCOLPRD = ? AND CODIGOPRD = ?&quot;;&#xd;
+&#xd;
+    return executaQuery(query, [&#xd;
+        { type: &quot;int&quot;, value: CODCOLIGADA },&#xd;
+        { type: &quot;varchar&quot;, value: CODIGOPRD },&#xd;
+    ], &quot;/jdbc/FluigRM&quot;);&#xd;
+}&#xd;
+function buscaLocalEstoquePorNome(CODCOLIGADA, CODFILIAL, NOME) {&#xd;
+    var ds = DatasetFactory.getDataset(&quot;LocalRM&quot;, null, [&#xd;
+        DatasetFactory.createConstraint(&quot;clg&quot;, CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST),&#xd;
+        DatasetFactory.createConstraint(&quot;cdFl&quot;, CODFILIAL, CODFILIAL, ConstraintType.MUST),&#xd;
+    ], null);&#xd;
+&#xd;
+    for (var i = 0; i &lt; ds.values.length; i++) {&#xd;
+        var nomeLocalEstoque = ds.getValue(i, &quot;nome&quot;);&#xd;
+        if (NOME == nomeLocalEstoque || (NOME == &quot;Obra VLI Manutenção&quot; &amp;&amp; nomeLocalEstoque == &quot;Obra VLI Paulista&quot;)) {&#xd;
+            return ds.getValue(i, &quot;codloc&quot;);&#xd;
+        }&#xd;
+    }&#xd;
+}&#xd;
+&#xd;
+function geraMovimentos(CODCOLIGADA, CODCCUSTO, CODCOLIGADA_FORNECEDOR, NOMECCUSTO, PRODUTO, CODDEPTO) {&#xd;
+    var CODLOC = buscaLocalEstoquePorNome(CODCOLIGADA, 1, NOMECCUSTO);&#xd;
+    var CNPJColigadaFornecedor = buscaCNPJDaColigada(CODCOLIGADA_FORNECEDOR);&#xd;
+    var fornecedor = buscaCodigoFornecedor(CODCOLIGADA, CNPJColigadaFornecedor);&#xd;
+    var CODCOLCFO = fornecedor[0];&#xd;
+    var CODCFO = fornecedor[1];&#xd;
+    &#xd;
+    var xml = montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO, CODDEPTO);&#xd;
+&#xd;
+    var idmov = ImportaMovimento(CODCOLIGADA, xml);&#xd;
+    log.info(&quot;Movimentos inseridos: &quot; + idmov);&#xd;
+    return idmov;&#xd;
+&#xd;
+}&#xd;
+function montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO, CODDEPTO) {&#xd;
+    var URLFluig = getServerURL() + &quot;/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=&quot; + getValue(&quot;WKNumProces&quot;);&#xd;
+&#xd;
+    var xml = &quot;&quot;;&#xd;
+    xml += &quot;&lt;MovMovimento&gt;&quot;;&#xd;
+    xml += &quot;    &lt;TMOV&gt;&quot;;&#xd;
+    xml += &quot;        &lt;CODCOLIGADA&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA&gt;&quot;;&#xd;
+    xml += &quot;        &lt;IDMOV&gt;-1&lt;/IDMOV&gt;&quot;;&#xd;
+    xml += &quot;        &lt;NUMEROMOV&gt;-1&lt;/NUMEROMOV&gt; &quot;;&#xd;
+    xml += &quot;        &lt;CODFILIAL&gt;1&lt;/CODFILIAL&gt;&quot;;&#xd;
+    xml += &quot;        &lt;CODLOC&gt;&quot; + CODLOC + &quot;&lt;/CODLOC&gt;&quot;;&#xd;
+    xml += &quot;        &lt;CODTMV&gt;1.1.93&lt;/CODTMV&gt;&quot;;&#xd;
+    xml += &quot;        &lt;TIPO&gt;A&lt;/TIPO&gt;&quot;;&#xd;
+    xml += &quot;        &lt;STATUS&gt;A&lt;/STATUS&gt;&quot;;&#xd;
+    xml += &quot;        &lt;DATAEMISSAO&gt;&quot; + getDateNow() + &quot;&lt;/DATAEMISSAO&gt;&quot;;&#xd;
+    xml += &quot;        &lt;DATASAIDA&gt;&quot; + getDateNow() + &quot;&lt;/DATASAIDA&gt;&quot;;&#xd;
+    xml += &quot;        &lt;CODMOEVALORLIQUIDO&gt;R$&lt;/CODMOEVALORLIQUIDO&gt;&quot;;&#xd;
+    xml += &quot;        &lt;INTEGRAAPLICACAO&gt;T&lt;/INTEGRAAPLICACAO&gt;&quot;;&#xd;
+    xml += &quot;        &lt;CODCOLIGADA1&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA1&gt;&quot;;&#xd;
+    xml += &quot;        &lt;CODCFO&gt;&quot; + CODCFO + &quot;&lt;/CODCFO&gt;&quot;;&#xd;
+    xml += &quot;        &lt;CODCFOAUX&gt;&quot; + CODCFO + &quot;&lt;/CODCFOAUX&gt;&quot;;&#xd;
+    xml += &quot;        &lt;CODCOLCFO&gt;&quot; + CODCOLCFO + &quot;&lt;/CODCOLCFO&gt;&quot;;&#xd;
+    xml += &quot;        &lt;CODCPG&gt;001&lt;/CODCPG&gt;&quot;;&#xd;
+    xml += &quot;    &lt;/TMOV&gt;&quot;;&#xd;
+&#xd;
+&#xd;
+&#xd;
+    var CODIGOPRD = CODCOLIGADA == 1 ?  PRODUTO.CODIGOPRD_COLIGADA1: PRODUTO.CODIGOPRD;&#xd;
+    var DESCPRODUTO = PRODUTO.DESCPRD;&#xd;
+    var IDPRD = buscaIdDoProduto(CODCOLIGADA, CODIGOPRD)[0].IDPRD;&#xd;
+&#xd;
+    // var DESCITEM = item.DescricaoItem;&#xd;
+    var QUANTIDADE = 1;&#xd;
+    var VALORUNIT = moneyToFloat(hAPI.getCardValue(&quot;valorObraDestino&quot;)).toString().replace(&quot;.&quot;, &quot;,&quot;);&#xd;
+    var CODUND = &quot;UN&quot;;&#xd;
+&#xd;
+    xml += &quot;&lt;TITMMOV&gt;&quot;;&#xd;
+    xml += &quot;    &lt;CODCOLIGADA&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA&gt;&quot;;&#xd;
+    xml += &quot;    &lt;IDMOV&gt;-1&lt;/IDMOV&gt;&quot;;&#xd;
+    xml += &quot;    &lt;CODLOC&gt;&quot; + CODLOC + &quot;&lt;/CODLOC&gt;&quot;;&#xd;
+    xml += &quot;    &lt;NSEQITMMOV&gt;1&lt;/NSEQITMMOV&gt;&quot;;&#xd;
+    xml += &quot;    &lt;NUMEROSEQUENCIAL&gt;1&lt;/NUMEROSEQUENCIAL&gt;&quot;;&#xd;
+    xml += &quot;    &lt;IDPRD&gt;&quot; + IDPRD + &quot;&lt;/IDPRD&gt;&quot;;&#xd;
+    xml += &quot;    &lt;CODIGOPRD&gt;&quot; + CODIGOPRD + &quot;&lt;/CODIGOPRD&gt;&quot;;&#xd;
+    xml += &quot;    &lt;NOMEFANTASIA&gt;&quot; + DESCPRODUTO + &quot;&lt;/NOMEFANTASIA&gt;&quot;;&#xd;
+    xml += &quot;    &lt;QUANTIDADE&gt;&quot; + QUANTIDADE + &quot;&lt;/QUANTIDADE&gt;&quot;;&#xd;
+    xml += &quot;    &lt;PRECOUNITARIO&gt;&quot; + VALORUNIT + &quot;&lt;/PRECOUNITARIO&gt;&quot;;&#xd;
+    xml += &quot;    &lt;CODUND&gt;&quot; + CODUND + &quot;&lt;/CODUND&gt;&quot;;&#xd;
+    xml += &quot;    &lt;VALORUNITARIO&gt;&quot; + VALORUNIT + &quot;&lt;/VALORUNITARIO&gt;&quot;;&#xd;
+    // xml += &quot;    &lt;HISTORICOCURTO&gt;&quot; + DESCITEM + &quot;&lt;/HISTORICOCURTO&gt;&quot;;&#xd;
+    xml += &quot;    &lt;INTEGRAAPLICACAO&gt;T&lt;/INTEGRAAPLICACAO&gt;&quot;;&#xd;
+    xml += &quot;    &lt;IDMOVHST&gt;-1&lt;/IDMOVHST&gt;&quot;;&#xd;
+    xml += &quot;    &lt;CODCOLIGADA1&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA1&gt;&quot;;&#xd;
+    xml += &quot;    &lt;NSEQITMMOV1&gt;1&lt;/NSEQITMMOV1&gt;&quot;;&#xd;
+    xml += &quot;&lt;/TITMMOV&gt;&quot;&#xd;
+&#xd;
+&#xd;
+    xml += &quot;&lt;TITMMOVRATCCU&gt;&quot;;&#xd;
+    xml += &quot;    &lt;CODCOLIGADA&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA&gt;&quot;;&#xd;
+    xml += &quot;    &lt;IDMOV&gt;-1&lt;/IDMOV&gt;&quot;;&#xd;
+    xml += &quot;    &lt;NSEQITMMOV&gt;1&lt;/NSEQITMMOV&gt;&quot;;&#xd;
+    xml += &quot;    &lt;CODCCUSTO&gt;&quot; + CODCCUSTO + &quot;&lt;/CODCCUSTO&gt;&quot;;&#xd;
+    xml += &quot;    &lt;PERCENTUAL&gt;100&lt;/PERCENTUAL&gt;&quot;;&#xd;
+    xml += &quot;    &lt;IDMOVRATCCU&gt;-1&lt;/IDMOVRATCCU&gt;&quot;;&#xd;
+    xml += &quot;&lt;/TITMMOVRATCCU&gt;&quot;;&#xd;
+&#xd;
+&#xd;
+    xml += &quot;&lt;TITMMOVRATDEP&gt;&quot;;&#xd;
+    xml += &quot;    &lt;CODCOLIGADA&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA&gt;&quot;;&#xd;
+    xml += &quot;    &lt;IDMOV&gt;-1&lt;/IDMOV&gt;&quot;;&#xd;
+    xml += &quot;    &lt;NSEQITMMOV&gt;1&lt;/NSEQITMMOV&gt;&quot;;&#xd;
+    xml += &quot;    &lt;CODFILIAL&gt;1&lt;/CODFILIAL&gt;&quot;;&#xd;
+    xml += &quot;    &lt;CODDEPARTAMENTO&gt;&quot; + CODDEPTO + &quot;&lt;/CODDEPARTAMENTO&gt;&quot;;&#xd;
+    xml += &quot;    &lt;PERCENTUAL&gt;100&lt;/PERCENTUAL&gt;&quot;;&#xd;
+    xml += &quot;&lt;/TITMMOVRATDEP&gt;&quot;;&#xd;
+&#xd;
+&#xd;
+    xml += &quot;&lt;TMOVCOMPL&gt;&quot;;&#xd;
+    xml += &quot;    &lt;CODCOLIGADA&gt;&quot; + CODCOLIGADA + &quot;&lt;/CODCOLIGADA&gt; &quot;;&#xd;
+    xml += &quot;    &lt;IDMOV&gt;-1&lt;/IDMOV&gt;&quot;;&#xd;
+    xml += &quot;    &lt;FLUIG&gt;&quot; + URLFluig + &quot;&lt;/FLUIG&gt;&quot;;&#xd;
+    xml += &quot;&lt;/TMOVCOMPL&gt;&quot;;&#xd;
+    xml += &quot;&lt;/MovMovimento&gt; &quot;;&#xd;
+&#xd;
+    xml = xml.split(&quot;&amp;&quot;).join(&quot;&amp;amp;&quot;);&#xd;
+    log.info(&quot;Transferencia de custo XML: &quot; + xml);&#xd;
+&#xd;
+    return xml;&#xd;
+}&#xd;
+&#xd;
+function buscaCodigoFornecedor(CODCOLIGADA, CGCCFO) {&#xd;
+    var FCFO = DatasetFactory.getDataset(&quot;FCFO&quot;, null, [&#xd;
+        DatasetFactory.createConstraint(&quot;CODCOLIGADA&quot;, CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST),&#xd;
+        DatasetFactory.createConstraint(&quot;CGCCFO&quot;, CGCCFO, CGCCFO, ConstraintType.MUST),&#xd;
+    ], null);&#xd;
+    if (FCFO.values.length &gt; 0) {&#xd;
+        return [CODCOLIGADA, FCFO.getValue(0, &quot;CODCFO&quot;)];&#xd;
+    }&#xd;
+&#xd;
+    var FCFO = DatasetFactory.getDataset(&quot;FCFO&quot;, null, [&#xd;
+        DatasetFactory.createConstraint(&quot;CODCOLIGADA&quot;, 0, 0, ConstraintType.MUST),&#xd;
+        DatasetFactory.createConstraint(&quot;CGCCFO&quot;, CGCCFO, CGCCFO, ConstraintType.MUST),&#xd;
+    ], null);&#xd;
+    if (FCFO.values.length &gt; 0) {&#xd;
+        return [0, FCFO.getValue(0, &quot;CODCFO&quot;)];&#xd;
+    }&#xd;
+}&#xd;
+function buscaCNPJDaColigada(CODCOLIGADA) {&#xd;
+    var ds = DatasetFactory.getDataset(&quot;Coligadas&quot;, null, [&#xd;
+        DatasetFactory.createConstraint(&quot;CODCOLIGADA&quot;, CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST)&#xd;
+    ], null);&#xd;
+    return ds.getValue(0, &quot;CGC&quot;);&#xd;
+}&#xd;
+&#xd;
+function ImportaMovimento(CODCOLIGADA, xml) {&#xd;
+    var ds = DatasetFactory.getDataset(&quot;ImportaMovRM&quot;, null, [&#xd;
+        DatasetFactory.createConstraint(&quot;xmlMov&quot;, xml, xml, ConstraintType.MUST),&#xd;
+        DatasetFactory.createConstraint(&quot;codColigada&quot;, CODCOLIGADA, CODCOLIGADA, ConstraintType.MUST)&#xd;
+    ], null);&#xd;
+&#xd;
+    if (!ds || ds == &quot;&quot; || ds == null) {&#xd;
+        return [false, &quot;Houve um erro na comunicação com o webservice. Tente novamente!&quot;];&#xd;
+    }&#xd;
+    else {&#xd;
+        if (ds.values[0][0] == &quot;false&quot;) {&#xd;
+            throw &quot;Erro ao gerar movimento. Favor entrar em contato com o administrador do sistema. Mensagem: &quot; + ds.values[0][1];&#xd;
+        }&#xd;
+        else if (ds.values[0][0] == &quot;true&quot;) {&#xd;
+            return ds.values[0][2];&#xd;
+        }&#xd;
+    }&#xd;
+}&#xd;
+&#xd;
+&#xd;
+function atualizaStatusTransferencia(STATUS, IDMOV_ORIGEM, IDMOV_DESTINO) {&#xd;
+    try {&#xd;
+        var id = hAPI.getCardValue(&quot;ID_TRANSFERENCIAS_DE_CUSTO&quot;);&#xd;
+&#xd;
+        if (STATUS == STATUS_TRANSFENCIA.APROVADO) {&#xd;
+            var date = getDateNow();&#xd;
+&#xd;
+            var query =&#xd;
+                &quot;UPDATE TRANSFERENCIAS_DE_CUSTO SET &quot; +&#xd;
+                &quot;   STATUS = ?, &quot; + //1&#xd;
+                &quot;   DATA_COMPETENCIA = ?, &quot; + //2&#xd;
+                &quot;   IDMOV_ORIGEM = ?, &quot; + //3&#xd;
+                &quot;   IDMOV_DESTINO = ? &quot; + //4&#xd;
+                &quot;WHERE ID = ?&quot;; //5&#xd;
+&#xd;
+            executeUpdateSemResult(query, [&#xd;
+                { type: &quot;int&quot;, value: STATUS }, //1&#xd;
+                { type: &quot;varchar&quot;, value: date }, //2&#xd;
+                { type: &quot;int&quot;, value: IDMOV_ORIGEM }, //3&#xd;
+                { type: &quot;int&quot;, value: IDMOV_DESTINO }, //4&#xd;
+                { type: &quot;int&quot;, value: id }, //5&#xd;
+            ]);&#xd;
+        }else{&#xd;
+             var query =&#xd;
+                &quot;UPDATE TRANSFERENCIAS_DE_CUSTO SET &quot; +&#xd;
+                &quot;   STATUS = ? &quot; + //1&#xd;
+                &quot;WHERE ID = ?&quot;; //2&#xd;
+&#xd;
+            executeUpdateSemResult(query, [&#xd;
+                { type: &quot;int&quot;, value: STATUS }, //1&#xd;
+                { type: &quot;int&quot;, value: id }, //5&#xd;
+            ]);&#xd;
+        }&#xd;
+    } catch (error) {&#xd;
+        throw error;&#xd;
+    }&#xd;
+}&#xd;
+&#xd;
+&#xd;
+// Notificacao&#xd;
+function EnviaEmailTransferenciaEntreColigadas(emails) {&#xd;
+    var CorpoEmail = &quot;&quot;;&#xd;
+    CorpoEmail += &quot;Olá, &lt;br&gt;&quot;;&#xd;
+    CorpoEmail += &quot;Segue abaixo as informações das Transferência de &quot;+(hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? &quot;CUSTO&quot;:&quot;RECEITA&quot;)+&quot; entre Coligadas&lt;br&gt;&quot;;&#xd;
+    CorpoEmail += &quot;&lt;br&gt;&quot;;&#xd;
+    CorpoEmail += &quot;&lt;h4&gt;OBRA ORIGEM&lt;/h4&gt;&quot;;&#xd;
+    CorpoEmail += &quot;&lt;b&gt;Coligada: &lt;/b&gt;&lt;span&gt;&quot; + hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[0] + &quot;&lt;/span&gt;&lt;br&gt;&quot;;&#xd;
+    CorpoEmail += &quot;&lt;b&gt;Centro de Custo: &lt;/b&gt;&lt;span&gt;&quot; + hAPI.getCardValue(&quot;ccustoObraOrigem&quot;) + &quot;&lt;/span&gt;&lt;br&gt;&quot;;&#xd;
+    CorpoEmail += &quot;&lt;br&gt;&quot;;&#xd;
+    CorpoEmail += &quot;&lt;h4&gt;OBRA DESTINO&lt;/h4&gt;&quot;;&#xd;
+    CorpoEmail += &quot;&lt;b&gt;Coligada: &lt;/b&gt;&lt;span&gt;&quot; + hAPI.getCardValue(&quot;ccustoObraDestino&quot;).split(&quot; - &quot;)[0] + &quot;&lt;/span&gt;&lt;br&gt;&quot;;&#xd;
+    CorpoEmail += &quot;&lt;b&gt;Centro de Custo: &lt;/b&gt;&lt;span&gt;&quot; + hAPI.getCardValue(&quot;ccustoObraDestino&quot;) + &quot;&lt;/span&gt;&lt;br&gt;&quot;;&#xd;
+    CorpoEmail += &quot;&lt;br&gt;&quot;;&#xd;
+    CorpoEmail += &quot;&lt;b&gt;Valor: &lt;/b&gt;&lt;span&gt;&quot; + FormataValorParaMoeda(parseFloat(hAPI.getCardValue(&quot;valorTotal&quot;))) + &quot;&lt;/span&gt;&lt;br&gt;&quot;;&#xd;
+    CorpoEmail += &quot;&lt;b&gt;Data Competência: &lt;/b&gt;&lt;span&gt;&quot; + getDateNow().split(&quot;-&quot;).reverse().join(&quot;/&quot;) + &quot;&lt;/span&gt;&lt;br&gt;&quot;;&#xd;
+    CorpoEmail += &quot;&lt;br&gt;&quot;;&#xd;
+    CorpoEmail += &quot;Para mais informações, &lt;a href=&apos;http://fluig.castilho.com.br:1010/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=&quot; + getValue(&quot;WKNumProces&quot;) + &quot;&apos;&gt;clique aqui&lt;/a&gt;.&quot;;&#xd;
+&#xd;
+    var url = &apos;http://fluig.castilho.com.br:1010&apos;;//Prod&#xd;
+    // var url = &apos;http://homologacao.castilho.com.br:2020&apos;;//Homolog&#xd;
+&#xd;
+    var data = {&#xd;
+        &quot;to&quot;: emails,&#xd;
+        from: &quot;fluig@construtoracastilho.com.br&quot;, //Prod&#xd;
+        &quot;subject&quot;: &quot;Transferência de &quot;+(hAPI.getCardValue(&quot;TRANSFERE_CUSTO&quot;) == &quot;true&quot; ? &quot;CUSTO&quot;:&quot;RECEITA&quot;)+&quot; entre Coligadas - #&quot; + getValue(&quot;WKNumProces&quot;), //   subject&#xd;
+        &quot;templateId&quot;: &quot;TPL_PADRAO_CASTILHO&quot;, // Email template Id previously registered&#xd;
+        &quot;dialectId&quot;: &quot;pt_BR&quot;, //Email dialect , if not informed receives pt_BR , email dialect (&quot;pt_BR&quot;, &quot;en_US&quot;, &quot;es&quot;)&#xd;
+        &quot;param&quot;: {&#xd;
+            &quot;CORPO_EMAIL&quot;: CorpoEmail,&#xd;
+            &quot;SERVER_URL&quot;: url,&#xd;
+            &quot;TENANT_ID&quot;: &quot;1&quot;&#xd;
+        }&#xd;
+    };&#xd;
+&#xd;
+&#xd;
+    var clientService = fluigAPI.getAuthorizeClientService();&#xd;
+    var data = {&#xd;
+        companyId: getValue(&quot;WKCompany&quot;) + &apos;&apos;,&#xd;
+        serviceCode: &apos;ServicoFluig&apos;,&#xd;
+        endpoint: &apos;/api/public/alert/customEmailSender&apos;,&#xd;
+        method: &apos;post&apos;,&#xd;
+        params: data,&#xd;
+        options: {&#xd;
+            encoding: &apos;UTF-8&apos;,&#xd;
+            mediaType: &apos;application/json&apos;,&#xd;
+            useSSL: true&#xd;
+        },&#xd;
+        headers: {&#xd;
+            &quot;Content-Type&quot;: &apos;application/json;charset=UTF-8&apos;&#xd;
+        }&#xd;
+    };&#xd;
+&#xd;
+&#xd;
+    var vo = clientService.invoke(JSON.stringify(data));&#xd;
+&#xd;
+    if (vo.getResult() == null || vo.getResult().isEmpty()) {&#xd;
+        throw new Exception(&quot;Retorno está vazio&quot;);&#xd;
+    } else {&#xd;
+        return vo.getResult();&#xd;
+    }&#xd;
+}&#xd;
+function notificaConclusaoPorWhatsApp(){&#xd;
+    var mensagem = &quot;&quot;;&#xd;
+        mensagem += &quot;Sua Solicitação de *Transferência de Custo* foi *Concluída*!&quot;;&#xd;
+        mensagem += &quot;\n\n&quot;;&#xd;
+        mensagem += &quot;*Obra Origem*\n&quot;;&#xd;
+        mensagem += hAPI.getCardValue(&quot;ccustoObraOrigem&quot;);&#xd;
+        mensagem += &quot;\n\n&quot;;&#xd;
+        mensagem += &quot;*Obra Destino*\n&quot;;&#xd;
+        mensagem += hAPI.getCardValue(&quot;ccustoObraDestino&quot;);&#xd;
+        mensagem += &quot;\n\n&quot;;&#xd;
+        mensagem += &quot;*Valor: * &quot; + hAPI.getCardValue(&quot;valorObraOrigem&quot;) + &quot;\n&quot;;&#xd;
+        mensagem += &quot;\n\n&quot;;&#xd;
+        mensagem += &quot;*Transferências*\n&quot;;&#xd;
+&#xd;
+        var indices = hAPI.getChildrenIndexes(&quot;tableTransferencias&quot;);&#xd;
+&#xd;
+        for (var i = 0; i &lt; indices.length; i++) {&#xd;
+            var id = indices[i];&#xd;
+&#xd;
+            var tipo = hAPI.getCardValue(&quot;motivoTransferencia&quot; + &quot;___&quot; + id);&#xd;
+            var motivo = hAPI.getCardValue(&quot;textMotivoTransferencia&quot; + &quot;___&quot; + id);&#xd;
+            var valor = moneyToFloat(hAPI.getCardValue(&quot;valorTotalTransferencia&quot; + &quot;___&quot; + id));&#xd;
+&#xd;
+            mensagem += &quot;*Tipo:* &quot; + tipo + &quot;\n&quot;;&#xd;
+            mensagem += &quot;*Valor:* &quot; + valor + &quot;\n&quot;;&#xd;
+            mensagem += &quot;*Motivo: *&quot; + motivo + &quot;\n&quot;;&#xd;
+    &#xd;
+            mensagem += &quot;\n&quot;;&#xd;
+        }&#xd;
+&#xd;
+        mensagem += &quot;Acesse o Fluig para mais informações.&quot;;&#xd;
+        sendNotifiWhatsApp(mensagem, hAPI.getCardValue(&quot;solicitante&quot;));&#xd;
+}&#xd;
+&#xd;
+// Utils&#xd;
+function getServerURL() {&#xd;
+    var ds = DatasetFactory.getDataset(&quot;dsGetServerURL&quot;, null, null, null);&#xd;
+    return ds.getValue(0, &quot;URL&quot;);&#xd;
+}&#xd;
+function executaQuery(query, constraints, dataSorce) {&#xd;
+    try {&#xd;
+        var dataSource = dataSorce;&#xd;
+        var ic = new javax.naming.InitialContext();&#xd;
+        var ds = ic.lookup(dataSource);&#xd;
+&#xd;
+        var conn = ds.getConnection();&#xd;
+        var stmt = conn.prepareStatement(query);&#xd;
+&#xd;
+        var counter = 1;&#xd;
+        for (var i = 0; i &lt; constraints.length; i++) {&#xd;
+            var val = constraints[i];&#xd;
+            if (val.type == &quot;int&quot;) {&#xd;
+                stmt.setInt(counter, val.value);&#xd;
+            }&#xd;
+            else if (val.type == &quot;float&quot;) {&#xd;
+                stmt.setFloat(counter, val.value);&#xd;
+            }&#xd;
+            else if (val.type == &quot;date&quot;) {&#xd;
+                stmt.setString(counter, val.value);&#xd;
+            }&#xd;
+            else if (val.type == &quot;datetime&quot;) {&#xd;
+                stmt.setString(counter, val.value);&#xd;
+            } else {&#xd;
+                stmt.setString(counter, val.value);&#xd;
+            }&#xd;
+            counter++;&#xd;
+        }&#xd;
+&#xd;
+        var rs = stmt.executeQuery();&#xd;
+        var columnCount = rs.getMetaData().getColumnCount();&#xd;
+        var retorno = [];&#xd;
+&#xd;
+        while (rs.next()) {&#xd;
+            var linha = {};&#xd;
+            for (var j = 1; j &lt; columnCount + 1; j++) {&#xd;
+                linha[rs.getMetaData().getColumnName(j)] = rs.getObject(rs.getMetaData().getColumnName(j)).toString() + &quot;&quot;;&#xd;
+            }&#xd;
+            retorno.push(linha);&#xd;
+        }&#xd;
+&#xd;
+        return retorno;&#xd;
+&#xd;
+    } catch (e) {&#xd;
+        log.error(&quot;ERRO==============&gt; &quot; + e.message);&#xd;
+        throw e;&#xd;
+    } finally {&#xd;
+        if (stmt != null) {&#xd;
+            stmt.close();&#xd;
+        }&#xd;
+        if (conn != null) {&#xd;
+            conn.close();&#xd;
+        }&#xd;
+    }&#xd;
+}&#xd;
+function executeUpdateSemResult(query, constraints) {&#xd;
+    var dataSource = &quot;/jdbc/CastilhoCustom&quot;;&#xd;
+    var ic = new javax.naming.InitialContext();&#xd;
+    var ds = ic.lookup(dataSource);&#xd;
+&#xd;
+    log.info(&quot;wfkTransferenciaDeCustoEntreObras.beforeTaskSave: executandoQuery&quot;);&#xd;
+    log.info(query);&#xd;
+    try {&#xd;
+        var conn = ds.getConnection();&#xd;
+        var stmt = conn.prepareStatement(query, Packages.java.sql.Statement.RETURN_GENERATED_KEYS);&#xd;
+&#xd;
+        var counter = 1;&#xd;
+        for (var i = 0; i &lt; constraints.length; i++) {&#xd;
+            var val = constraints[i];&#xd;
+            if (val.type == &quot;int&quot;) {&#xd;
+                stmt.setInt(counter, val.value);&#xd;
+            }&#xd;
+            else if (val.type == &quot;float&quot;) {&#xd;
+                stmt.setFloat(counter, val.value);&#xd;
+            }&#xd;
+            else if (val.type == &quot;date&quot;) {&#xd;
+                stmt.setString(counter, val.value);&#xd;
+            }&#xd;
+            else if (val.type == &quot;datetime&quot;) {&#xd;
+                stmt.setString(counter, val.value);&#xd;
+            } else {&#xd;
+                stmt.setString(counter, val.value);&#xd;
+            }&#xd;
+            counter++;&#xd;
+        }&#xd;
+&#xd;
+        log.info(&quot;wfkTransferenciaDeCustoEntreObras.beforeTaskSave: executandoQuery&quot;+constraints.length)&#xd;
+&#xd;
+       stmt.execute();&#xd;
+&#xd;
+&#xd;
+    } catch (e) {&#xd;
+        log.error(&quot;ERRO==============&gt; &quot; + e.message);&#xd;
+        throw e;&#xd;
+    } finally {&#xd;
+        if (stmt != null) {&#xd;
+            stmt.close();&#xd;
+        }&#xd;
+        if (conn != null) {&#xd;
+            conn.close();&#xd;
+        }&#xd;
+    }&#xd;
 }</eventDescription>
     </WorkflowProcessEvent>
     <WorkflowProcessEvent>
@@ -2312,6 +2365,7 @@ var STATUS_TRANSFENCIA = {&#xd;
     &quot;EM_APROVACAO&quot;: 1,&#xd;
     &quot;APROVADO&quot;: 2,&#xd;
     &quot;CANCELADO&quot;: 3,&#xd;
+    &quot;EXCLUIDO&quot;: 4,&#xd;
 }&#xd;
 &#xd;
 function beforeTaskSave(colleagueId, nextSequenceId, userList) {&#xd;
@@ -2357,6 +2411,8 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {&#xd;
         if (decisao == &quot;Reprovado&quot;) {&#xd;
             hAPI.setCardValue(&quot;aprovadoObraOrigem&quot;, &quot;Reprovado&quot;);&#xd;
             hAPI.setCardValue(&quot;aprovadoObraDestino&quot;, &quot;Reprovado&quot;);&#xd;
+&#xd;
+            notificaReprovacaoPorWhatsApp();&#xd;
         }&#xd;
 &#xd;
         // Se NÂO Reprovado Automaticamente, insere o Historio na Tabela&#xd;
@@ -2415,38 +2471,49 @@ function insereNovoRegistro() {&#xd;
     var numProces = getValue(&quot;WKNumProces&quot;);&#xd;
     var CODCOLIGADA_ORIGEM = hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[0];&#xd;
     var CCUSTO_ORIGEM = hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[1];&#xd;
+    var CODDEPTO_ORIGEM = hAPI.getCardValue(&quot;departamentoObraOrigem&quot;).split(&quot; - &quot;)[0];&#xd;
+    if (CODDEPTO_ORIGEM == &quot;&quot;) {&#xd;
+        CODDEPTO_ORIGEM = &quot;1.3.01&quot;;&#xd;
+    }&#xd;
+&#xd;
     var CODCOLIGADA_DESTINO = hAPI.getCardValue(&quot;ccustoObraDestino&quot;).split(&quot; - &quot;)[0];&#xd;
     var CCUSTO_DESTINO = hAPI.getCardValue(&quot;ccustoObraDestino&quot;).split(&quot; - &quot;)[1];&#xd;
-    var SOLICITANTE = hAPI.getCardValue(&quot;solicitante&quot;);&#xd;
-&#xd;
-    var VALOR = moneyToFloat(hAPI.getCardValue(&quot;valorObraDestino&quot;));&#xd;
-&#xd;
+    var CODDEPTO_DESTINO = hAPI.getCardValue(&quot;departamentoObraDestino&quot;).split(&quot; - &quot;)[0];&#xd;
+    if (CODDEPTO_DESTINO == &quot;&quot;) {&#xd;
+        CODDEPTO_DESTINO = &quot;1.3.01&quot;;&#xd;
+    }&#xd;
     &#xd;
+    var SOLICITANTE = hAPI.getCardValue(&quot;solicitante&quot;);&#xd;
+    var VALOR = moneyToFloat(hAPI.getCardValue(&quot;valorObraDestino&quot;));&#xd;
 &#xd;
     var query =&#xd;
         &quot;INSERT INTO TRANSFERENCIAS_DE_CUSTO (&quot; +&#xd;
-        &quot;   ID_SOLICITACAO, &quot; +&#xd;
-        &quot;   CODCOLIGADA_ORIGEM, &quot; +&#xd;
-        &quot;   CCUSTO_ORIGEM, &quot; +&#xd;
-        &quot;   CODCOLIGADA_DESTINO, &quot; +&#xd;
-        &quot;   CCUSTO_DESTINO, &quot; +&#xd;
-        &quot;   SOLICITANTE, &quot; +&#xd;
-        &quot;   VALOR, &quot; +&#xd;
+        &quot;   ID_SOLICITACAO, &quot; +//1&#xd;
+        &quot;   CODCOLIGADA_ORIGEM, &quot; +//2&#xd;
+        &quot;   CCUSTO_ORIGEM, &quot; +//3&#xd;
+        &quot;   DEPARTAMENTO_ORIGEM, &quot; +//4&#xd;
+        &quot;   CODCOLIGADA_DESTINO, &quot; +//5&#xd;
+        &quot;   CCUSTO_DESTINO, &quot; +//6&#xd;
+        &quot;   DEPARTAMENTO_DESTINO, &quot; +//7&#xd;
+        &quot;   SOLICITANTE, &quot; +//8&#xd;
+        &quot;   VALOR, &quot; +//9&#xd;
         &quot;   DATA_SOLICITACAO, &quot; +&#xd;
-        &quot;   STATUS)&quot; +&#xd;
+        &quot;   STATUS)&quot; +//10&#xd;
         &quot; OUTPUT Inserted.ID &quot;+&#xd;
         &quot; VALUES &quot; +&#xd;
-        &quot;(?,?,?,?,?,?,?,SYSDATETIME(),?)&quot;;&#xd;
+        &quot;(?,?,?,?,?,?,?,?,?,SYSDATETIME(),?)&quot;;&#xd;
 &#xd;
     return executeInsert(query, [&#xd;
-        { type: &quot;int&quot;, value: numProces },&#xd;
-        { type: &quot;int&quot;, value: CODCOLIGADA_ORIGEM },&#xd;
-        { type: &quot;varchar&quot;, value: CCUSTO_ORIGEM },&#xd;
-        { type: &quot;int&quot;, value: CODCOLIGADA_DESTINO },&#xd;
-        { type: &quot;varchar&quot;, value: CCUSTO_DESTINO },&#xd;
-        { type: &quot;varchar&quot;, value: SOLICITANTE },&#xd;
-        { type: &quot;float&quot;, value: VALOR },&#xd;
-        { type: &quot;int&quot;, value: STATUS_TRANSFENCIA.EM_APROVACAO },&#xd;
+        { type: &quot;int&quot;, value: numProces }, // 1&#xd;
+        { type: &quot;int&quot;, value: CODCOLIGADA_ORIGEM }, // 2&#xd;
+        { type: &quot;varchar&quot;, value: CCUSTO_ORIGEM }, // 3&#xd;
+        { type: &quot;varchar&quot;, value: CODDEPTO_ORIGEM }, // 4&#xd;
+        { type: &quot;int&quot;, value: CODCOLIGADA_DESTINO }, // 5&#xd;
+        { type: &quot;varchar&quot;, value: CCUSTO_DESTINO }, // 6&#xd;
+        { type: &quot;varchar&quot;, value: CODDEPTO_DESTINO }, // 7&#xd;
+        { type: &quot;varchar&quot;, value: SOLICITANTE }, // 8&#xd;
+        { type: &quot;float&quot;, value: VALOR }, // 9&#xd;
+        { type: &quot;int&quot;, value: STATUS_TRANSFENCIA.EM_APROVACAO }, // 10&#xd;
     ]);&#xd;
 }&#xd;
 function atualizaTransferencia() {&#xd;
@@ -2588,6 +2655,39 @@ function insereHistorico(ID_PAI) {&#xd;
         { type: &quot;varchar&quot;, value: observacao },&#xd;
         { type: &quot;varchar&quot;, value: movimentacao },&#xd;
     ]);&#xd;
+}&#xd;
+&#xd;
+&#xd;
+//Notifica&#xd;
+function notificaReprovacaoPorWhatsApp() {&#xd;
+    var mensagem = &quot;&quot;;&#xd;
+    mensagem += &quot;Sua Solicitação de *Transferência de Custo* foi *Reprovada*!&quot;;&#xd;
+    mensagem += &quot;\n\n&quot;;&#xd;
+    mensagem += &quot;*Obra Origem*\n&quot;;&#xd;
+    mensagem += hAPI.getCardValue(&quot;ccustoObraOrigem&quot;);&#xd;
+    mensagem += &quot;\n\n&quot;;&#xd;
+    mensagem += &quot;*Obra Destino*\n&quot;;&#xd;
+    mensagem += hAPI.getCardValue(&quot;ccustoObraDestino&quot;);&#xd;
+    mensagem += &quot;\n\n&quot;;&#xd;
+    mensagem += &quot;*Valor*: &quot; + hAPI.getCardValue(&quot;valorObraOrigem&quot;) + &quot;\n&quot;;&#xd;
+    mensagem += &quot;\n\n&quot;;&#xd;
+&#xd;
+    mensagem += &quot;*Aprovador*: &quot; + hAPI.getCardValue(&quot;userCode&quot;) + &quot;\n&quot;;&#xd;
+    mensagem += &quot;*Justificativa*: &quot; + hAPI.getCardValue(&quot;textObservacao&quot;) + &quot;\n&quot;;&#xd;
+&#xd;
+    mensagem += &quot;\n&quot;;&#xd;
+    mensagem += &quot;Acesse o Fluig para mais informações.&quot;;&#xd;
+    sendNotifiWhatsApp(mensagem, hAPI.getCardValue(&quot;solicitante&quot;));&#xd;
+}&#xd;
+function sendNotifiWhatsApp(mensagem, user){&#xd;
+    var ds = DatasetFactory.getDataset(&quot;dsEnviaMensagemWhatsApp&quot;, null,[&#xd;
+        DatasetFactory.createConstraint(&quot;message&quot;, mensagem, mensagem, ConstraintType.MUST),&#xd;
+        DatasetFactory.createConstraint(&quot;user&quot;,user, user, ConstraintType.MUST),&#xd;
+    ],null);&#xd;
+&#xd;
+    // if (ds.getValue(0,&quot;STATUS&quot;) != &quot;success&quot;) {&#xd;
+    //     log.error(&quot;whatsApp API: &quot; + ds.getValue(0,&quot;MENSAGEM&quot;));&#xd;
+    // }&#xd;
 }&#xd;
 &#xd;
 // Utils&#xd;
@@ -2765,112 +2865,106 @@ function FormataValorParaMoeda(valor) {&#xd;
         <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
       </workflowProcessEventPK>
-      <eventDescription>// Define Aprovador Obra Origem
-function servicetask10(attempt, message) {
-    var decisao = hAPI.getCardValue(&quot;decisao&quot;);
-    if (decisao==&quot;&quot;) {
-        // Se Decisao == &quot;&quot;, significar que o Processo foi iniciado e Define o Primeiro Aprovador
-        defineProximoAprovador();
-        hAPI.setCardValue(&quot;decisaoAprovadorObraOrigem&quot;, &quot;Aprovação&quot;);
-        return true;
-    }
-
-    if (decisao == &quot;Aprovado&quot;) {
-        marcaAprovacaoDoAprovador();
-        verificaSeAprovadorTambemAprovaPelaDestino();
-
-        var aprovadoTotalmente = verificaSeTotalmenteAprovado();
-        if (aprovadoTotalmente) {
-            hAPI.setCardValue(&quot;decisaoAprovadorObraOrigem&quot;, &quot;Aprovado&quot;);
-            return true;
-        }
-        else{
-            defineProximoAprovador();
-            hAPI.setCardValue(&quot;decisaoAprovadorObraOrigem&quot;, &quot;Aprovação&quot;);
-            return true;
-        }
-    }
-
-    if (decisao == &quot;Reprovado&quot; || decisao == &quot;Reprovado Automaticamente&quot;) {
-        hAPI.setCardValue(&quot;decisaoAprovadorObraOrigem&quot;, &quot;Reprovado&quot;);
-        return true;
-    }
-}
-
-function defineProximoAprovador() {
-    var valorTotalTransferencia = hAPI.getCardValue(&quot;valorTotal&quot;);
-
-    var aprovadoEngenheiroObraOrigem = hAPI.getCardValue(&quot;aprovadoEngenheiroObraOrigem&quot;);
-    var aprovadoCoordenadorObraOrigem = hAPI.getCardValue(&quot;aprovadoCoordenadorObraOrigem&quot;);
-    var aprovadoDiretorObraOrigem = hAPI.getCardValue(&quot;aprovadoDiretorObraOrigem&quot;);
-
-    if (aprovadoEngenheiroObraOrigem != &quot;true&quot;) {
-        var engenheiroObraOrigem = hAPI.getCardValue(&quot;engenheiroObraOrigem&quot;);
-        hAPI.setCardValue(&quot;usuarioAprovadorOrigem&quot;, engenheiroObraOrigem);
-    }
-    else if (aprovadoCoordenadorObraOrigem != &quot;true&quot;) {
-        var coordenadorObraOrigem = hAPI.getCardValue(&quot;coordenadorObraOrigem&quot;);
-        hAPI.setCardValue(&quot;usuarioAprovadorOrigem&quot;, coordenadorObraOrigem);
-    }
-    else if (valorTotalTransferencia &gt; 250000 &amp;&amp; aprovadoDiretorObraOrigem != &quot;true&quot;) {
-        var diretorObraOrigem = hAPI.getCardValue(&quot;diretorObraOrigem&quot;);
-        hAPI.setCardValue(&quot;usuarioAprovadorOrigem&quot;, diretorObraOrigem);
-    } 
-    else {
-        hAPI.setCardValue(&quot;aprovadoObraOrigem&quot;, &quot;true&quot;);
-        hAPI.setCardValue(&quot;usuarioAprovadorOrigem&quot;, &quot;&quot;);
-    }
-
-    return hAPI.getCardValue(&quot;usuarioAprovadorOrigem&quot;);
-}
-function marcaAprovacaoDoAprovador() {
-    var aprovador = hAPI.getCardValue(&quot;usuarioAprovadorOrigem&quot;);
-
-    var engenheiroObraOrigem = hAPI.getCardValue(&quot;engenheiroObraOrigem&quot;);
-    var coordenadorObraOrigem = hAPI.getCardValue(&quot;coordenadorObraOrigem&quot;);
-    var diretorObraOrigem = hAPI.getCardValue(&quot;diretorObraOrigem&quot;);
-
-    if (aprovador == engenheiroObraOrigem) {
-        hAPI.setCardValue(&quot;aprovadoEngenheiroObraOrigem&quot;, &quot;true&quot;);
-    }
-    if (aprovador == coordenadorObraOrigem) {
-        hAPI.setCardValue(&quot;aprovadoCoordenadorObraOrigem&quot;, &quot;true&quot;);
-    }
-    if (aprovador == diretorObraOrigem) {
-        hAPI.setCardValue(&quot;aprovadoDiretorObraOrigem&quot;, &quot;true&quot;);
-    }
-}
-function verificaSeAprovadorTambemAprovaPelaDestino() {
-    var aprovador = hAPI.getCardValue(&quot;usuarioAprovadorOrigem&quot;);
-
-    var engenheiroObraDestino = hAPI.getCardValue(&quot;engenheiroObraDestino&quot;);
-    var coordenadorObrDestino = hAPI.getCardValue(&quot;coordenadorObraDestino&quot;);
-    var diretorObraOriDestino = hAPI.getCardValue(&quot;diretorObraDestino&quot;);
-
-    if (aprovador == engenheiroObraDestino) {
-        hAPI.setCardValue(&quot;aprovadoEngenheiroObraDestino&quot;, &quot;true&quot;);
-    }
-    else if (aprovador == coordenadorObrDestino) {
-        hAPI.setCardValue(&quot;aprovadoCoordenadorObraDestino&quot;, &quot;true&quot;);
-    }
-    else if (aprovador == diretorObraOriDestino) {
-        hAPI.setCardValue(&quot;aprovadoDiretorObraDestino&quot;, &quot;true&quot;);
-    }
-}
-function verificaSeTotalmenteAprovado(){
-    var valorTotalTransferencia = parseFloat(hAPI.getCardValue(&quot;valorTotal&quot;));
-
-    var aprovadoEngenheiroObraOrigem = hAPI.getCardValue(&quot;aprovadoEngenheiroObraOrigem&quot;);
-    var aprovadoCoordenadorObraOrigem = hAPI.getCardValue(&quot;aprovadoCoordenadorObraOrigem&quot;);
-    var aprovadoDiretorObraOrigem = hAPI.getCardValue(&quot;aprovadoDiretorObraOrigem&quot;);
-
-    if (aprovadoEngenheiroObraOrigem == &quot;true&quot; &amp;&amp; aprovadoCoordenadorObraOrigem == &quot;true&quot;) {
-        if (aprovadoDiretorObraOrigem == &quot;true&quot; || valorTotalTransferencia &lt; 250000) {
-            return true;
-        }
-    }
-
-    return false;
+      <eventDescription>// Define Aprovador Obra Origem&#xd;
+function servicetask10(attempt, message) {&#xd;
+    var decisao = hAPI.getCardValue(&quot;decisao&quot;);&#xd;
+    if (decisao==&quot;&quot;) {&#xd;
+        // Se Decisao == &quot;&quot;, significar que o Processo foi iniciado e Define o Primeiro Aprovador&#xd;
+        defineProximoAprovador();&#xd;
+        hAPI.setCardValue(&quot;decisaoAprovadorObraOrigem&quot;, &quot;Aprovação&quot;);&#xd;
+        return true;&#xd;
+    }&#xd;
+&#xd;
+    if (decisao == &quot;Aprovado&quot;) {&#xd;
+        marcaAprovacaoDoAprovador();&#xd;
+        verificaSeAprovadorTambemAprovaPelaDestino();&#xd;
+&#xd;
+        var aprovadoTotalmente = verificaSeTotalmenteAprovado();&#xd;
+        if (aprovadoTotalmente) {&#xd;
+            hAPI.setCardValue(&quot;decisaoAprovadorObraOrigem&quot;, &quot;Aprovado&quot;);&#xd;
+            return true;&#xd;
+        }&#xd;
+        else{&#xd;
+            defineProximoAprovador();&#xd;
+            hAPI.setCardValue(&quot;decisaoAprovadorObraOrigem&quot;, &quot;Aprovação&quot;);&#xd;
+            return true;&#xd;
+        }&#xd;
+    }&#xd;
+&#xd;
+    if (decisao == &quot;Reprovado&quot; || decisao == &quot;Reprovado Automaticamente&quot;) {&#xd;
+        hAPI.setCardValue(&quot;decisaoAprovadorObraOrigem&quot;, &quot;Reprovado&quot;);&#xd;
+        return true;&#xd;
+    }&#xd;
+}&#xd;
+&#xd;
+function defineProximoAprovador() {&#xd;
+    var aprovadoEngenheiroObraOrigem = hAPI.getCardValue(&quot;aprovadoEngenheiroObraOrigem&quot;);&#xd;
+    var aprovadoCoordenadorObraOrigem = hAPI.getCardValue(&quot;aprovadoCoordenadorObraOrigem&quot;);&#xd;
+    var aprovadoDiretorObraOrigem = hAPI.getCardValue(&quot;aprovadoDiretorObraOrigem&quot;);&#xd;
+&#xd;
+    if (aprovadoEngenheiroObraOrigem != &quot;true&quot; &amp;&amp; hAPI.getCardValue(&quot;engenheiroObraOrigem&quot;) != &quot;&quot;) {&#xd;
+        var engenheiroObraOrigem = hAPI.getCardValue(&quot;engenheiroObraOrigem&quot;);&#xd;
+        hAPI.setCardValue(&quot;usuarioAprovadorOrigem&quot;, engenheiroObraOrigem);&#xd;
+    }&#xd;
+    else if (aprovadoCoordenadorObraOrigem != &quot;true&quot;) {&#xd;
+        var coordenadorObraOrigem = hAPI.getCardValue(&quot;coordenadorObraOrigem&quot;);&#xd;
+        hAPI.setCardValue(&quot;usuarioAprovadorOrigem&quot;, coordenadorObraOrigem);&#xd;
+    }&#xd;
+    else if (aprovadoDiretorObraOrigem != &quot;true&quot;) {&#xd;
+        var diretorObraOrigem = hAPI.getCardValue(&quot;diretorObraOrigem&quot;);&#xd;
+        hAPI.setCardValue(&quot;usuarioAprovadorOrigem&quot;, diretorObraOrigem);&#xd;
+    } &#xd;
+    else {&#xd;
+        hAPI.setCardValue(&quot;aprovadoObraOrigem&quot;, &quot;true&quot;);&#xd;
+        hAPI.setCardValue(&quot;usuarioAprovadorOrigem&quot;, &quot;&quot;);&#xd;
+    }&#xd;
+&#xd;
+    return hAPI.getCardValue(&quot;usuarioAprovadorOrigem&quot;);&#xd;
+}&#xd;
+function marcaAprovacaoDoAprovador() {&#xd;
+    var aprovador = hAPI.getCardValue(&quot;usuarioAprovadorOrigem&quot;);&#xd;
+&#xd;
+    var engenheiroObraOrigem = hAPI.getCardValue(&quot;engenheiroObraOrigem&quot;);&#xd;
+    var coordenadorObraOrigem = hAPI.getCardValue(&quot;coordenadorObraOrigem&quot;);&#xd;
+    var diretorObraOrigem = hAPI.getCardValue(&quot;diretorObraOrigem&quot;);&#xd;
+&#xd;
+    if (aprovador == engenheiroObraOrigem) {&#xd;
+        hAPI.setCardValue(&quot;aprovadoEngenheiroObraOrigem&quot;, &quot;true&quot;);&#xd;
+    }&#xd;
+    if (aprovador == coordenadorObraOrigem) {&#xd;
+        hAPI.setCardValue(&quot;aprovadoCoordenadorObraOrigem&quot;, &quot;true&quot;);&#xd;
+    }&#xd;
+    if (aprovador == diretorObraOrigem) {&#xd;
+        hAPI.setCardValue(&quot;aprovadoDiretorObraOrigem&quot;, &quot;true&quot;);&#xd;
+    }&#xd;
+}&#xd;
+function verificaSeAprovadorTambemAprovaPelaDestino() {&#xd;
+    var aprovador = hAPI.getCardValue(&quot;usuarioAprovadorOrigem&quot;);&#xd;
+&#xd;
+    var engenheiroObraDestino = hAPI.getCardValue(&quot;engenheiroObraDestino&quot;);&#xd;
+    var coordenadorObrDestino = hAPI.getCardValue(&quot;coordenadorObraDestino&quot;);&#xd;
+    var diretorObraOriDestino = hAPI.getCardValue(&quot;diretorObraDestino&quot;);&#xd;
+&#xd;
+    if (aprovador == engenheiroObraDestino) {&#xd;
+        hAPI.setCardValue(&quot;aprovadoEngenheiroObraDestino&quot;, &quot;true&quot;);&#xd;
+    }&#xd;
+    else if (aprovador == coordenadorObrDestino) {&#xd;
+        hAPI.setCardValue(&quot;aprovadoCoordenadorObraDestino&quot;, &quot;true&quot;);&#xd;
+    }&#xd;
+    else if (aprovador == diretorObraOriDestino) {&#xd;
+        hAPI.setCardValue(&quot;aprovadoDiretorObraDestino&quot;, &quot;true&quot;);&#xd;
+    }&#xd;
+}&#xd;
+function verificaSeTotalmenteAprovado(){&#xd;
+    var aprovadoEngenheiroObraOrigem = hAPI.getCardValue(&quot;aprovadoEngenheiroObraOrigem&quot;);&#xd;
+    var aprovadoCoordenadorObraOrigem = hAPI.getCardValue(&quot;aprovadoCoordenadorObraOrigem&quot;);&#xd;
+    var aprovadoDiretorObraOrigem = hAPI.getCardValue(&quot;aprovadoDiretorObraOrigem&quot;);&#xd;
+&#xd;
+    if ((aprovadoEngenheiroObraOrigem == &quot;true&quot; || hAPI.getCardValue(&quot;engenheiroObraOrigem&quot;) == &quot;&quot;) &amp;&amp; aprovadoCoordenadorObraOrigem == &quot;true&quot; &amp;&amp; aprovadoDiretorObraOrigem == &quot;true&quot;) {        &#xd;
+        return true;&#xd;
+    }&#xd;
+&#xd;
+    return false;&#xd;
 }</eventDescription>
     </WorkflowProcessEvent>
     <WorkflowProcessEvent>
@@ -2880,109 +2974,106 @@ function verificaSeTotalmenteAprovado(){
         <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
       </workflowProcessEventPK>
-      <eventDescription>// Define Aprovador Obra Destino
-function servicetask9(attempt, message) {
-    var decisao = hAPI.getCardValue(&quot;decisao&quot;);
-    if (decisao==&quot;&quot;) {
-        // Se Decisao == &quot;&quot;, significar que o Processo foi iniciado e Define o Primeiro Aprovador
-        defineProximoAprovador();
-        hAPI.setCardValue(&quot;decisaoAprovadorObraDestino&quot;, &quot;Aprovação&quot;);
-        if (hAPI.getCardValue(&quot;usuarioAprovadorDestino&quot;) == &quot;&quot;) {
-            hAPI.setCardValue(&quot;usuarioAprovadorDestino&quot;, &quot;gabriel.persike&quot;);
-        }
-        return true;
-    }
-
-    if (decisao == &quot;Aprovado&quot;) {
-        marcaAprovacaoDoAprovador();
-        var aprovadoTotalmente = verificaSeTotalmenteAprovado();
-        if (aprovadoTotalmente) {
-            hAPI.setCardValue(&quot;decisaoAprovadorObraDestino&quot;, &quot;Aprovado&quot;);
-            return true;
-        }
-        else{
-            defineProximoAprovador();
-            hAPI.setCardValue(&quot;decisaoAprovadorObraDestino&quot;, &quot;Aprovação&quot;);
-            return true;
-        }
-    }
-
-    if (decisao == &quot;Reprovado&quot; || decisao == &quot;Reprovado Automaticamente&quot;) {
-        hAPI.setCardValue(&quot;decisaoAprovadorObraDestino&quot;, &quot;Reprovado&quot;);
-        return true;
-    }
-}
-
-function defineProximoAprovador(){
-    var valorTotalTransferencia = parseFloat(hAPI.getCardValue(&quot;valorTotal&quot;));
-
-    // Verifica quais níveis já aprovaram
-    var isAprovadoPeloEngenheiro = hAPI.getCardValue(&quot;aprovadoEngenheiroObraDestino&quot;) == &quot;true&quot;;
-    var isAprovadoCoordenador = hAPI.getCardValue(&quot;aprovadoCoordenadorObraDestino&quot;) == &quot;true&quot;;
-    var isAprovadoDiretor = hAPI.getCardValue(&quot;aprovadoDiretorObraDestino&quot;) == &quot;true&quot;;
-
-    // Verifica casos que o nível de Aprovação é o mesmo na Origem e Destino
-    var mesmoEngenheiroOrigemDestino = hAPI.getCardValue(&quot;engenheiroObraDestino&quot;) == hAPI.getCardValue(&quot;engenheiroObraOrigem&quot;);
-    var mesmoCoordenadorOrigemDestino = hAPI.getCardValue(&quot;coordenadorObraDestino&quot;) == hAPI.getCardValue(&quot;coordenadorObraOrigem&quot;);
-    var mesmoDiretorOrigemDestino = hAPI.getCardValue(&quot;diretorObraDestino&quot;) == hAPI.getCardValue(&quot;diretorObraOrigem&quot;);
-
-
-    // Caso o Aprovador também Aprova na Obra Origem, não defini ele como Aprovador na Destino para não ocorrer aprovações Duplicadas
-    if (!isAprovadoPeloEngenheiro &amp;&amp; !mesmoEngenheiroOrigemDestino) {
-        hAPI.setCardValue(&quot;usuarioAprovadorDestino&quot;, hAPI.getCardValue(&quot;engenheiroObraDestino&quot;));
-        return;
-    }
-    if (!isAprovadoCoordenador &amp;&amp; !mesmoCoordenadorOrigemDestino) {
-        hAPI.setCardValue(&quot;usuarioAprovadorDestino&quot;, hAPI.getCardValue(&quot;coordenadorObraDestino&quot;));
-        return;
-    }
-    if (valorTotalTransferencia &gt; 250000 &amp;&amp; !isAprovadoDiretor &amp;&amp; !mesmoDiretorOrigemDestino) {
-        hAPI.setCardValue(&quot;usuarioAprovadorDestino&quot;, hAPI.getCardValue(&quot;diretorObraDestino&quot;));
-        return;
-    }
-}
-function marcaAprovacaoDoAprovador() {
-    var aprovador = hAPI.getCardValue(&quot;usuarioAprovadorDestino&quot;);
-
-    var engenheiroObraDestino = hAPI.getCardValue(&quot;engenheiroObraDestino&quot;);
-    var coordenadorObraDestino = hAPI.getCardValue(&quot;coordenadorObraDestino&quot;);
-    var diretorObraDestino = hAPI.getCardValue(&quot;diretorObraDestino&quot;);
-
-    if (aprovador == engenheiroObraDestino) {
-        hAPI.setCardValue(&quot;aprovadoEngenheiroObraDestino&quot;,&quot;true&quot;);
-    }
-    if (aprovador == coordenadorObraDestino) {
-        hAPI.setCardValue(&quot;aprovadoCoordenadorObraDestino&quot;,&quot;true&quot;);
-    }
-    if (aprovador == diretorObraDestino) {
-        hAPI.setCardValue(&quot;aprovadoDiretorObraDestino&quot;,&quot;true&quot;);
-    }
-}
-function verificaSeTotalmenteAprovado(){
-    var valorTotalTransferencia = parseFloat(hAPI.getCardValue(&quot;valorTotal&quot;));
-
-    // Verifica casos que o nível de Aprovação é o mesmo na Origem e Destino
-    var mesmoEngenheiroOrigemDestino = hAPI.getCardValue(&quot;engenheiroObraDestino&quot;) == hAPI.getCardValue(&quot;engenheiroObraOrigem&quot;);
-    var mesmoCoordenadorOrigemDestino = hAPI.getCardValue(&quot;coordenadorObraDestino&quot;) == hAPI.getCardValue(&quot;coordenadorObraOrigem&quot;);
-    var mesmoDiretorOrigemDestino = hAPI.getCardValue(&quot;diretorObraDestino&quot;) == hAPI.getCardValue(&quot;diretorObraOrigem&quot;);
-
-    var isAprovadoEngenheiro = hAPI.getCardValue(&quot;aprovadoEngenheiroObraDestino&quot;) == &quot;true&quot;;
-    var isAprovadoCoordenador = hAPI.getCardValue(&quot;aprovadoCoordenadorObraDestino&quot;) == &quot;true&quot;;
-    var isAprovadoDiretor = hAPI.getCardValue(&quot;aprovadoDiretorObraDestino&quot;) == &quot;true&quot;;
-
-    log.info(&quot;verificaSeTotalmenteAprovado: Init&quot;);
-    log.info(&quot;verificaSeTotalmenteAprovado: &quot; + hAPI.getCardValue(&quot;aprovadoEngenheiroObraDestino&quot;));
-    log.info(&quot;verificaSeTotalmenteAprovado: &quot; + isAprovadoEngenheiro);
-
-    if ((isAprovadoEngenheiro || mesmoEngenheiroOrigemDestino) &amp;&amp; (isAprovadoCoordenador || mesmoCoordenadorOrigemDestino)) {
-        log.info(&quot;verificaSeTotalmenteAprovado: enge e coord aprovado&quot;);
-        if ((isAprovadoDiretor || mesmoDiretorOrigemDestino) || valorTotalTransferencia &lt; 250000) {
-            log.info(&quot;verificaSeTotalmenteAprovado: dir aprovado&quot;);
-            return true;
-        }
-    }
-
-    return false;
+      <eventDescription>// Define Aprovador Obra Destino&#xd;
+function servicetask9(attempt, message) {&#xd;
+    var decisao = hAPI.getCardValue(&quot;decisao&quot;);&#xd;
+    if (decisao==&quot;&quot;) {&#xd;
+        // Se Decisao == &quot;&quot;, significar que o Processo foi iniciado&#xd;
+&#xd;
+        //Verifica se os Aprovadores não são todos iguais entre Origem e Destino&#xd;
+        var isTodosAprovadoresIguaisOrigemDestino = verificaSeTotalmenteAprovado();&#xd;
+        if (isTodosAprovadoresIguaisOrigemDestino == true) {&#xd;
+            hAPI.setCardValue(&quot;decisaoAprovadorObraDestino&quot;, &quot;Aprovado&quot;);&#xd;
+            return true;&#xd;
+        }&#xd;
+&#xd;
+        // Define primeiro Aprovador&#xd;
+        defineProximoAprovador();&#xd;
+        hAPI.setCardValue(&quot;decisaoAprovadorObraDestino&quot;, &quot;Aprovação&quot;);&#xd;
+        if (hAPI.getCardValue(&quot;usuarioAprovadorDestino&quot;) == &quot;&quot;) {&#xd;
+            hAPI.setCardValue(&quot;usuarioAprovadorDestino&quot;, &quot;gabriel.persike&quot;);&#xd;
+        }&#xd;
+        return true;&#xd;
+    }&#xd;
+&#xd;
+    if (decisao == &quot;Aprovado&quot;) {&#xd;
+        marcaAprovacaoDoAprovador();&#xd;
+        var aprovadoTotalmente = verificaSeTotalmenteAprovado();&#xd;
+        if (aprovadoTotalmente) {&#xd;
+            hAPI.setCardValue(&quot;decisaoAprovadorObraDestino&quot;, &quot;Aprovado&quot;);&#xd;
+            return true;&#xd;
+        }&#xd;
+        else{&#xd;
+            defineProximoAprovador();&#xd;
+            hAPI.setCardValue(&quot;decisaoAprovadorObraDestino&quot;, &quot;Aprovação&quot;);&#xd;
+            return true;&#xd;
+        }&#xd;
+    }&#xd;
+&#xd;
+    if (decisao == &quot;Reprovado&quot; || decisao == &quot;Reprovado Automaticamente&quot;) {&#xd;
+        hAPI.setCardValue(&quot;decisaoAprovadorObraDestino&quot;, &quot;Reprovado&quot;);&#xd;
+        return true;&#xd;
+    }&#xd;
+}&#xd;
+&#xd;
+function defineProximoAprovador(){&#xd;
+    // Verifica quais níveis já aprovaram&#xd;
+    var isAprovadoPeloEngenheiro = hAPI.getCardValue(&quot;aprovadoEngenheiroObraDestino&quot;) == &quot;true&quot;;&#xd;
+    var isAprovadoCoordenador = hAPI.getCardValue(&quot;aprovadoCoordenadorObraDestino&quot;) == &quot;true&quot;;&#xd;
+    var isAprovadoDiretor = hAPI.getCardValue(&quot;aprovadoDiretorObraDestino&quot;) == &quot;true&quot;;&#xd;
+&#xd;
+    // Verifica casos que o nível de Aprovação é o mesmo na Origem e Destino&#xd;
+    var mesmoEngenheiroOrigemDestino = hAPI.getCardValue(&quot;engenheiroObraDestino&quot;) == hAPI.getCardValue(&quot;engenheiroObraOrigem&quot;);&#xd;
+    var mesmoCoordenadorOrigemDestino = hAPI.getCardValue(&quot;coordenadorObraDestino&quot;) == hAPI.getCardValue(&quot;coordenadorObraOrigem&quot;);&#xd;
+    var mesmoDiretorOrigemDestino = hAPI.getCardValue(&quot;diretorObraDestino&quot;) == hAPI.getCardValue(&quot;diretorObraOrigem&quot;);&#xd;
+&#xd;
+&#xd;
+    // Caso o Aprovador também Aprova na Obra Origem, não defini ele como Aprovador na Destino para não ocorrer aprovações Duplicadas&#xd;
+    if (!isAprovadoPeloEngenheiro &amp;&amp; !mesmoEngenheiroOrigemDestino &amp;&amp; hAPI.getCardValue(&quot;engenheiroObraDestino&quot;) != &quot;&quot;) {&#xd;
+        hAPI.setCardValue(&quot;usuarioAprovadorDestino&quot;, hAPI.getCardValue(&quot;engenheiroObraDestino&quot;));&#xd;
+        return;&#xd;
+    }&#xd;
+    if (!isAprovadoCoordenador &amp;&amp; !mesmoCoordenadorOrigemDestino) {&#xd;
+        hAPI.setCardValue(&quot;usuarioAprovadorDestino&quot;, hAPI.getCardValue(&quot;coordenadorObraDestino&quot;));&#xd;
+        return;&#xd;
+    }&#xd;
+    if (!isAprovadoDiretor &amp;&amp; !mesmoDiretorOrigemDestino) {&#xd;
+        hAPI.setCardValue(&quot;usuarioAprovadorDestino&quot;, hAPI.getCardValue(&quot;diretorObraDestino&quot;));&#xd;
+        return;&#xd;
+    }&#xd;
+}&#xd;
+function marcaAprovacaoDoAprovador() {&#xd;
+    var aprovador = hAPI.getCardValue(&quot;usuarioAprovadorDestino&quot;);&#xd;
+&#xd;
+    var engenheiroObraDestino = hAPI.getCardValue(&quot;engenheiroObraDestino&quot;);&#xd;
+    var coordenadorObraDestino = hAPI.getCardValue(&quot;coordenadorObraDestino&quot;);&#xd;
+    var diretorObraDestino = hAPI.getCardValue(&quot;diretorObraDestino&quot;);&#xd;
+&#xd;
+    if (aprovador == engenheiroObraDestino) {&#xd;
+        hAPI.setCardValue(&quot;aprovadoEngenheiroObraDestino&quot;,&quot;true&quot;);&#xd;
+    }&#xd;
+    if (aprovador == coordenadorObraDestino) {&#xd;
+        hAPI.setCardValue(&quot;aprovadoCoordenadorObraDestino&quot;,&quot;true&quot;);&#xd;
+    }&#xd;
+    if (aprovador == diretorObraDestino) {&#xd;
+        hAPI.setCardValue(&quot;aprovadoDiretorObraDestino&quot;,&quot;true&quot;);&#xd;
+    }&#xd;
+}&#xd;
+function verificaSeTotalmenteAprovado(){&#xd;
+    // Verifica casos que o nível de Aprovação é o mesmo na Origem e Destino&#xd;
+    var mesmoEngenheiroOrigemDestino = hAPI.getCardValue(&quot;engenheiroObraDestino&quot;) == hAPI.getCardValue(&quot;engenheiroObraOrigem&quot;);&#xd;
+    var mesmoCoordenadorOrigemDestino = hAPI.getCardValue(&quot;coordenadorObraDestino&quot;) == hAPI.getCardValue(&quot;coordenadorObraOrigem&quot;);&#xd;
+    var mesmoDiretorOrigemDestino = hAPI.getCardValue(&quot;diretorObraDestino&quot;) == hAPI.getCardValue(&quot;diretorObraOrigem&quot;);&#xd;
+&#xd;
+    var isAprovadoEngenheiro = hAPI.getCardValue(&quot;aprovadoEngenheiroObraDestino&quot;) == &quot;true&quot;;&#xd;
+    var isAprovadoCoordenador = hAPI.getCardValue(&quot;aprovadoCoordenadorObraDestino&quot;) == &quot;true&quot;;&#xd;
+    var isAprovadoDiretor = hAPI.getCardValue(&quot;aprovadoDiretorObraDestino&quot;) == &quot;true&quot;;&#xd;
+&#xd;
+    if ((isAprovadoEngenheiro || mesmoEngenheiroOrigemDestino || hAPI.getCardValue(&quot;engenheiroObraDestino&quot;) == &quot;&quot;) &amp;&amp; (isAprovadoCoordenador || mesmoCoordenadorOrigemDestino) &amp;&amp; (isAprovadoDiretor || mesmoDiretorOrigemDestino)) {&#xd;
+        return true;&#xd;
+    }&#xd;
+&#xd;
+    return false;&#xd;
 }</eventDescription>
     </WorkflowProcessEvent>
   </list>
@@ -3060,7 +3151,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>31</version>
+        <version>32</version>
         <linkSequence>11</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3071,7 +3162,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>31</version>
+        <version>32</version>
         <linkSequence>12</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3082,7 +3173,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>31</version>
+        <version>32</version>
         <linkSequence>43</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3093,7 +3184,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>31</version>
+        <version>32</version>
         <linkSequence>47</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3104,7 +3195,7 @@ function verificaSeTotalmenteAprovado(){
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>31</version>
+        <version>32</version>
         <linkSequence>47</linkSequence>
         <bendSequence>2</bendSequence>
       </processLinkBendPK>

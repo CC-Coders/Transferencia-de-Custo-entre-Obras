@@ -101,6 +101,7 @@ function loadAtividadeInicio() {
     $('#ccustoObraOrigem').selectize({
         onChange: async function (value, isOnInitialize) {
             var CODCOLIGADA = value.split(" - ")[0];
+            var CODCCUSTO = value.split(" - ")[1];
             var perfil = value.split(" - ")[2];
     
             $("#CODCOLIGADA").val(value.split(" - ")[0]);
@@ -119,12 +120,19 @@ function loadAtividadeInicio() {
                 $("#departamentoObraOrigem").closest(".row").hide();
                 $("#engenheiroObraOrigem").closest("div").show();
                 $("#departamentoObraOrigem").val("1.3.01");
+
+                if (CODCOLIGADA != 1 || CODCCUSTO.substring(0,3) != "1.2") {
+                    $("#engenheiroObraOrigem").val("fernando.ribeiro");
+                    $("#coordenadorObraOrigem").val("fernando.ribeiro");
+                    $("#diretorObraOrigem").val("fernando.ribeiro");
+                }
             }
         }
     });
     $('#ccustoObraDestino').selectize({
         onChange: async function (value, isOnInitialize) {
             var CODCOLIGADA = value.split(" - ")[0];
+            var CODCCUSTO = value.split(" - ")[1];
             var perfil = value.split(" - ")[2];
 
             $("#motivoTransferencia").change();
@@ -142,6 +150,12 @@ function loadAtividadeInicio() {
                 $("#departamentoObraDestino").closest(".row").hide();
                 $("#engenheiroObraDestino").closest("div").show();
                 $("#departamentoObraDestino").val("1.3.01");
+
+                if (CODCOLIGADA != 1 || CODCCUSTO.substring(0,3) != "1.2") {
+                    $("#engenheiroObraDestino").val("gabriel.persike");
+                    $("#coordenadorObraDestino").val("gabriel.persike");
+                    $("#diretorObraDestino").val("gabriel.persike");
+                }
             }
         }
     });
@@ -345,7 +359,7 @@ function validaPreenchimentoForm() {
         retorno.push("Informar a Obra de Destino.");
     }
 
-    if ($("#ccustoObraOrigem").val() == $("#ccustoObraDestino").val()) {
+    if ($("#ccustoObraOrigem").val() == $("#ccustoObraDestino").val() && $("#ccustoObraDestino").val() != "1.1.001") {
         retorno.push("Não é possível fazer Transferência entre o Mesmo Centro de Custo");
     }
 

@@ -48,6 +48,7 @@ function servicetask26(attempt, message) {
                 EnviaEmailTransferenciaEntreColigadas("contabilidade@castilho.com.br; control@castilho.com.br; informatica@castilho.com.br; padilha@castilho.com.br");
             }
         }
+
     } catch (error) {
         log.error(error);
         throw error;
@@ -286,6 +287,46 @@ function ImportaMovimento(CODCOLIGADA, xml) {
 }
 
 
+function atualizaStatusTransferencia(STATUS, IDMOV_ORIGEM, IDMOV_DESTINO) {
+    try {
+        var id = hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO");
+
+        if (STATUS == STATUS_TRANSFENCIA.APROVADO) {
+            var date = getDateNow();
+
+            var query =
+                "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
+                "   STATUS = ?, " + //1
+                "   DATA_COMPETENCIA = ?, " + //2
+                "   IDMOV_ORIGEM = ?, " + //3
+                "   IDMOV_DESTINO = ? " + //4
+                "WHERE ID = ?"; //5
+
+            executeUpdateSemResult(query, [
+                { type: "int", value: STATUS }, //1
+                { type: "varchar", value: date }, //2
+                { type: "int", value: IDMOV_ORIGEM }, //3
+                { type: "int", value: IDMOV_DESTINO }, //4
+                { type: "int", value: id }, //5
+            ]);
+        }else{
+             var query =
+                "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
+                "   STATUS = ? " + //1
+                "WHERE ID = ?"; //2
+
+            executeUpdateSemResult(query, [
+                { type: "int", value: STATUS }, //1
+                { type: "int", value: id }, //5
+            ]);
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+// Notificacao
 function EnviaEmailTransferenciaEntreColigadas(emails) {
     var CorpoEmail = "";
     CorpoEmail += "Olá, <br>";
@@ -345,48 +386,6 @@ function EnviaEmailTransferenciaEntreColigadas(emails) {
         throw new Exception("Retorno está vazio");
     } else {
         return vo.getResult();
-    }
-}
-
-
-
-
-
-function atualizaStatusTransferencia(STATUS, IDMOV_ORIGEM, IDMOV_DESTINO) {
-    try {
-        var id = hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO");
-
-        if (STATUS == STATUS_TRANSFENCIA.APROVADO) {
-            var date = getDateNow();
-
-            var query =
-                "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
-                "   STATUS = ?, " + //1
-                "   DATA_COMPETENCIA = ?, " + //2
-                "   IDMOV_ORIGEM = ?, " + //3
-                "   IDMOV_DESTINO = ? " + //4
-                "WHERE ID = ?"; //5
-
-            executeUpdateSemResult(query, [
-                { type: "int", value: STATUS }, //1
-                { type: "varchar", value: date }, //2
-                { type: "int", value: IDMOV_ORIGEM }, //3
-                { type: "int", value: IDMOV_DESTINO }, //4
-                { type: "int", value: id }, //5
-            ]);
-        }else{
-             var query =
-                "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
-                "   STATUS = ? " + //1
-                "WHERE ID = ?"; //2
-
-            executeUpdateSemResult(query, [
-                { type: "int", value: STATUS }, //1
-                { type: "int", value: id }, //5
-            ]);
-        }
-    } catch (error) {
-        throw error;
     }
 }
 

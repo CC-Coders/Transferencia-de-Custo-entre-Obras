@@ -16,17 +16,6 @@ function extraiAprovadoresDaLista(lista) {
         }
     }
 
-    
-    // Condição inserida para Testes
-    engenherio = !engenherio ? "gabriel.persike" : engenherio;
-    coordenador = !coordenador ? "gabriel.persike" : coordenador;
-    diretor = !diretor ? "gabriel.persike" : diretor;
-
-
-    // Condição inserida para lançamento das transferencias Pela Controladoria
-    // engenherio = "fernando.ribeiro";
-    // coordenador = "fernando.ribeiro";
-    // diretor = "fernando.ribeiro";
 
     return { engenherio, coordenador, diretor };
 }
@@ -577,9 +566,10 @@ function aprovadoresMatriz(CODDEPTO){
         {CODDEPTO:"1.2.21", NOME:"Compras",                  CODUSUARIO:"thalessa.tomm"},
         {CODDEPTO:"1.2.30", NOME:"Diretoria Administrativa", CODUSUARIO:"padilha"},
         {CODDEPTO:"1.2.31", NOME:"Diretoria Tecnica",        CODUSUARIO:"jerson"},
-        {CODDEPTO:"1.2.34", NOME:"Planejamento e Controle",  CODUSUARIO:""},
+        {CODDEPTO:"1.2.34", NOME:"Planejamento e Controle",  CODUSUARIO:"glaucio.moraes"},
         {CODDEPTO:"1.2.37", NOME:"Jurídico",                 CODUSUARIO:"rubia.oliveira"},
         {CODDEPTO:"1.2.38", NOME:"Meio Ambiente",            CODUSUARIO:"eder"},
+        {CODDEPTO:"1.2.42", NOME:"Diretoria Executiva",      CODUSUARIO:"augusto"},
         {CODDEPTO:"1.2.43", NOME:"Nova Serrinha",            CODUSUARIO:"rodrigo.ramos"},
     ];
 
@@ -630,6 +620,7 @@ function consultaDepartamentos(CODCOLIGADA){
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.34","1.2.34",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.37","1.2.37",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.38","1.2.38",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.42","1.2.42",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.43","1.2.43",ConstraintType.SHOULD),
     ],null);
 

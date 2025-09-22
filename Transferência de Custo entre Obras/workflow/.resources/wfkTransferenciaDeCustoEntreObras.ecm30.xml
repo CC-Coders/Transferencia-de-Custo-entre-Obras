@@ -29,10 +29,10 @@
     <processDefinitionVersionPK>
       <companyId>1</companyId>
       <processId>Transferência de Custos entre Obras</processId>
-      <version>144</version>
+      <version>32</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
-    <formId>28837</formId>
+    <formId>1782503</formId>
     <editionMode>true</editionMode>
     <updateAttachmentsVersion>false</updateAttachmentsVersion>
     <controlsAttachmentsSecurity>false</controlsAttachmentsSecurity>
@@ -1203,7 +1203,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>144</version>
+        <version>32</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1215,7 +1215,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>144</version>
+        <version>32</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1227,7 +1227,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>3</expressionOrder>
-        <version>144</version>
+        <version>32</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1239,7 +1239,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>144</version>
+        <version>32</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1251,7 +1251,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>144</version>
+        <version>32</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1263,7 +1263,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>3</expressionOrder>
-        <version>144</version>
+        <version>32</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1275,7 +1275,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>144</version>
+        <version>32</version>
         <sequence>44</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1289,7 +1289,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>144</version>
+        <version>32</version>
         <sequence>44</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1800,8 +1800,6 @@
       </workflowProcessEventPK>
       <eventDescription>function servicetask26(attempt, message) {&#xd;
     try {&#xd;
-        // updateDataCompetencia();&#xd;
-&#xd;
         var CODCOLIGADA_ORIGEM = hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[0];&#xd;
         var CODCCUSTO_ORIGEM = hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[1];&#xd;
         var NOMECCUSTO_ORIGEM = hAPI.getCardValue(&quot;ccustoObraOrigem&quot;).split(&quot; - &quot;)[2];&#xd;
@@ -1850,6 +1848,8 @@
                 EnviaEmailTransferenciaEntreColigadas(&quot;contabilidade@castilho.com.br; control@castilho.com.br; informatica@castilho.com.br; padilha@castilho.com.br&quot;);&#xd;
             }&#xd;
         }&#xd;
+&#xd;
+        notificaConclusaoPorWhatsApp();&#xd;
     } catch (error) {&#xd;
         log.error(error);&#xd;
         throw error;&#xd;
@@ -1942,17 +1942,11 @@ function buscaLocalEstoquePorNome(CODCOLIGADA, CODFILIAL, NOME) {&#xd;
 &#xd;
 function geraMovimentos(CODCOLIGADA, CODCCUSTO, CODCOLIGADA_FORNECEDOR, NOMECCUSTO, PRODUTO, CODDEPTO) {&#xd;
     var CODLOC = buscaLocalEstoquePorNome(CODCOLIGADA, 1, NOMECCUSTO);&#xd;
-    log.info(&quot;CODLOC&quot;)&#xd;
-    log.info(CODLOC)&#xd;
     var CNPJColigadaFornecedor = buscaCNPJDaColigada(CODCOLIGADA_FORNECEDOR);&#xd;
-    log.info(&quot;CNPJColigadaFornecedor&quot;)&#xd;
-    log.info(CNPJColigadaFornecedor)&#xd;
     var fornecedor = buscaCodigoFornecedor(CODCOLIGADA, CNPJColigadaFornecedor);&#xd;
     var CODCOLCFO = fornecedor[0];&#xd;
     var CODCFO = fornecedor[1];&#xd;
-    log.info(&quot;CODCFO&quot;)&#xd;
-    log.info(CODCFO)&#xd;
-&#xd;
+    &#xd;
     var xml = montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO, CODDEPTO);&#xd;
 &#xd;
     var idmov = ImportaMovimento(CODCOLIGADA, xml);&#xd;
@@ -2045,7 +2039,7 @@ function montaXML(CODCOLIGADA, CODLOC, CODCOLCFO, CODCFO, PRODUTO, CODCCUSTO, CO
     xml += &quot;&lt;/MovMovimento&gt; &quot;;&#xd;
 &#xd;
     xml = xml.split(&quot;&amp;&quot;).join(&quot;&amp;amp;&quot;);&#xd;
-    log.info(&quot;XML: &quot; + xml);&#xd;
+    log.info(&quot;Transferencia de custo XML: &quot; + xml);&#xd;
 &#xd;
     return xml;&#xd;
 }&#xd;
@@ -2094,6 +2088,46 @@ function ImportaMovimento(CODCOLIGADA, xml) {&#xd;
 }&#xd;
 &#xd;
 &#xd;
+function atualizaStatusTransferencia(STATUS, IDMOV_ORIGEM, IDMOV_DESTINO) {&#xd;
+    try {&#xd;
+        var id = hAPI.getCardValue(&quot;ID_TRANSFERENCIAS_DE_CUSTO&quot;);&#xd;
+&#xd;
+        if (STATUS == STATUS_TRANSFENCIA.APROVADO) {&#xd;
+            var date = getDateNow();&#xd;
+&#xd;
+            var query =&#xd;
+                &quot;UPDATE TRANSFERENCIAS_DE_CUSTO SET &quot; +&#xd;
+                &quot;   STATUS = ?, &quot; + //1&#xd;
+                &quot;   DATA_COMPETENCIA = ?, &quot; + //2&#xd;
+                &quot;   IDMOV_ORIGEM = ?, &quot; + //3&#xd;
+                &quot;   IDMOV_DESTINO = ? &quot; + //4&#xd;
+                &quot;WHERE ID = ?&quot;; //5&#xd;
+&#xd;
+            executeUpdateSemResult(query, [&#xd;
+                { type: &quot;int&quot;, value: STATUS }, //1&#xd;
+                { type: &quot;varchar&quot;, value: date }, //2&#xd;
+                { type: &quot;int&quot;, value: IDMOV_ORIGEM }, //3&#xd;
+                { type: &quot;int&quot;, value: IDMOV_DESTINO }, //4&#xd;
+                { type: &quot;int&quot;, value: id }, //5&#xd;
+            ]);&#xd;
+        }else{&#xd;
+             var query =&#xd;
+                &quot;UPDATE TRANSFERENCIAS_DE_CUSTO SET &quot; +&#xd;
+                &quot;   STATUS = ? &quot; + //1&#xd;
+                &quot;WHERE ID = ?&quot;; //2&#xd;
+&#xd;
+            executeUpdateSemResult(query, [&#xd;
+                { type: &quot;int&quot;, value: STATUS }, //1&#xd;
+                { type: &quot;int&quot;, value: id }, //5&#xd;
+            ]);&#xd;
+        }&#xd;
+    } catch (error) {&#xd;
+        throw error;&#xd;
+    }&#xd;
+}&#xd;
+&#xd;
+&#xd;
+// Notificacao&#xd;
 function EnviaEmailTransferenciaEntreColigadas(emails) {&#xd;
     var CorpoEmail = &quot;&quot;;&#xd;
     CorpoEmail += &quot;Olá, &lt;br&gt;&quot;;&#xd;
@@ -2155,45 +2189,39 @@ function EnviaEmailTransferenciaEntreColigadas(emails) {&#xd;
         return vo.getResult();&#xd;
     }&#xd;
 }&#xd;
+function notificaConclusaoPorWhatsApp(){&#xd;
+    var mensagem = &quot;&quot;;&#xd;
+        mensagem += &quot;Sua Solicitação de *Transferência de Custo* foi *Concluída*!&quot;;&#xd;
+        mensagem += &quot;\n\n&quot;;&#xd;
+        mensagem += &quot;*Obra Origem*\n&quot;;&#xd;
+        mensagem += hAPI.getCardValue(&quot;ccustoObraOrigem&quot;);&#xd;
+        mensagem += &quot;\n\n&quot;;&#xd;
+        mensagem += &quot;*Obra Destino*\n&quot;;&#xd;
+        mensagem += hAPI.getCardValue(&quot;ccustoObraDestino&quot;);&#xd;
+        mensagem += &quot;\n\n&quot;;&#xd;
+        mensagem += &quot;*Valor: * &quot; + hAPI.getCardValue(&quot;valorObraOrigem&quot;) + &quot;\n&quot;;&#xd;
+        mensagem += &quot;\n\n&quot;;&#xd;
+        mensagem += &quot;*Transferências*\n&quot;;&#xd;
 &#xd;
+        var indices = hAPI.getChildrenIndexes(&quot;tableTransferencias&quot;);&#xd;
 &#xd;
+        for (var i = 0; i &lt; indices.length; i++) {&#xd;
+            var id = indices[i];&#xd;
 &#xd;
+            var tipo = hAPI.getCardValue(&quot;motivoTransferencia&quot; + &quot;___&quot; + id);&#xd;
+            var motivo = hAPI.getCardValue(&quot;textMotivoTransferencia&quot; + &quot;___&quot; + id);&#xd;
+            var valor = moneyToFloat(hAPI.getCardValue(&quot;valorTotalTransferencia&quot; + &quot;___&quot; + id));&#xd;
 &#xd;
+            mensagem += &quot;*Tipo:* &quot; + tipo + &quot;\n&quot;;&#xd;
+            mensagem += &quot;*Valor:* &quot; + valor + &quot;\n&quot;;&#xd;
+            mensagem += &quot;*Motivo: *&quot; + motivo + &quot;\n&quot;;&#xd;
+    &#xd;
+            mensagem += &quot;\n&quot;;&#xd;
+        }&#xd;
 &#xd;
-function atualizaStatusTransferencia(STATUS, IDMOV_ORIGEM, IDMOV_DESTINO) {&#xd;
-    var id = hAPI.getCardValue(&quot;ID_TRANSFERENCIAS_DE_CUSTO&quot;);&#xd;
-    var date = getDateNow();&#xd;
-&#xd;
-    var query = &#xd;
-    &quot;UPDATE TRANSFERENCIAS_DE_CUSTO SET &quot; +&#xd;
-    &quot;   STATUS = ?, &quot;+ //1&#xd;
-    &quot;   DATA_COMPETENCIA = ?, &quot;+ //2&#xd;
-    &quot;   IDMOV_ORIGEM = ?, &quot;+ //3&#xd;
-    &quot;   IDMOV_DESTINO = ? &quot;+ //4&#xd;
-    &quot;WHERE ID = ?&quot;; //5&#xd;
-    executeUpdateSemResult(query, [&#xd;
-        { type: &quot;int&quot;, value: STATUS },//1&#xd;
-        { type: &quot;varchar&quot;, value: date },//2&#xd;
-        { type: &quot;int&quot;, value: IDMOV_ORIGEM },//3&#xd;
-        { type: &quot;int&quot;, value: IDMOV_DESTINO },//4&#xd;
-        { type: &quot;int&quot;, value: id },//5&#xd;
-    ]);&#xd;
+        mensagem += &quot;Acesse o Fluig para mais informações.&quot;;&#xd;
+        sendNotifiWhatsApp(mensagem, hAPI.getCardValue(&quot;solicitante&quot;));&#xd;
 }&#xd;
-function updateDataCompetencia(){&#xd;
-    var date = getDateNow();&#xd;
-    var id = hAPI.getCardValue(&quot;ID_TRANSFERENCIAS_DE_CUSTO&quot;);&#xd;
-&#xd;
-    var query =&#xd;
-        &quot;UPDATE TRANSFERENCIAS_DE_CUSTO &quot; +&#xd;
-        &quot;   SET DATA_COMPETENCIA = ? &quot; +&#xd;
-        &quot;   WHERE ID = ? &quot;;&#xd;
-&#xd;
-    return executeUpdateSemResult(query, [&#xd;
-        { type: &quot;varchar&quot;, value: date },&#xd;
-        { type: &quot;int&quot;, value: id },&#xd;
-    ]);&#xd;
-}&#xd;
-&#xd;
 &#xd;
 // Utils&#xd;
 function getServerURL() {&#xd;
@@ -2383,6 +2411,8 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {&#xd;
         if (decisao == &quot;Reprovado&quot;) {&#xd;
             hAPI.setCardValue(&quot;aprovadoObraOrigem&quot;, &quot;Reprovado&quot;);&#xd;
             hAPI.setCardValue(&quot;aprovadoObraDestino&quot;, &quot;Reprovado&quot;);&#xd;
+&#xd;
+            notificaReprovacaoPorWhatsApp();&#xd;
         }&#xd;
 &#xd;
         // Se NÂO Reprovado Automaticamente, insere o Historio na Tabela&#xd;
@@ -2625,6 +2655,39 @@ function insereHistorico(ID_PAI) {&#xd;
         { type: &quot;varchar&quot;, value: observacao },&#xd;
         { type: &quot;varchar&quot;, value: movimentacao },&#xd;
     ]);&#xd;
+}&#xd;
+&#xd;
+&#xd;
+//Notifica&#xd;
+function notificaReprovacaoPorWhatsApp() {&#xd;
+    var mensagem = &quot;&quot;;&#xd;
+    mensagem += &quot;Sua Solicitação de *Transferência de Custo* foi *Reprovada*!&quot;;&#xd;
+    mensagem += &quot;\n\n&quot;;&#xd;
+    mensagem += &quot;*Obra Origem*\n&quot;;&#xd;
+    mensagem += hAPI.getCardValue(&quot;ccustoObraOrigem&quot;);&#xd;
+    mensagem += &quot;\n\n&quot;;&#xd;
+    mensagem += &quot;*Obra Destino*\n&quot;;&#xd;
+    mensagem += hAPI.getCardValue(&quot;ccustoObraDestino&quot;);&#xd;
+    mensagem += &quot;\n\n&quot;;&#xd;
+    mensagem += &quot;*Valor*: &quot; + hAPI.getCardValue(&quot;valorObraOrigem&quot;) + &quot;\n&quot;;&#xd;
+    mensagem += &quot;\n\n&quot;;&#xd;
+&#xd;
+    mensagem += &quot;*Aprovador*: &quot; + hAPI.getCardValue(&quot;userCode&quot;) + &quot;\n&quot;;&#xd;
+    mensagem += &quot;*Justificativa*: &quot; + hAPI.getCardValue(&quot;textObservacao&quot;) + &quot;\n&quot;;&#xd;
+&#xd;
+    mensagem += &quot;\n&quot;;&#xd;
+    mensagem += &quot;Acesse o Fluig para mais informações.&quot;;&#xd;
+    sendNotifiWhatsApp(mensagem, hAPI.getCardValue(&quot;solicitante&quot;));&#xd;
+}&#xd;
+function sendNotifiWhatsApp(mensagem, user){&#xd;
+    var ds = DatasetFactory.getDataset(&quot;dsEnviaMensagemWhatsApp&quot;, null,[&#xd;
+        DatasetFactory.createConstraint(&quot;message&quot;, mensagem, mensagem, ConstraintType.MUST),&#xd;
+        DatasetFactory.createConstraint(&quot;user&quot;,user, user, ConstraintType.MUST),&#xd;
+    ],null);&#xd;
+&#xd;
+    // if (ds.getValue(0,&quot;STATUS&quot;) != &quot;success&quot;) {&#xd;
+    //     log.error(&quot;whatsApp API: &quot; + ds.getValue(0,&quot;MENSAGEM&quot;));&#xd;
+    // }&#xd;
 }&#xd;
 &#xd;
 // Utils&#xd;
@@ -3088,7 +3151,7 @@ function verificaSeTotalmenteAprovado(){&#xd;
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>144</version>
+        <version>32</version>
         <linkSequence>11</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3099,7 +3162,7 @@ function verificaSeTotalmenteAprovado(){&#xd;
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>144</version>
+        <version>32</version>
         <linkSequence>12</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3110,7 +3173,7 @@ function verificaSeTotalmenteAprovado(){&#xd;
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>144</version>
+        <version>32</version>
         <linkSequence>43</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3121,7 +3184,7 @@ function verificaSeTotalmenteAprovado(){&#xd;
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>144</version>
+        <version>32</version>
         <linkSequence>47</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3132,7 +3195,7 @@ function verificaSeTotalmenteAprovado(){&#xd;
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>144</version>
+        <version>32</version>
         <linkSequence>47</linkSequence>
         <bendSequence>2</bendSequence>
       </processLinkBendPK>

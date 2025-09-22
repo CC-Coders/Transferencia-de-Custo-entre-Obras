@@ -59,6 +59,7 @@ function beforeTaskSave(colleagueId, nextSequenceId, userList) {
         if (decisao == "Reprovado") {
             hAPI.setCardValue("aprovadoObraOrigem", "Reprovado");
             hAPI.setCardValue("aprovadoObraDestino", "Reprovado");
+            notificaReprovacaoPorWhatsApp();
         }
 
         // Se NÂO Reprovado Automaticamente, insere o Historio na Tabela
@@ -302,6 +303,41 @@ function insereHistorico(ID_PAI) {
         { type: "varchar", value: movimentacao },
     ]);
 }
+
+
+
+//Notifica
+function notificaReprovacaoPorWhatsApp() {
+    var mensagem = "";
+    mensagem += "Sua Solicitação de *Transferência de Custo* foi *Reprovada*!";
+    mensagem += "\n\n";
+    mensagem += "*Obra Origem*\n";
+    mensagem += hAPI.getCardValue("ccustoObraOrigem");
+    mensagem += "\n\n";
+    mensagem += "*Obra Destino*\n";
+    mensagem += hAPI.getCardValue("ccustoObraDestino");
+    mensagem += "\n\n";
+    mensagem += "*Valor*: " + hAPI.getCardValue("valorObraOrigem") + "\n";
+    mensagem += "\n\n";
+
+    mensagem += "*Aprovador*: " + hAPI.getCardValue("userCode") + "\n";
+    mensagem += "*Justificativa*: " + hAPI.getCardValue("textObservacao") + "\n";
+
+    mensagem += "\n";
+    mensagem += "Acesse o Fluig para mais informações.";
+    sendNotifiWhatsApp(mensagem, hAPI.getCardValue("solicitante"));
+}
+function sendNotifiWhatsApp(mensagem, user){
+    var ds = DatasetFactory.getDataset("dsEnviaMensagemWhatsApp", null,[
+        DatasetFactory.createConstraint("message", mensagem, mensagem, ConstraintType.MUST),
+        DatasetFactory.createConstraint("user",user, user, ConstraintType.MUST),
+    ],null);
+
+    // if (ds.getValue(0,"STATUS") != "success") {
+    //     log.error("whatsApp API: " + ds.getValue(0,"MENSAGEM"));
+    // }
+}
+
 
 // Utils
 function moneyToFloat(val) {

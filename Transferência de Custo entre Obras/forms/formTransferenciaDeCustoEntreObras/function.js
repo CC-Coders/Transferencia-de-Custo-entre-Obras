@@ -678,3 +678,8 @@ function movimentaAtividadeParaReprovacao() {
 
     });
 }
+
+function getServerURL() {
+    var ds = DatasetFactory.getDataset("dsGetServerURL", null, null, null);
+    return ds.values[0].URL;
+}

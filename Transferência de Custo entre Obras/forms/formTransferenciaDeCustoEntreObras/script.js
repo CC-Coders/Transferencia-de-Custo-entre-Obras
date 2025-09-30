@@ -51,6 +51,9 @@ $(document).ready(function () {
     else if (atividadeAtual == ATIVIDADES.APROVADOR_DESTINO || atividadeAtual == ATIVIDADES.APROVADOR_ORIGEM) {
         loadAtividadeAprovacao();
     }
+    else if(atividadeAtual == ATIVIDADES.CONTROLADORIA){
+        loadAtividadeControladoria();
+    }
 });
 
 
@@ -88,6 +91,7 @@ function bindings() {
     $(".panelColapse>.panel-heading").on("click", function () {
         $(this).siblings(".panel-body").slideToggle();
     });
+    $("#btnDownloadResumo").on("click", downloadResumo);
 }
 
 
@@ -324,6 +328,7 @@ function loadAtividadeAprovacao() {
     }
 }
 function loadAtividadeControladoria() {
+    
     setTimeout(() => {
         $("#header, #main, #footer").show("fade", 1500);
     }, 1000);
@@ -332,6 +337,7 @@ function loadAtividadeControladoria() {
     $("#divOpcoesAprovacao").show();
     $("#divObservacaoAprovacao").show();
     $("#divHistorico").show();
+    $("#divDownloadResumo").show();
 
     $("#ccustoObraOrigem, #ccustoObraDestino").addClass("form-control");
     $("#ccustoObraOrigem, #ccustoObraDestino").attr("readonly", "readonly");

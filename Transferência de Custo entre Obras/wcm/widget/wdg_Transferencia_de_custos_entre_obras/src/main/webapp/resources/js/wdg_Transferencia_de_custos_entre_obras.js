@@ -77,7 +77,10 @@ function init() {
     $("#filtroDepartamentoOrigem").selectize();
     
 
-    GCCUSTO = DatasetFactory.getDataset("GCCUSTO", null, null, null).values;
+    GCCUSTO = DatasetFactory.getDataset("GCCUSTO", null, [
+        DatasetFactory.createConstraint("ATIVO","T","T",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("ATIVO","F","F",ConstraintType.SHOULD),
+    ], null).values;
     PreencheCamposFiltros();
     initDataTableTransferencias();
     consultaTransferencias();

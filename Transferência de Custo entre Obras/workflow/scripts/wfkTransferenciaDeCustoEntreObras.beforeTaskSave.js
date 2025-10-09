@@ -18,56 +18,63 @@ var STATUS_TRANSFENCIA = {
 }
 
 function beforeTaskSave(colleagueId, nextSequenceId, userList) {
-    var ATIVIDADE = getValue("WKNumState");
-    var formMode = hAPI.getCardValue("formMode");
+    try {
+        var ATIVIDADE = getValue("WKNumState");
+        var formMode = hAPI.getCardValue("formMode");
 
-    if (ATIVIDADE == ATIVIDADES.INICIO && formMode == "ADD") {
-        // Se for Inicio da Solicitação
+        if (ATIVIDADE == ATIVIDADES.INICIO && formMode == "ADD") {
+            // Se for Inicio da Solicitação
 
-        // Insere nova Linha na tabela de Transferencias
-        var id = insereNovoRegistro();
+            // Insere nova Linha na tabela de Transferencias
+            var id = insereNovoRegistro();
 
-        // Salva o ID da Transferencia no campo ID_TRANSFERENCIAS_DE_CUSTO
-        hAPI.setCardValue("ID_TRANSFERENCIAS_DE_CUSTO", id);
+            // Salva o ID da Transferencia no campo ID_TRANSFERENCIAS_DE_CUSTO
+            hAPI.setCardValue("ID_TRANSFERENCIAS_DE_CUSTO", id);
 
-        // Insere as Transferencias, Itens e Historico com o ID da Transferencia como Chave Estrangeira
-        insereTransferencias(id);
-        insereHistorico(id);
+            // Insere as Transferencias, Itens e Historico com o ID da Transferencia como Chave Estrangeira
+            insereTransferencias(id);
+            insereHistorico(id);
 
-        // Salva Número da Solicitação no Processo
-        hAPI.setCardValue("numProces", getValue("WKNumProces"));
-        hAPI.setCardValue("solicitacao", getValue("WKNumProces"));
-    }
-    else if (ATIVIDADE == ATIVIDADES.INICIO) {
-        // Se for Atividade Inico mas o Processo já está criado
-        // Atualiza os Dados da Transferencia nas Tabelas
-        atualizaTransferencia();
-    }
-    else if (ATIVIDADE == ATIVIDADES.APROVADOR_DESTINO || ATIVIDADE == ATIVIDADES.APROVADOR_ORIGEM) {
-        var decisao = hAPI.getCardValue("decisao");
+            // Salva Número da Solicitação no Processo
+            hAPI.setCardValue("numProces", getValue("WKNumProces"));
+            hAPI.setCardValue("solicitacao", getValue("WKNumProces"));
+        }
+        else if (ATIVIDADE == ATIVIDADES.INICIO) {
+            // Se for Atividade Inico mas o Processo já está criado
+            // Atualiza os Dados da Transferencia nas Tabelas
+            atualizaTransferencia();
+        }
+        else if (ATIVIDADE == ATIVIDADES.APROVADOR_DESTINO || ATIVIDADE == ATIVIDADES.APROVADOR_ORIGEM) {
+            var decisao = hAPI.getCardValue("decisao");
 
-        // Se Aprovado verifica aprovadores em Comum entre as Obras e realiza a Aprovação Cruzada
-        if (decisao == "Aprovado") {
-            if (ATIVIDADE == ATIVIDADES.APROVADOR_DESTINO) {
-                verificaSeAprovadorTambemAprovaObraOrigem();
+            // Se Aprovado verifica aprovadores em Comum entre as Obras e realiza a Aprovação Cruzada
+            if (decisao == "Aprovado") {
+                if (ATIVIDADE == ATIVIDADES.APROVADOR_DESTINO) {
+                    verificaSeAprovadorTambemAprovaObraOrigem();
+                }
+                else if (ATIVIDADE == ATIVIDADES.APROVADOR_ORIGEM) {
+                    verificaSeAprovadorTambemAprovaObraDestino();
+                }
             }
-            else if (ATIVIDADE == ATIVIDADES.APROVADOR_ORIGEM) {
-                verificaSeAprovadorTambemAprovaObraDestino();
+
+            // Se reprovado marca a Reprovacao nas Duas Obras para Retornar ao Inicio
+            if (decisao == "Reprovado") {
+                hAPI.setCardValue("aprovadoObraOrigem", "Reprovado");
+                hAPI.setCardValue("aprovadoObraDestino", "Reprovado");
+                notificaReprovacaoPorWhatsApp();
+            }
+
+            // Se NÂO Reprovado Automaticamente, insere o Historio na Tabela
+            // Caso seja Reprovado Automaticamente significa que a Atividade só foi enviada para Frente automaticamente, sem ação do usuário
+            if (decisao != "Reprovado Automaticamente") {
+                insereHistorico(hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO"));
             }
         }
-
-        // Se reprovado marca a Reprovacao nas Duas Obras para Retornar ao Inicio
-        if (decisao == "Reprovado") {
-            hAPI.setCardValue("aprovadoObraOrigem", "Reprovado");
-            hAPI.setCardValue("aprovadoObraDestino", "Reprovado");
-            notificaReprovacaoPorWhatsApp();
+        else if(ATIVIDADE == ATIVIDADES.CONTROLADORIA){
+            atualizaStatusTransferencia(STATUS_TRANSFENCIA.APROVADO);
         }
-
-        // Se NÂO Reprovado Automaticamente, insere o Historio na Tabela
-        // Caso seja Reprovado Automaticamente significa que a Atividade só foi enviada para Frente automaticamente, sem ação do usuário
-        if (decisao != "Reprovado Automaticamente") {
-            insereHistorico(hAPI.getCardValue("ID_TRANSFERENCIAS_DE_CUSTO"));
-        }
+    } catch (error) {
+     throw error;   
     }
 }
 

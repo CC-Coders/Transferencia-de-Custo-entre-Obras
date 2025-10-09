@@ -295,21 +295,36 @@ function atualizaStatusTransferencia(STATUS, IDMOV_ORIGEM, IDMOV_DESTINO) {
         if (STATUS == STATUS_TRANSFENCIA.APROVADO) {
             var date = getDateNow();
 
-            var query =
-                "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
-                "   STATUS = ?, " + //1
-                "   DATA_COMPETENCIA = ?, " + //2
-                "   IDMOV_ORIGEM = ?, " + //3
-                "   IDMOV_DESTINO = ? " + //4
-                "WHERE ID = ?"; //5
+            if (IDMOV_ORIGEM && IDMOV_DESTINO) {
+                var query =
+                    "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
+                    "   STATUS = ?, " + //1
+                    "   DATA_COMPETENCIA = ?, " + //2
+                    "   IDMOV_ORIGEM = ?, " + //3
+                    "   IDMOV_DESTINO = ? " + //4
+                    "WHERE ID = ?"; //5
+    
+                executeUpdateSemResult(query, [
+                    { type: "int", value: STATUS }, //1
+                    { type: "varchar", value: date }, //2
+                    { type: "int", value: IDMOV_ORIGEM }, //3
+                    { type: "int", value: IDMOV_DESTINO }, //4
+                    { type: "int", value: id }, //5
+                ]);
+            }else{
+                      var query =
+                    "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
+                    "   STATUS = ?, " + //1
+                    "   DATA_COMPETENCIA = ? " + //2
+                    "WHERE ID = ?"; //3
+    
+                executeUpdateSemResult(query, [
+                    { type: "int", value: STATUS }, //1
+                    { type: "varchar", value: date }, //2
+                    { type: "int", value: id }, //3
+                ]);
+            }
 
-            executeUpdateSemResult(query, [
-                { type: "int", value: STATUS }, //1
-                { type: "varchar", value: date }, //2
-                { type: "int", value: IDMOV_ORIGEM }, //3
-                { type: "int", value: IDMOV_DESTINO }, //4
-                { type: "int", value: id }, //5
-            ]);
         }else{
              var query =
                 "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +

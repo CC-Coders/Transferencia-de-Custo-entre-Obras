@@ -535,17 +535,17 @@
       </children>
     </children>
     <children active="true" visible="true" xsi:type="pi:ContainerShape">
-      <graphicsAlgorithm filled="false" height="56" lineVisible="false" lineWidth="1" transparency="0.0" width="105" x="890" xsi:type="al:Rectangle" y="324"/>
+      <graphicsAlgorithm filled="false" height="56" lineVisible="false" lineWidth="1" transparency="0.0" width="106" x="890" xsi:type="al:Rectangle" y="324"/>
       <link businessObjects="task73"/>
       <anchors incomingConnections="/0/@connections.25" outgoingConnections="/0/@connections.26" xsi:type="pi:ChopboxAnchor"/>
       <anchors active="true" referencedGraphicsAlgorithm="/0/@children.26/@graphicsAlgorithm" relativeHeight="0.51" relativeWidth="1.0" visible="true" xsi:type="pi:BoxRelativeAnchor">
         <graphicsAlgorithm filled="false" lineVisible="false" xsi:type="al:Ellipse"/>
       </anchors>
       <children visible="true">
-        <graphicsAlgorithm cornerHeight="5" cornerWidth="5" height="56" lineWidth="1" style="/0/@styles.131" transparency="0.0" width="105" xsi:type="al:RoundedRectangle"/>
+        <graphicsAlgorithm cornerHeight="5" cornerWidth="5" height="56" lineWidth="1" style="/0/@styles.131" transparency="0.0" width="106" xsi:type="al:RoundedRectangle"/>
       </children>
       <children visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.1" height="46" horizontalAlignment="ALIGNMENT_CENTER" lineVisible="true" lineWidth="1" style="/0/@styles.132" transparency="0.0" value="Controladoria" width="95" x="5" xsi:type="al:MultiText" y="5"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.1" height="46" horizontalAlignment="ALIGNMENT_CENTER" lineVisible="true" lineWidth="1" style="/0/@styles.132" transparency="0.0" value="Controladoria" width="96" x="5" xsi:type="al:MultiText" y="5"/>
       </children>
     </children>
     <children active="true" visible="true" xsi:type="pi:ContainerShape">
@@ -4358,7 +4358,7 @@
     <fonts name="Arial" size="8"/>
     <fonts bold="true" name="Arial" size="8"/>
   </pi:Diagram>
-  <bpmn2:BpmnProcess author="" cardIndex="28837" category="Gerenciais" complementsLevel="1" expedient="Default" extendedFields="&lt;list/&gt;" formSource="server" id="Transfer&#234;ncia de Custos entre Obras" instruction="" keyWord="" managerAssignmentController="&lt;org.eclipse.bpmn2.impl.AssignmentControllerGroup&gt;&#10;  &lt;groupId&gt;gestoresTransferenciaDeCustoEntreObras&lt;/groupId&gt;&#10;  &lt;mechanismName&gt;Grupo&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerGroup&gt;" managerMechanism="Grupo" name="Transfer&#234;ncia de Custos entre Obras" notifyRequisitionerComplements="true" notifyResponsibleComplements="true" serverId="CASTILHO-DESENVOLVIMENTO" version="154" volume="Default"/>
+  <bpmn2:BpmnProcess author="" cardIndex="28837" category="Gerenciais" complementsLevel="1" expedient="Default" extendedFields="&lt;list/&gt;" formSource="server" id="Transfer&#234;ncia de Custos entre Obras" instruction="" keyWord="" managerAssignmentController="&lt;org.eclipse.bpmn2.impl.AssignmentControllerGroup&gt;&#10;  &lt;groupId&gt;gestoresTransferenciaDeCustoEntreObras&lt;/groupId&gt;&#10;  &lt;mechanismName&gt;Grupo&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerGroup&gt;" managerMechanism="Grupo" name="Transfer&#234;ncia de Custos entre Obras" notifyRequisitionerComplements="true" notifyResponsibleComplements="true" serverId="CASTILHO-DESENVOLVIMENTO" version="155" volume="Default"/>
   <bpmn2:BpmnPool cores="FFFFFF" id="pool1" name="Pool"/>
   <bpmn2:BpmnSwimLane cores="C0C0C0" id="swimlane2" name="Solicitante"/>
   <bpmn2:BpmnSwimLane cores="C0C0C0" id="swimlane3" name="Aprova&#231;&#227;o Obra Origem"/>

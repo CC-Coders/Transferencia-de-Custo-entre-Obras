@@ -333,6 +333,7 @@ function loadAtividadeControladoria() {
         $("#header, #main, #footer").show("fade", 1500);
     }, 1000);
 
+    $("#btnReprovar").hide();
     $("#divItensTransferencia").show();
     $("#divOpcoesAprovacao").show();
     $("#divObservacaoAprovacao").show();

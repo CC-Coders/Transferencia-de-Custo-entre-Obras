@@ -1,4 +1,4 @@
-var listUnidadesMedida = ["H","KG","L","M","M2","M3","DIA","MÊS","PC","SC","T","UN"];
+var listUnidadesMedida = ["H", "KG", "L", "M", "M2", "M3", "DIA", "MÊS", "PC", "SC", "T", "UN"];
 const ATIVIDADES = {
     INICIO_0: 0,
     INICIO: 4,
@@ -7,16 +7,17 @@ const ATIVIDADES = {
     APROVADOR_ORIGEM: 5,
     DEFINE_APROVADOR_ORIGEM: 10,
     LANCA_TRANSFENCIA: 26,
+    CONTROLADORIA: 73,
     FIM: 28,
 };
 const listaTiposTransferencia = {
-    CUSTO:[
+    CUSTO: [
         "Equipamento",
         "Mão de Obra",
         "Prestação de Serviço",
         "Insumos",
     ],
-    RECEITA:[
+    RECEITA: [
         "Receita"
     ],
 }
@@ -25,12 +26,12 @@ const listaTiposTransferencia = {
 $(document).ready(function () {
     const atividadeAtual = $("#atividade").val();
     const formMode = $("#formMode").val();
-    
+
     init();
     bindings();
 
     if (formMode == "VIEW") {
-        loadAtividadesAprovacao();
+        loadAtividadeAprovacao();
 
         if (atividadeAtual == ATIVIDADES.FIM) {
             $("#spanIDMOV_ORIGEM").text("Identificador: " + $("#IDMOV_ORIGEM").val());
@@ -48,7 +49,10 @@ $(document).ready(function () {
         marcaEmVerdeAprovados();
     }
     else if (atividadeAtual == ATIVIDADES.APROVADOR_DESTINO || atividadeAtual == ATIVIDADES.APROVADOR_ORIGEM) {
-        loadAtividadesAprovacao();
+        loadAtividadeAprovacao();
+    }
+    else if(atividadeAtual == ATIVIDADES.CONTROLADORIA){
+        loadAtividadeControladoria();
     }
 });
 
@@ -87,6 +91,7 @@ function bindings() {
     $(".panelColapse>.panel-heading").on("click", function () {
         $(this).siblings(".panel-body").slideToggle();
     });
+    $("#btnDownloadResumo").on("click", downloadResumo);
 }
 
 
@@ -103,16 +108,19 @@ function loadAtividadeInicio() {
             var CODCOLIGADA = value.split(" - ")[0];
             var CODCCUSTO = value.split(" - ")[1];
             var perfil = value.split(" - ")[2];
-    
+
             $("#CODCOLIGADA").val(value.split(" - ")[0]);
             $("#motivoTransferencia").change();
+
+            $("#CODCOLIGADA_ORIGEM").val(CODCOLIGADA);
+            $("#CODCCUSTO_ORIGEM").val(CODCCUSTO);
 
             if (perfil == "Matriz Curitiba") {
                 var deptos = consultaDepartamentos(CODCOLIGADA);
                 geraOptionsDepartamentos("departamentoObraOrigem", deptos);
                 $("#departamentoObraOrigem").closest(".row").show();
                 $("#engenheiroObraOrigem").closest("div").hide();
-            }else{
+            } else {
                 var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra(CODCOLIGADA, perfil, "1.1.02", "9999999999999"));
                 $("#engenheiroObraOrigem").val(aprovadores.engenherio);
                 $("#coordenadorObraOrigem").val(aprovadores.coordenador);
@@ -121,7 +129,7 @@ function loadAtividadeInicio() {
                 $("#engenheiroObraOrigem").closest("div").show();
                 $("#departamentoObraOrigem").val("1.3.01");
 
-                if (CODCOLIGADA != 1 || CODCCUSTO.substring(0,3) != "1.2") {
+                if (CODCOLIGADA != 1 || CODCCUSTO.substring(0, 3) != "1.2") {
                     $("#engenheiroObraOrigem").val("fernando.ribeiro");
                     $("#coordenadorObraOrigem").val("fernando.ribeiro");
                     $("#diretorObraOrigem").val("fernando.ribeiro");
@@ -137,12 +145,15 @@ function loadAtividadeInicio() {
 
             $("#motivoTransferencia").change();
 
+            $("#CODCOLIGADA_DESTINO").val(CODCOLIGADA);
+            $("#CODCCUSTO_DESTINO").val(CODCCUSTO);
+
             if (perfil == "Matriz Curitiba") {
                 var deptos = consultaDepartamentos(CODCOLIGADA);
                 geraOptionsDepartamentos("departamentoObraDestino", deptos);
                 $("#departamentoObraDestino").closest(".row").show();
                 $("#engenheiroObraDestino").closest("div").hide();
-            }else{
+            } else {
                 var aprovadores = extraiAprovadoresDaLista(await promiseBuscaAprovadoresDaObra(CODCOLIGADA, perfil, "1.1.02", "9999999999999"));
                 $("#engenheiroObraDestino").val(aprovadores.engenherio);
                 $("#coordenadorObraDestino").val(aprovadores.coordenador);
@@ -151,7 +162,7 @@ function loadAtividadeInicio() {
                 $("#engenheiroObraDestino").closest("div").show();
                 $("#departamentoObraDestino").val("1.3.01");
 
-                if (CODCOLIGADA != 1 || CODCCUSTO.substring(0,3) != "1.2") {
+                if (CODCOLIGADA != 1 || CODCCUSTO.substring(0, 3) != "1.2") {
                     $("#engenheiroObraDestino").val("gabriel.persike");
                     $("#coordenadorObraDestino").val("gabriel.persike");
                     $("#diretorObraDestino").val("gabriel.persike");
@@ -252,7 +263,7 @@ function loadAtividadeAjuste() {
         $("#decisaoAprovadorObraOrigem, #decisaoAprovadorObraDestino").val("");
     }
 }
-function loadAtividadesAprovacao() {
+function loadAtividadeAprovacao() {
     setTimeout(() => {
         $("#header, #main, #footer").show("fade", 1500);
     }, 1000);
@@ -270,7 +281,7 @@ function loadAtividadesAprovacao() {
     if (DEPTO_DESTINO != "1.3.01" && DEPTO_DESTINO != "" && DEPTO_DESTINO != null) {
         $("#departamentoObraDestino").closest(".row").show();
         $("#departamentoObraDestino").addClass("form-control");
-        $("#departamentoObraDestino").attr("readonly","readonly");
+        $("#departamentoObraDestino").attr("readonly", "readonly");
 
         if ($("#engenheiroObraDestino").val() == "") {
             $("#engenheiroObraDestino").closest("div").hide();
@@ -281,7 +292,7 @@ function loadAtividadesAprovacao() {
     if (DEPTO_ORIGEM != "1.3.01" && DEPTO_ORIGEM != "" && DEPTO_ORIGEM != null) {
         $("#departamentoObraOrigem").closest(".row").show();
         $("#departamentoObraOrigem").addClass("form-control");
-        $("#departamentoObraOrigem").attr("readonly","readonly");
+        $("#departamentoObraOrigem").attr("readonly", "readonly");
 
         if ($("#engenheiroObraOrigem").val() == "") {
             $("#engenheiroObraOrigem").closest("div").hide();
@@ -311,8 +322,75 @@ function loadAtividadesAprovacao() {
 
     geraTabelaHistorico();
     marcaEmVerdeAprovados();
+
+    if ($("#isMobile").val() == "true") {
+        carregaTabelaTransferenciasMobile();
+    }
+}
+function loadAtividadeControladoria() {
     
-    if($("#isMobile").val() == "true"){
+    setTimeout(() => {
+        $("#header, #main, #footer").show("fade", 1500);
+    }, 1000);
+
+    $("#btnReprovar").hide();
+    $("#divItensTransferencia").show();
+    $("#divOpcoesAprovacao").show();
+    $("#divObservacaoAprovacao").show();
+    $("#divHistorico").show();
+    $("#divDownloadResumo").show();
+
+    $("#ccustoObraOrigem, #ccustoObraDestino").addClass("form-control");
+    $("#ccustoObraOrigem, #ccustoObraDestino").attr("readonly", "readonly");
+
+
+    var DEPTO_DESTINO = $("#departamentoObraDestino").val() ? $("#departamentoObraDestino").val() : $("#departamentoObraDestino").text().split(" - ")[0].trim();
+    if (DEPTO_DESTINO != "1.3.01" && DEPTO_DESTINO != "" && DEPTO_DESTINO != null) {
+        $("#departamentoObraDestino").closest(".row").show();
+        $("#departamentoObraDestino").addClass("form-control");
+        $("#departamentoObraDestino").attr("readonly", "readonly");
+
+        if ($("#engenheiroObraDestino").val() == "") {
+            $("#engenheiroObraDestino").closest("div").hide();
+        }
+    }
+
+    var DEPTO_ORIGEM = $("#departamentoObraOrigem").val() ? $("#departamentoObraOrigem").val() : $("#departamentoObraOrigem").text().split(" - ")[0].trim();
+    if (DEPTO_ORIGEM != "1.3.01" && DEPTO_ORIGEM != "" && DEPTO_ORIGEM != null) {
+        $("#departamentoObraOrigem").closest(".row").show();
+        $("#departamentoObraOrigem").addClass("form-control");
+        $("#departamentoObraOrigem").attr("readonly", "readonly");
+
+        if ($("#engenheiroObraOrigem").val() == "") {
+            $("#engenheiroObraOrigem").closest("div").hide();
+        }
+    }
+
+    $("#dataCompetencia").attr("readonly", "readonly");
+
+    updateCounterRowsTableItens();
+    carregaTabelaItensDasTransferencias();
+    alteraIconesECorDosValores();
+    $(".panelTransferencia:last>.panel-heading").click();
+
+    $(".motivoTransferencia").each(function () {
+        var val = $(this).val() ? $(this).val() : $(this).text();
+        $(this).closest(".panelTransferencia").find(".spanTipoTransferencia").text(val);
+    });
+    $(".valorTotalTransferencia").each(function () {
+        var val = $(this).val() ? $(this).val() : $(this).text();
+        $(this).closest(".panelTransferencia").find(".spanValorTransferencia").text(val);
+    });
+
+    $(".btnRemoverTransferencia").hide();
+
+    $(".textMotivoTransferencia, .motivoTransferencia").attr("readonly", "readonly");
+    $("#btnAdicionarTransferencia").hide();
+
+    geraTabelaHistorico();
+    marcaEmVerdeAprovados();
+
+    if ($("#isMobile").val() == "true") {
         carregaTabelaTransferenciasMobile();
     }
 }

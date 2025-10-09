@@ -29,10 +29,10 @@
     <processDefinitionVersionPK>
       <companyId>1</companyId>
       <processId>Transferência de Custos entre Obras</processId>
-      <version>32</version>
+      <version>155</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
-    <formId>1782503</formId>
+    <formId>28837</formId>
     <editionMode>true</editionMode>
     <updateAttachmentsVersion>false</updateAttachmentsVersion>
     <controlsAttachmentsSecurity>false</controlsAttachmentsSecurity>
@@ -433,7 +433,7 @@
       <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
       <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
       <automatic>false</automatic>
-      <positionX>980</positionX>
+      <positionX>890</positionX>
       <positionY>490</positionY>
       <forecastedEffortType>0</forecastedEffortType>
       <forecastedEffort>0</forecastedEffort>
@@ -485,8 +485,60 @@
       <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
       <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
       <automatic>false</automatic>
-      <positionX>1140</positionX>
+      <positionX>1040</positionX>
       <positionY>490</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <allowanceManagerTime>0</allowanceManagerTime>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>0</stateType>
+      <bpmnType>80</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <noticeExpirationAuthorityTime>0</noticeExpirationAuthorityTime>
+      <noticeExpirationRequisitionerTime>0</noticeExpirationRequisitionerTime>
+      <noticeExpirationManagerTime>0</noticeExpirationManagerTime>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+      <executionType>0</executionType>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>1</version>
+        <sequence>73</sequence>
+      </processStatePK>
+      <stateName>Controladoria</stateName>
+      <stateDescription>Controladoria</stateDescription>
+      <instruction></instruction>
+      <deadlineTime>0</deadlineTime>
+      <deadlineFieldName></deadlineFieldName>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <engineAllocationId>Pool Grupo</engineAllocationId>
+      <engineAllocationConfiguration>&lt;AssignmentController&gt;&lt;Group&gt;Controladoria&lt;/Group&gt;&lt;/AssignmentController&gt;</engineAllocationConfiguration>
+      <selectColleague>1</selectColleague>
+      <initialState>false</initialState>
+      <notifyAuthorityDelay>true</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>3600</allowanceAuthorityTime>
+      <frequenceAuthorityTime>3600</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>false</automatic>
+      <positionX>890</positionX>
+      <positionY>324</positionY>
       <forecastedEffortType>0</forecastedEffortType>
       <forecastedEffort>0</forecastedEffort>
       <notifyManagerFollowUp>false</notifyManagerFollowUp>
@@ -630,7 +682,7 @@
       <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
       <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
       <automatic>false</automatic>
-      <positionX>1057</positionX>
+      <positionX>967</positionX>
       <positionY>511</positionY>
       <forecastedEffortType>0</forecastedEffortType>
       <forecastedEffort>0</forecastedEffort>
@@ -1139,7 +1191,7 @@
       <subProcessId></subProcessId>
       <formFolder>0</formFolder>
       <automatic>true</automatic>
-      <positionX>840</positionX>
+      <positionX>770</positionX>
       <positionY>480</positionY>
       <inhibitTransfer>false</inhibitTransfer>
       <stateType>1</stateType>
@@ -1178,8 +1230,55 @@
       <notifyAuthorityFollowUp>false</notifyAuthorityFollowUp>
       <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
       <automatic>false</automatic>
-      <positionX>1020</positionX>
-      <positionY>640</positionY>
+      <positionX>930</positionX>
+      <positionY>610</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <allowanceManagerTime>0</allowanceManagerTime>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>6</stateType>
+      <bpmnType>60</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>1</version>
+        <sequence>75</sequence>
+      </processStatePK>
+      <stateName>Fim</stateName>
+      <stateDescription>Fim</stateDescription>
+      <instruction>Atividade final do processo</instruction>
+      <deadlineTime>0</deadlineTime>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <engineAllocationId></engineAllocationId>
+      <engineAllocationConfiguration></engineAllocationConfiguration>
+      <selectColleague>0</selectColleague>
+      <initialState>false</initialState>
+      <notifyAuthorityDelay>true</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>0</allowanceAuthorityTime>
+      <frequenceAuthorityTime>1</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>false</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>false</automatic>
+      <positionX>1050</positionX>
+      <positionY>334</positionY>
       <forecastedEffortType>0</forecastedEffortType>
       <forecastedEffort>0</forecastedEffort>
       <notifyManagerFollowUp>false</notifyManagerFollowUp>
@@ -1203,7 +1302,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>32</version>
+        <version>155</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1215,7 +1314,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>32</version>
+        <version>155</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1227,7 +1326,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>3</expressionOrder>
-        <version>32</version>
+        <version>155</version>
         <sequence>36</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1239,7 +1338,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>32</version>
+        <version>155</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1251,7 +1350,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>32</version>
+        <version>155</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1263,7 +1362,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>3</expressionOrder>
-        <version>32</version>
+        <version>155</version>
         <sequence>37</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1275,7 +1374,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>1</expressionOrder>
-        <version>32</version>
+        <version>155</version>
         <sequence>44</sequence>
       </conditionProcessStatePK>
       <condition></condition>
@@ -1289,12 +1388,23 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <expressionOrder>2</expressionOrder>
-        <version>32</version>
+        <version>155</version>
+        <sequence>44</sequence>
+      </conditionProcessStatePK>
+      <condition></condition>
+      <destinationSequenceId>73</destinationSequenceId>
+      <conditionType>1</conditionType>
+    </ConditionProcessState>
+    <ConditionProcessState>
+      <conditionProcessStatePK>
+        <companyId>1</companyId>
+        <processId>Transferência de Custos entre Obras</processId>
+        <expressionOrder>3</expressionOrder>
+        <version>155</version>
         <sequence>44</sequence>
       </conditionProcessStatePK>
       <condition></condition>
       <destinationSequenceId>26</destinationSequenceId>
-      <engineAllocationConfiguration>&lt;AssignmentController&gt;&lt;BaseActivity&gt;4&lt;/BaseActivity&gt;&lt;Returns&gt;Last&lt;/Returns&gt;&lt;/AssignmentController&gt;</engineAllocationConfiguration>
       <conditionType>1</conditionType>
     </ConditionProcessState>
   </list>
@@ -1729,7 +1839,41 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
-        <linkSequence>73</linkSequence>
+        <linkSequence>74</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>44</initialStateSequence>
+      <finalStateSequence>73</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>1</version>
+        <linkSequence>76</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>73</initialStateSequence>
+      <finalStateSequence>75</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>1</version>
+        <linkSequence>77</linkSequence>
       </processLinkPK>
       <actionLabel></actionLabel>
       <returnPermited>false</returnPermited>
@@ -1745,7 +1889,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
-        <linkSequence>74</linkSequence>
+        <linkSequence>78</linkSequence>
       </processLinkPK>
       <actionLabel></actionLabel>
       <returnPermited>false</returnPermited>
@@ -1761,7 +1905,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
-        <linkSequence>75</linkSequence>
+        <linkSequence>79</linkSequence>
       </processLinkPK>
       <actionLabel></actionLabel>
       <returnPermited>false</returnPermited>
@@ -1777,7 +1921,7 @@
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
         <version>1</version>
-        <linkSequence>76</linkSequence>
+        <linkSequence>80</linkSequence>
       </processLinkPK>
       <actionLabel></actionLabel>
       <returnPermited>false</returnPermited>
@@ -1848,8 +1992,8 @@
                 EnviaEmailTransferenciaEntreColigadas(&quot;contabilidade@castilho.com.br; control@castilho.com.br; informatica@castilho.com.br; padilha@castilho.com.br&quot;);&#xd;
             }&#xd;
         }&#xd;
-&#xd;
         notificaConclusaoPorWhatsApp();&#xd;
+&#xd;
     } catch (error) {&#xd;
         log.error(error);&#xd;
         throw error;&#xd;
@@ -2095,21 +2239,36 @@ function atualizaStatusTransferencia(STATUS, IDMOV_ORIGEM, IDMOV_DESTINO) {&#xd;
         if (STATUS == STATUS_TRANSFENCIA.APROVADO) {&#xd;
             var date = getDateNow();&#xd;
 &#xd;
-            var query =&#xd;
-                &quot;UPDATE TRANSFERENCIAS_DE_CUSTO SET &quot; +&#xd;
-                &quot;   STATUS = ?, &quot; + //1&#xd;
-                &quot;   DATA_COMPETENCIA = ?, &quot; + //2&#xd;
-                &quot;   IDMOV_ORIGEM = ?, &quot; + //3&#xd;
-                &quot;   IDMOV_DESTINO = ? &quot; + //4&#xd;
-                &quot;WHERE ID = ?&quot;; //5&#xd;
+            if (IDMOV_ORIGEM &amp;&amp; IDMOV_DESTINO) {&#xd;
+                var query =&#xd;
+                    &quot;UPDATE TRANSFERENCIAS_DE_CUSTO SET &quot; +&#xd;
+                    &quot;   STATUS = ?, &quot; + //1&#xd;
+                    &quot;   DATA_COMPETENCIA = ?, &quot; + //2&#xd;
+                    &quot;   IDMOV_ORIGEM = ?, &quot; + //3&#xd;
+                    &quot;   IDMOV_DESTINO = ? &quot; + //4&#xd;
+                    &quot;WHERE ID = ?&quot;; //5&#xd;
+    &#xd;
+                executeUpdateSemResult(query, [&#xd;
+                    { type: &quot;int&quot;, value: STATUS }, //1&#xd;
+                    { type: &quot;varchar&quot;, value: date }, //2&#xd;
+                    { type: &quot;int&quot;, value: IDMOV_ORIGEM }, //3&#xd;
+                    { type: &quot;int&quot;, value: IDMOV_DESTINO }, //4&#xd;
+                    { type: &quot;int&quot;, value: id }, //5&#xd;
+                ]);&#xd;
+            }else{&#xd;
+                      var query =&#xd;
+                    &quot;UPDATE TRANSFERENCIAS_DE_CUSTO SET &quot; +&#xd;
+                    &quot;   STATUS = ?, &quot; + //1&#xd;
+                    &quot;   DATA_COMPETENCIA = ? &quot; + //2&#xd;
+                    &quot;WHERE ID = ?&quot;; //3&#xd;
+    &#xd;
+                executeUpdateSemResult(query, [&#xd;
+                    { type: &quot;int&quot;, value: STATUS }, //1&#xd;
+                    { type: &quot;varchar&quot;, value: date }, //2&#xd;
+                    { type: &quot;int&quot;, value: id }, //3&#xd;
+                ]);&#xd;
+            }&#xd;
 &#xd;
-            executeUpdateSemResult(query, [&#xd;
-                { type: &quot;int&quot;, value: STATUS }, //1&#xd;
-                { type: &quot;varchar&quot;, value: date }, //2&#xd;
-                { type: &quot;int&quot;, value: IDMOV_ORIGEM }, //3&#xd;
-                { type: &quot;int&quot;, value: IDMOV_DESTINO }, //4&#xd;
-                { type: &quot;int&quot;, value: id }, //5&#xd;
-            ]);&#xd;
         }else{&#xd;
              var query =&#xd;
                 &quot;UPDATE TRANSFERENCIAS_DE_CUSTO SET &quot; +&#xd;
@@ -2199,7 +2358,7 @@ function notificaConclusaoPorWhatsApp(){&#xd;
         mensagem += &quot;*Obra Destino*\n&quot;;&#xd;
         mensagem += hAPI.getCardValue(&quot;ccustoObraDestino&quot;);&#xd;
         mensagem += &quot;\n\n&quot;;&#xd;
-        mensagem += &quot;*Valor: * &quot; + hAPI.getCardValue(&quot;valorObraOrigem&quot;) + &quot;\n&quot;;&#xd;
+        mensagem += &quot;*Valor:* &quot; + hAPI.getCardValue(&quot;valorObraOrigem&quot;) + &quot;\n&quot;;&#xd;
         mensagem += &quot;\n\n&quot;;&#xd;
         mensagem += &quot;*Transferências*\n&quot;;&#xd;
 &#xd;
@@ -2214,7 +2373,7 @@ function notificaConclusaoPorWhatsApp(){&#xd;
 &#xd;
             mensagem += &quot;*Tipo:* &quot; + tipo + &quot;\n&quot;;&#xd;
             mensagem += &quot;*Valor:* &quot; + valor + &quot;\n&quot;;&#xd;
-            mensagem += &quot;*Motivo: *&quot; + motivo + &quot;\n&quot;;&#xd;
+            mensagem += &quot;*Motivo:* &quot; + motivo + &quot;\n&quot;;&#xd;
     &#xd;
             mensagem += &quot;\n&quot;;&#xd;
         }&#xd;
@@ -2358,6 +2517,7 @@ function executeUpdateSemResult(query, constraints) {&#xd;
     APROVADOR_ORIGEM: 5,&#xd;
     DEFINE_APROVADOR_ORIGEM: 10,&#xd;
     LANCA_TRANSFENCIA: 26,&#xd;
+    CONTROLADORIA: 73,&#xd;
     FIM: 28,&#xd;
 };&#xd;
 &#xd;
@@ -2369,57 +2529,63 @@ var STATUS_TRANSFENCIA = {&#xd;
 }&#xd;
 &#xd;
 function beforeTaskSave(colleagueId, nextSequenceId, userList) {&#xd;
-    var ATIVIDADE = getValue(&quot;WKNumState&quot;);&#xd;
-    var formMode = hAPI.getCardValue(&quot;formMode&quot;);&#xd;
+    try {&#xd;
+        var ATIVIDADE = getValue(&quot;WKNumState&quot;);&#xd;
+        var formMode = hAPI.getCardValue(&quot;formMode&quot;);&#xd;
 &#xd;
-    if (ATIVIDADE == ATIVIDADES.INICIO &amp;&amp; formMode == &quot;ADD&quot;) {&#xd;
-        // Se for Inicio da Solicitação&#xd;
+        if (ATIVIDADE == ATIVIDADES.INICIO &amp;&amp; formMode == &quot;ADD&quot;) {&#xd;
+            // Se for Inicio da Solicitação&#xd;
 &#xd;
-        // Insere nova Linha na tabela de Transferencias&#xd;
-        var id = insereNovoRegistro();&#xd;
+            // Insere nova Linha na tabela de Transferencias&#xd;
+            var id = insereNovoRegistro();&#xd;
 &#xd;
-        // Salva o ID da Transferencia no campo ID_TRANSFERENCIAS_DE_CUSTO&#xd;
-        hAPI.setCardValue(&quot;ID_TRANSFERENCIAS_DE_CUSTO&quot;, id);&#xd;
+            // Salva o ID da Transferencia no campo ID_TRANSFERENCIAS_DE_CUSTO&#xd;
+            hAPI.setCardValue(&quot;ID_TRANSFERENCIAS_DE_CUSTO&quot;, id);&#xd;
 &#xd;
-        // Insere as Transferencias, Itens e Historico com o ID da Transferencia como Chave Estrangeira&#xd;
-        insereTransferencias(id);&#xd;
-        insereHistorico(id);&#xd;
+            // Insere as Transferencias, Itens e Historico com o ID da Transferencia como Chave Estrangeira&#xd;
+            insereTransferencias(id);&#xd;
+            insereHistorico(id);&#xd;
 &#xd;
-        // Salva Número da Solicitação no Processo&#xd;
-        hAPI.setCardValue(&quot;numProces&quot;, getValue(&quot;WKNumProces&quot;));&#xd;
-        hAPI.setCardValue(&quot;solicitacao&quot;, getValue(&quot;WKNumProces&quot;));&#xd;
-    }&#xd;
-    else if (ATIVIDADE == ATIVIDADES.INICIO) {&#xd;
-        // Se for Atividade Inico mas o Processo já está criado&#xd;
-        // Atualiza os Dados da Transferencia nas Tabelas&#xd;
-        atualizaTransferencia();&#xd;
-    }&#xd;
-    else if (ATIVIDADE == ATIVIDADES.APROVADOR_DESTINO || ATIVIDADE == ATIVIDADES.APROVADOR_ORIGEM) {&#xd;
-        var decisao = hAPI.getCardValue(&quot;decisao&quot;);&#xd;
+            // Salva Número da Solicitação no Processo&#xd;
+            hAPI.setCardValue(&quot;numProces&quot;, getValue(&quot;WKNumProces&quot;));&#xd;
+            hAPI.setCardValue(&quot;solicitacao&quot;, getValue(&quot;WKNumProces&quot;));&#xd;
+        }&#xd;
+        else if (ATIVIDADE == ATIVIDADES.INICIO) {&#xd;
+            // Se for Atividade Inico mas o Processo já está criado&#xd;
+            // Atualiza os Dados da Transferencia nas Tabelas&#xd;
+            atualizaTransferencia();&#xd;
+        }&#xd;
+        else if (ATIVIDADE == ATIVIDADES.APROVADOR_DESTINO || ATIVIDADE == ATIVIDADES.APROVADOR_ORIGEM) {&#xd;
+            var decisao = hAPI.getCardValue(&quot;decisao&quot;);&#xd;
 &#xd;
-        // Se Aprovado verifica aprovadores em Comum entre as Obras e realiza a Aprovação Cruzada&#xd;
-        if (decisao == &quot;Aprovado&quot;) {&#xd;
-            if (ATIVIDADE == ATIVIDADES.APROVADOR_DESTINO) {&#xd;
-                verificaSeAprovadorTambemAprovaObraOrigem();&#xd;
+            // Se Aprovado verifica aprovadores em Comum entre as Obras e realiza a Aprovação Cruzada&#xd;
+            if (decisao == &quot;Aprovado&quot;) {&#xd;
+                if (ATIVIDADE == ATIVIDADES.APROVADOR_DESTINO) {&#xd;
+                    verificaSeAprovadorTambemAprovaObraOrigem();&#xd;
+                }&#xd;
+                else if (ATIVIDADE == ATIVIDADES.APROVADOR_ORIGEM) {&#xd;
+                    verificaSeAprovadorTambemAprovaObraDestino();&#xd;
+                }&#xd;
             }&#xd;
-            else if (ATIVIDADE == ATIVIDADES.APROVADOR_ORIGEM) {&#xd;
-                verificaSeAprovadorTambemAprovaObraDestino();&#xd;
+&#xd;
+            // Se reprovado marca a Reprovacao nas Duas Obras para Retornar ao Inicio&#xd;
+            if (decisao == &quot;Reprovado&quot;) {&#xd;
+                hAPI.setCardValue(&quot;aprovadoObraOrigem&quot;, &quot;Reprovado&quot;);&#xd;
+                hAPI.setCardValue(&quot;aprovadoObraDestino&quot;, &quot;Reprovado&quot;);&#xd;
+                notificaReprovacaoPorWhatsApp();&#xd;
+            }&#xd;
+&#xd;
+            // Se NÂO Reprovado Automaticamente, insere o Historio na Tabela&#xd;
+            // Caso seja Reprovado Automaticamente significa que a Atividade só foi enviada para Frente automaticamente, sem ação do usuário&#xd;
+            if (decisao != &quot;Reprovado Automaticamente&quot;) {&#xd;
+                insereHistorico(hAPI.getCardValue(&quot;ID_TRANSFERENCIAS_DE_CUSTO&quot;));&#xd;
             }&#xd;
         }&#xd;
-&#xd;
-        // Se reprovado marca a Reprovacao nas Duas Obras para Retornar ao Inicio&#xd;
-        if (decisao == &quot;Reprovado&quot;) {&#xd;
-            hAPI.setCardValue(&quot;aprovadoObraOrigem&quot;, &quot;Reprovado&quot;);&#xd;
-            hAPI.setCardValue(&quot;aprovadoObraDestino&quot;, &quot;Reprovado&quot;);&#xd;
-&#xd;
-            notificaReprovacaoPorWhatsApp();&#xd;
+        else if(ATIVIDADE == ATIVIDADES.CONTROLADORIA){&#xd;
+            atualizaStatusTransferencia(STATUS_TRANSFENCIA.APROVADO);&#xd;
         }&#xd;
-&#xd;
-        // Se NÂO Reprovado Automaticamente, insere o Historio na Tabela&#xd;
-        // Caso seja Reprovado Automaticamente significa que a Atividade só foi enviada para Frente automaticamente, sem ação do usuário&#xd;
-        if (decisao != &quot;Reprovado Automaticamente&quot;) {&#xd;
-            insereHistorico(hAPI.getCardValue(&quot;ID_TRANSFERENCIAS_DE_CUSTO&quot;));&#xd;
-        }&#xd;
+    } catch (error) {&#xd;
+     throw error;   &#xd;
     }&#xd;
 }&#xd;
 &#xd;
@@ -2658,6 +2824,7 @@ function insereHistorico(ID_PAI) {&#xd;
 }&#xd;
 &#xd;
 &#xd;
+&#xd;
 //Notifica&#xd;
 function notificaReprovacaoPorWhatsApp() {&#xd;
     var mensagem = &quot;&quot;;&#xd;
@@ -2689,6 +2856,7 @@ function sendNotifiWhatsApp(mensagem, user){&#xd;
     //     log.error(&quot;whatsApp API: &quot; + ds.getValue(0,&quot;MENSAGEM&quot;));&#xd;
     // }&#xd;
 }&#xd;
+&#xd;
 &#xd;
 // Utils&#xd;
 function moneyToFloat(val) {&#xd;
@@ -3151,7 +3319,7 @@ function verificaSeTotalmenteAprovado(){&#xd;
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>32</version>
+        <version>155</version>
         <linkSequence>11</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3162,7 +3330,7 @@ function verificaSeTotalmenteAprovado(){&#xd;
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>32</version>
+        <version>155</version>
         <linkSequence>12</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3173,7 +3341,7 @@ function verificaSeTotalmenteAprovado(){&#xd;
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>32</version>
+        <version>155</version>
         <linkSequence>43</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -3184,23 +3352,34 @@ function verificaSeTotalmenteAprovado(){&#xd;
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>32</version>
+        <version>155</version>
         <linkSequence>47</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
-      <positionX>870</positionX>
+      <positionX>800</positionX>
       <positionY>96</positionY>
     </ProcessLinkBend>
     <ProcessLinkBend>
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>Transferência de Custos entre Obras</processId>
-        <version>32</version>
+        <version>155</version>
         <linkSequence>47</linkSequence>
         <bendSequence>2</bendSequence>
       </processLinkBendPK>
       <positionX>272</positionX>
       <positionY>96</positionY>
+    </ProcessLinkBend>
+    <ProcessLinkBend>
+      <processLinkBendPK>
+        <companyId>1</companyId>
+        <processId>Transferência de Custos entre Obras</processId>
+        <version>155</version>
+        <linkSequence>74</linkSequence>
+        <bendSequence>1</bendSequence>
+      </processLinkBendPK>
+      <positionX>800</positionX>
+      <positionY>351</positionY>
     </ProcessLinkBend>
   </list>
   <list/>
@@ -3321,6 +3500,15 @@ function verificaSeTotalmenteAprovado(){&#xd;
       <sequence>44</sequence>
       <expressionOrder>2</expressionOrder>
       <ruleOrder>1</ruleOrder>
+      <field>CODCOLIGADA_ORIGEM</field>
+      <value>CODCOLIGADA_DESTINO</value>
+      <operator>2</operator>
+      <valueType>0</valueType>
+    </ConditionProcessAutomaticRules>
+    <ConditionProcessAutomaticRules>
+      <sequence>44</sequence>
+      <expressionOrder>2</expressionOrder>
+      <ruleOrder>2</ruleOrder>
       <field>aprovadoObraDestino</field>
       <value>Reprovado</value>
       <operator>2</operator>
@@ -3329,7 +3517,34 @@ function verificaSeTotalmenteAprovado(){&#xd;
     <ConditionProcessAutomaticRules>
       <sequence>44</sequence>
       <expressionOrder>2</expressionOrder>
+      <ruleOrder>3</ruleOrder>
+      <field>aprovadoObraOrigem</field>
+      <value>Reprovado</value>
+      <operator>2</operator>
+      <valueType>1</valueType>
+    </ConditionProcessAutomaticRules>
+    <ConditionProcessAutomaticRules>
+      <sequence>44</sequence>
+      <expressionOrder>3</expressionOrder>
+      <ruleOrder>1</ruleOrder>
+      <field>CODCOLIGADA_ORIGEM</field>
+      <value>CODCOLIGADA_DESTINO</value>
+      <operator>1</operator>
+      <valueType>0</valueType>
+    </ConditionProcessAutomaticRules>
+    <ConditionProcessAutomaticRules>
+      <sequence>44</sequence>
+      <expressionOrder>3</expressionOrder>
       <ruleOrder>2</ruleOrder>
+      <field>aprovadoObraDestino</field>
+      <value>Reprovado</value>
+      <operator>2</operator>
+      <valueType>1</valueType>
+    </ConditionProcessAutomaticRules>
+    <ConditionProcessAutomaticRules>
+      <sequence>44</sequence>
+      <expressionOrder>3</expressionOrder>
+      <ruleOrder>3</ruleOrder>
       <field>aprovadoObraOrigem</field>
       <value>Reprovado</value>
       <operator>2</operator>

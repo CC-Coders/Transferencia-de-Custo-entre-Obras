@@ -48,6 +48,7 @@ function servicetask26(attempt, message) {
                 EnviaEmailTransferenciaEntreColigadas("contabilidade@castilho.com.br; control@castilho.com.br; informatica@castilho.com.br; padilha@castilho.com.br");
             }
         }
+        notificaConclusaoPorWhatsApp();
 
     } catch (error) {
         log.error(error);
@@ -294,21 +295,36 @@ function atualizaStatusTransferencia(STATUS, IDMOV_ORIGEM, IDMOV_DESTINO) {
         if (STATUS == STATUS_TRANSFENCIA.APROVADO) {
             var date = getDateNow();
 
-            var query =
-                "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
-                "   STATUS = ?, " + //1
-                "   DATA_COMPETENCIA = ?, " + //2
-                "   IDMOV_ORIGEM = ?, " + //3
-                "   IDMOV_DESTINO = ? " + //4
-                "WHERE ID = ?"; //5
+            if (IDMOV_ORIGEM && IDMOV_DESTINO) {
+                var query =
+                    "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
+                    "   STATUS = ?, " + //1
+                    "   DATA_COMPETENCIA = ?, " + //2
+                    "   IDMOV_ORIGEM = ?, " + //3
+                    "   IDMOV_DESTINO = ? " + //4
+                    "WHERE ID = ?"; //5
+    
+                executeUpdateSemResult(query, [
+                    { type: "int", value: STATUS }, //1
+                    { type: "varchar", value: date }, //2
+                    { type: "int", value: IDMOV_ORIGEM }, //3
+                    { type: "int", value: IDMOV_DESTINO }, //4
+                    { type: "int", value: id }, //5
+                ]);
+            }else{
+                      var query =
+                    "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
+                    "   STATUS = ?, " + //1
+                    "   DATA_COMPETENCIA = ? " + //2
+                    "WHERE ID = ?"; //3
+    
+                executeUpdateSemResult(query, [
+                    { type: "int", value: STATUS }, //1
+                    { type: "varchar", value: date }, //2
+                    { type: "int", value: id }, //3
+                ]);
+            }
 
-            executeUpdateSemResult(query, [
-                { type: "int", value: STATUS }, //1
-                { type: "varchar", value: date }, //2
-                { type: "int", value: IDMOV_ORIGEM }, //3
-                { type: "int", value: IDMOV_DESTINO }, //4
-                { type: "int", value: id }, //5
-            ]);
         }else{
              var query =
                 "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
@@ -388,7 +404,39 @@ function EnviaEmailTransferenciaEntreColigadas(emails) {
         return vo.getResult();
     }
 }
+function notificaConclusaoPorWhatsApp(){
+    var mensagem = "";
+        mensagem += "Sua Solicitação de *Transferência de Custo* foi *Concluída*!";
+        mensagem += "\n\n";
+        mensagem += "*Obra Origem*\n";
+        mensagem += hAPI.getCardValue("ccustoObraOrigem");
+        mensagem += "\n\n";
+        mensagem += "*Obra Destino*\n";
+        mensagem += hAPI.getCardValue("ccustoObraDestino");
+        mensagem += "\n\n";
+        mensagem += "*Valor:* " + hAPI.getCardValue("valorObraOrigem") + "\n";
+        mensagem += "\n\n";
+        mensagem += "*Transferências*\n";
 
+        var indices = hAPI.getChildrenIndexes("tableTransferencias");
+
+        for (var i = 0; i < indices.length; i++) {
+            var id = indices[i];
+
+            var tipo = hAPI.getCardValue("motivoTransferencia" + "___" + id);
+            var motivo = hAPI.getCardValue("textMotivoTransferencia" + "___" + id);
+            var valor = moneyToFloat(hAPI.getCardValue("valorTotalTransferencia" + "___" + id));
+
+            mensagem += "*Tipo:* " + tipo + "\n";
+            mensagem += "*Valor:* " + valor + "\n";
+            mensagem += "*Motivo:* " + motivo + "\n";
+    
+            mensagem += "\n";
+        }
+
+        mensagem += "Acesse o Fluig para mais informações.";
+        sendNotifiWhatsApp(mensagem, hAPI.getCardValue("solicitante"));
+}
 
 // Utils
 function getServerURL() {

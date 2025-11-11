@@ -556,6 +556,7 @@ async function geraTabelaHistorico() {
 function aprovadoresMatriz(CODDEPTO){
     const coordenadoresMatriz = [
         {CODDEPTO:"1.2.01", NOME:"Presidência",              CODUSUARIO:"padilha"},
+        {CODDEPTO:"1.2.02", NOME:"Administração",              CODUSUARIO:"padilha"},
         {CODDEPTO:"1.2.04", NOME:"Contabilidade",            CODUSUARIO:"cris"},
         {CODDEPTO:"1.2.05", NOME:"Informática",              CODUSUARIO:"thiago.senne"},
         {CODDEPTO:"1.2.06", NOME:"Financeiro",               CODUSUARIO:"fernando.jarvorski"},
@@ -571,6 +572,7 @@ function aprovadoresMatriz(CODDEPTO){
         {CODDEPTO:"1.2.38", NOME:"Meio Ambiente",            CODUSUARIO:"eder"},
         {CODDEPTO:"1.2.42", NOME:"Diretoria Executiva",      CODUSUARIO:"augusto"},
         {CODDEPTO:"1.2.43", NOME:"Nova Serrinha",            CODUSUARIO:"rodrigo.ramos"},
+        {CODDEPTO:"1.2.96", NOME:"Diretoria Planejamento Estratégico",CODUSUARIO:"mario"},
     ];
 
     var depto = coordenadoresMatriz.find(e=> e.CODDEPTO == CODDEPTO);
@@ -607,6 +609,7 @@ function consultaDepartamentos(CODCOLIGADA){
         DatasetFactory.createConstraint("ATIVO","T","T",ConstraintType.MUST),
         DatasetFactory.createConstraint("CODFILIAL","1","1",ConstraintType.MUST),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.01","1.2.01",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.02","1.2.02",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.04","1.2.04",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.05","1.2.05",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.06","1.2.06",ConstraintType.SHOULD),
@@ -622,6 +625,7 @@ function consultaDepartamentos(CODCOLIGADA){
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.38","1.2.38",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.42","1.2.42",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.43","1.2.43",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.96","1.2.96",ConstraintType.SHOULD),
     ],null);
 
     if (ds.values.length == 0) {

@@ -752,8 +752,13 @@ function alimentaCharts() {
     for (const obra of envioCustoPorObra) {
         for (const transferencia of obra.transferencias) {
             var data = transferencia.DATA_COMPETENCIA;
-            if (!data) {
-                data = getDataHoje();
+
+            if (!data || data == "null") {
+                if (transferencia.STATUS != 3) {
+                    data = getDataHoje();
+                }else{
+                    data = transferencia.DATA_SOLICITACAO;
+                }
             }
             var [ano, mes, dia] = data.split(" ")[0].split("-");
             var date = new Date(ano, mes - 1, 1);
@@ -776,8 +781,12 @@ function alimentaCharts() {
     for (const obra of recebimentoCustoPorObra) {
         for (const transferencia of obra.transferencias) {
             var data = transferencia.DATA_COMPETENCIA;
-            if (!data) {
-                data = getDataHoje();
+            if (!data || data == "null") {
+                if (transferencia.STATUS != 3) {
+                    data = getDataHoje();
+                }else{
+                    data = transferencia.DATA_SOLICITACAO;
+                }
             }
             var [ano, mes, dia] = data.split(" ")[0].split("-");
             var date = new Date(ano, mes - 1, 1);
@@ -800,9 +809,11 @@ function alimentaCharts() {
     for (const obra of envioReceitaPorObra) {
         for (const transferencia of obra.transferencias) {
             var data = transferencia.DATA_COMPETENCIA;
-            if (!data) {
-                data = getDataHoje();
-            }
+              if (transferencia.STATUS != 3) {
+                    data = getDataHoje();
+                }else{
+                    data = transferencia.DATA_SOLICITACAO;
+                }
             var [ano, mes, dia] = data.split(" ")[0].split("-");
             var date = new Date(ano, mes - 1, 1);
             enviosReceita.push({ date: date, value: parseFloat(transferencia.VALOR) });
@@ -823,9 +834,11 @@ function alimentaCharts() {
     for (const obra of recebimentoReceitaPorObra) {
         for (const transferencia of obra.transferencias) {
             var data = transferencia.DATA_COMPETENCIA;
-            if (!data) {
-                data = getDataHoje();
-            }
+              if (transferencia.STATUS != 3) {
+                    data = getDataHoje();
+                }else{
+                    data = transferencia.DATA_SOLICITACAO;
+                }
             var [ano, mes, dia] = data.split(" ")[0].split("-");
             var date = new Date(ano, mes - 1, 1);
             recebimentoReceita.push({ date: date, value: parseFloat(transferencia.VALOR) });
@@ -936,7 +949,7 @@ function atualizaChartProdutos() {
     loadChart1("chart3", itens);
 }
 function loadChart1(id, data, colors) {
-    if (!data) {
+    if (!data || data == "null") {
         data = [
             { label: "Obra Toledo II", value: getRandomInt(100) },
             { label: "Obra Estrada da Boiadeira II", value: getRandomInt(100) },
@@ -1297,7 +1310,7 @@ function loadMultiLineChart(id, datasets, colorList) {
 }
 function loadGroupedBarChart(id, data, groupKeys, colors) {
     // Example data if not provided
-    if (!data) {
+    if (!data || data == "null") {
         data = [
             { group: "A", value1: 30, value2: 50 },
             { group: "B", value1: 80, value2: 35 },
@@ -1444,6 +1457,7 @@ function consultaDepartamentos(CODCOLIGADA){
         DatasetFactory.createConstraint("ATIVO","T","T",ConstraintType.MUST),
         DatasetFactory.createConstraint("CODFILIAL","1","1",ConstraintType.MUST),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.01","1.2.01",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.02","1.2.02",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.04","1.2.04",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.05","1.2.05",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.06","1.2.06",ConstraintType.SHOULD),
@@ -1458,6 +1472,7 @@ function consultaDepartamentos(CODCOLIGADA){
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.37","1.2.37",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.38","1.2.38",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.43","1.2.43",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.96","1.2.96",ConstraintType.SHOULD),
     ],null);
 
     if (ds.values.length == 0) {

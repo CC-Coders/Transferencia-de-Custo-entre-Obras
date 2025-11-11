@@ -6,12 +6,12 @@
 
     <!-- Fluig -->
     <link rel="stylesheet"
-        href="http://desenvolvimento.castilho.com.br:3232//style-guide/css/fluig-style-guide.min.css" />
+        href="/style-guide/css/fluig-style-guide.min.css" />
     <script type="text/javascript" src="/webdesk/vcXMLRPC.js"></script>
     <link rel="stylesheet" type="text/css"
-        href="http://desenvolvimento.castilho.com.br:3232/style-guide/css/fluig-style-guide-ratingstars.min.css">
+        href="/style-guide/css/fluig-style-guide-ratingstars.min.css">
     <script
-        src="http://desenvolvimento.castilho.com.br:3232/style-guide/js/fluig-style-guide-ratingstars.min.js"></script>
+        src="/style-guide/js/fluig-style-guide-ratingstars.min.js"></script>
 
 
 
@@ -32,13 +32,13 @@
 
     <!-- Castilho Dev Guide -->
     <script
-        src="http://desenvolvimento.castilho.com.br:3232/castilho_dev_guide/resources/js/castilho-consultas-rm.js"></script>
+        src="/castilho_dev_guide/resources/js/castilho-consultas-rm.js"></script>
     <script
-        src="http://desenvolvimento.castilho.com.br:3232/castilho_dev_guide/resources/js/castilho-utils.js"></script>
+        src="/castilho_dev_guide/resources/js/castilho-utils.js"></script>
     <link rel="stylesheet"
-        href="http://desenvolvimento.castilho.com.br:3232/castilho_dev_guide/resources/css/castilho_dev_guide.css" />
+        href="/castilho_dev_guide/resources/css/castilho_dev_guide.css" />
     <link rel="stylesheet"
-        href="http://desenvolvimento.castilho.com.br:3232/castilho_dev_guide/resources/css/castilho-cards.css" />
+        href="/castilho_dev_guide/resources/css/castilho-cards.css" />
 
     <!-- Fontawesome -->
     <script src="https://kit.fontawesome.com/28d06c1f1f.js" crossorigin="anonymous"></script>

@@ -437,7 +437,7 @@ function validaPreenchimentoForm() {
         retorno.push("Informar a Obra de Destino.");
     }
 
-    if ($("#ccustoObraOrigem").val() == $("#ccustoObraDestino").val() && $("#ccustoObraDestino").val() != "1.1.001") {
+    if ($("#ccustoObraOrigem").val() == $("#ccustoObraDestino").val() && $("#ccustoObraDestino").val().split(" - ")[1] != "1.1.001") {
         retorno.push("Não é possível fazer Transferência entre o Mesmo Centro de Custo");
     }
 

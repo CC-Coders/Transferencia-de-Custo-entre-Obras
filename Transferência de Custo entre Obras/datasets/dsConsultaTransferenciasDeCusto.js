@@ -65,7 +65,7 @@ function createDataset(fields, constraints, sortFields) {
 
         // Filtro Periodo
         if (constraints.DATAINICIO && constraints.DATAFIM) {
-            query += "AND ((TRANSFERENCIAS_DE_CUSTO.DATA_COMPETENCIA IS NULL AND TRANSFERENCIAS_DE_CUSTO.DATA_SOLICITACAO BETWEEN ? AND ?) OR ( TRANSFERENCIAS_DE_CUSTO.DATA_COMPETENCIA IS NOT NULL AND TRANSFERENCIAS_DE_CUSTO.DATA_COMPETENCIA BETWEEN ? AND ?))";
+            query += "AND ((TRANSFERENCIAS_DE_CUSTO.DATA_COMPETENCIA IS NULL AND TRANSFERENCIAS_DE_CUSTO.DATA_SOLICITACAO BETWEEN CONVERT(datetime, ?, 121) AND CONVERT(datetime, ?, 121)) OR ( TRANSFERENCIAS_DE_CUSTO.DATA_COMPETENCIA IS NOT NULL AND TRANSFERENCIAS_DE_CUSTO.DATA_COMPETENCIA BETWEEN ? AND ?))";
             queryConstraints.push({type:"varchar", value: constraints.DATAINICIO});
             queryConstraints.push({type:"varchar", value: constraints.DATAFIM});
             queryConstraints.push({type:"varchar", value: constraints.DATAINICIO});

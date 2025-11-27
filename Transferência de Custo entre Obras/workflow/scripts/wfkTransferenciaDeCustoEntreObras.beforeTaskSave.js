@@ -301,7 +301,7 @@ function insereHistorico(ID_PAI) {
         "   OBSERVACAO, " +
         "   DECISAO) " +
         " VALUES " +
-        "  (?,?,?,?,?)";
+        "  (?,?,CONVERT(datetime, ?, 121),?,?)";
 
     executeInsert(query, [
         { type: "int", value: ID_PAI },

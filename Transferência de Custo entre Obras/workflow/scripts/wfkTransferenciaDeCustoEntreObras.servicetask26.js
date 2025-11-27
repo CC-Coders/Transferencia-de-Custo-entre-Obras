@@ -299,7 +299,7 @@ function atualizaStatusTransferencia(STATUS, IDMOV_ORIGEM, IDMOV_DESTINO) {
                 var query =
                     "UPDATE TRANSFERENCIAS_DE_CUSTO SET " +
                     "   STATUS = ?, " + //1
-                    "   DATA_COMPETENCIA = ?, " + //2
+                    "   DATA_COMPETENCIA = CONVERT(datetime, ?, 121), " + //2
                     "   IDMOV_ORIGEM = ?, " + //3
                     "   IDMOV_DESTINO = ? " + //4
                     "WHERE ID = ?"; //5

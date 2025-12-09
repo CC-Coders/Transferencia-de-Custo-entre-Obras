@@ -572,6 +572,7 @@ function aprovadoresMatriz(CODDEPTO){
         {CODDEPTO:"1.2.38", NOME:"Meio Ambiente",            CODUSUARIO:"eder"},
         {CODDEPTO:"1.2.42", NOME:"Diretoria Executiva",      CODUSUARIO:"augusto"},
         {CODDEPTO:"1.2.43", NOME:"Nova Serrinha",            CODUSUARIO:"rodrigo.ramos"},
+        {CODDEPTO:"1.2.64", NOME:"Frota Leve",            CODUSUARIO:"thalessa.tomm"},
         {CODDEPTO:"1.2.96", NOME:"Diretoria Planejamento Estratégico",CODUSUARIO:"mario"},
     ];
 
@@ -625,6 +626,7 @@ function consultaDepartamentos(CODCOLIGADA){
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.38","1.2.38",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.42","1.2.42",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.43","1.2.43",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.64","1.2.64",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.96","1.2.96",ConstraintType.SHOULD),
     ],null);
 

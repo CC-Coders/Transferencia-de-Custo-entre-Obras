@@ -1472,6 +1472,7 @@ function consultaDepartamentos(CODCOLIGADA){
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.37","1.2.37",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.38","1.2.38",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.43","1.2.43",ConstraintType.SHOULD),
+        DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.64","1.2.64",ConstraintType.SHOULD),
         DatasetFactory.createConstraint("CODDEPARTAMENTO","1.2.96","1.2.96",ConstraintType.SHOULD),
     ],null);
 

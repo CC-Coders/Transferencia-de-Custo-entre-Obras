@@ -128,12 +128,6 @@ function loadAtividadeInicio() {
                 $("#departamentoObraOrigem").closest(".row").hide();
                 $("#engenheiroObraOrigem").closest("div").show();
                 $("#departamentoObraOrigem").val("1.3.01");
-
-                if (CODCOLIGADA != 1 || CODCCUSTO.substring(0, 3) != "1.2") {
-                    $("#engenheiroObraOrigem").val("fernando.ribeiro");
-                    $("#coordenadorObraOrigem").val("fernando.ribeiro");
-                    $("#diretorObraOrigem").val("fernando.ribeiro");
-                }
             }
         }
     });
@@ -161,12 +155,6 @@ function loadAtividadeInicio() {
                 $("#departamentoObraDestino").closest(".row").hide();
                 $("#engenheiroObraDestino").closest("div").show();
                 $("#departamentoObraDestino").val("1.3.01");
-
-                if (CODCOLIGADA != 1 || CODCCUSTO.substring(0, 3) != "1.2") {
-                    $("#engenheiroObraDestino").val("gabriel.persike");
-                    $("#coordenadorObraDestino").val("gabriel.persike");
-                    $("#diretorObraDestino").val("gabriel.persike");
-                }
             }
         }
     });
